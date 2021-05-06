@@ -1,0 +1,11 @@
+__pycache__/
+test.*
+
+#一些插件
+_nickname/
+clock_in/
+group/
+#json数据
+_nickname/*.json
+chat/*.json
+bilibili_live/*.json
