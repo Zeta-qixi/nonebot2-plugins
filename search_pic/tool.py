@@ -119,13 +119,13 @@ async def get_view(sc, image_url: str) -> str:
     view = sc.get_view(image_url)
 
     if view:
-        putline = "\n\n".join([header, view])
+        putline = "".join([header, view])
 
     return putline
 
 
 
-async def get_image_data(image_url: str, api_key: str):
+async def get_image_data(image_url: str, api_key: str=SAUCENAO_KEY):
     if type(image_url) == list:
         image_url = image_url[0]
         
@@ -138,7 +138,7 @@ async def get_image_data(image_url: str, api_key: str):
             putline = await get_view(sc, image_url)
             if putline:
                 if repass:
-                    repass = "\n\n".join([repass, putline])
+                    repass = "".join([repass, putline])
                 else:
                     repass = putline
         except :
