@@ -10,7 +10,7 @@ import random
 import nonebot
 from nonebot import require
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-
+from . import nickname
 
 master = nonebot.get_driver().config.master
 
@@ -29,17 +29,21 @@ class rp:
             return self.rp[num]
 
 rpbot = rp()
-
+nn = nickname.nickname()
 jrrp = on_command('jrrp')
 @jrrp.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
+    print('tt')
     msg = event.raw_message
     user_id = event.user_id
     jp = rpbot.RP(user_id)
 
     if jp:
         msg= f'今天的人品值是:{jp}'
-        await bot.send(event, message=MessageSegment.at(user_id)+msg)
+        if nn.my_name(user_id):
+            await bot.send(event, message=f'{nn.my_name(user_id)}{msg}')
+        else:
+            await bot.send(event, message=MessageSegment.at(user_id)+msg)
     else:
         await bot.send(event, message='你今天已经测过人品值了哦～')
 
