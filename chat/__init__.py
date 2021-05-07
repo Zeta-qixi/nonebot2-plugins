@@ -32,7 +32,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     user_id = event.user_id
     
     global ptalk
-    ptalk.setdefault(group_id,0.5)
+    ptalk.setdefault(group_id,1)
     trigger.setdefault(group_id,' ')
    
 
