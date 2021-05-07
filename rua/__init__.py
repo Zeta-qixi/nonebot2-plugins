@@ -20,7 +20,6 @@ master = get_driver().config.master
 
 
 data_dir = path.join(path.dirname(__file__), 'data')
-rua = on_command('rua', aliases={})
 path = path.abspath(__file__).split('__')[0]
 img_src = path +  '/data/output.gif'
 img = MessageSegment.image(f'file://{img_src}')
@@ -51,7 +50,7 @@ async def _t3(bot: Bot, event: PokeNotifyEvent):
         pass
 
     
-rua = on_command('.rua')
+rua = on_command('rua')
 @rua.handle()
 async def rua_handle(bot: Bot, event: Event, state: T_State):
     try:
