@@ -20,7 +20,7 @@ class SauceNAO():
         params['db'] = db
         params['numres'] = numres
         self.params = params
-        self.header = "————>saucenao<————"
+        self.header = "———>saucenao<———"
 
     def get_sauce(self, url):
         self.params['url'] = url
@@ -30,26 +30,24 @@ class SauceNAO():
 
     def get_view(self, sauce) -> str:
         sauces = self.get_sauce(sauce)
-
         repass = ""
         try:
             for sauce in sauces['results']:
                 url = sauce['data']['ext_urls'][0].replace("\\","").strip()
                 similarity = sauce['header']['similarity']
-                putline = "[{}] 相似度:{}%".format(url, similarity)
+                putline = f"[{url}] 相似度:{similarity}%"
                 if repass:
-                    repass = "\n".join([repass, putline])
+                    repass = repass + "\n" + putline
                 else:
                     repass = putline
-        except Exception as e:
+        except:
             pass
-
         return repass
 
 class ascii2d():
     def __init__(self, num=2):
         self.num = num
-        self.header = "————>ascii2d<————"
+        self.header = "———>ascii2d<———"
 
 
     def get_search_data(self, url: str, data=None):
@@ -70,10 +68,10 @@ class ascii2d():
 
 
     def add_repass(self, tag: str, data):
-        po = "——{}——".format(tag)
+        po = f"<{tag}>"
         for line in data:
-            putline = "[{}][{}]".format(line[1], line[0])
-            po = "\n".join([po, putline])
+            putline = f"[{line[1]}]\n{line[0]}"
+            po = po + "\n" + putline
 
         return po
 
@@ -119,16 +117,14 @@ async def get_view(sc, image_url: str) -> str:
     view = sc.get_view(image_url)
 
     if view:
-        putline = "".join([header, view])
+        putline = header + '\n' + view
 
     return putline
 
 
 
 async def get_image_data(image_url: str, api_key: str=SAUCENAO_KEY):
-    if type(image_url) == list:
-        image_url = image_url[0]
-        
+
     NAO = SauceNAO(api_key)
     ii2d = ascii2d()
 

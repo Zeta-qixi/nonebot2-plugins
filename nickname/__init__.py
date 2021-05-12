@@ -43,7 +43,7 @@ nn = nickname()
 
 nc = on_command('nickname')
 @nc.handle()
-async def nc(bot: Bot, event: MessageEvent, state: T_State):
+async def nc_handle(bot: Bot, event: MessageEvent, state: T_State):
     user_id=str(event.user_id)
     name = str(event.get_message())
 

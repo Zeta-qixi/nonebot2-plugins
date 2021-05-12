@@ -17,8 +17,6 @@ path = dirname(__file__) +'/data.json'
 with open(path) as f:
     liveroom = json.load(f)
 
-for key in liveroom:
-    liveroom[key]['status'] = 0
 class live_:
     def __init__(self):
         #self.liveroom = liveroom_
@@ -47,6 +45,10 @@ class live_:
 
     def change_status(self, key:str):
         liveroom[key]['status'] = 0 if liveroom[key]['status'] ==1 else 1
+        with open(path, 'w+') as f :
+            tojson = json.dumps(liveroom,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
+            f.write(tojson)
+
 
 live = live_()
 
@@ -60,7 +62,7 @@ async def living():
             lm = liveroom[key]
             info = live.get_info_(lm['mid'])
             k = info['liveStatus']       
-            if k > lm['status']:
+            if k == 1 and lm['status'] == 0:
                 
                 live.change_status(key)
 
@@ -71,7 +73,7 @@ async def living():
                 msg = f'你关注的{lm["nickname"]}开播啦！\n#{title}\n{url}[CQ:image,file={cover}]'
                 #print(msg)
                 await bot.send_group_msg(group_id=648868273, message=msg) 
-            elif k < lm['status']:
+            elif k == 0 and lm['status'] == 1:
                 live.change_status(key)
                 msg = f'{lm["nickname"]}下播了。。'
                 await bot.send_group_msg(group_id=648868273, message=msg)
