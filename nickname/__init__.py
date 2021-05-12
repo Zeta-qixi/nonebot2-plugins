@@ -9,7 +9,7 @@ from nonebot.adapters.cqhttp.event import (Event, MessageEvent)
 from nonebot.adapters.cqhttp.message import Message
 from nonebot.typing import T_State
 
-path = os.path.dirname(__file__) + "/name.json"
+path = os.path.dirname(__file__) + "/data.json"
 
 class nickname:
     def __init__(self):

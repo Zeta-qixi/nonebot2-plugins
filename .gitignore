@@ -6,6 +6,8 @@ _nickname/
 clock_in/
 group/
 #json数据
+data.json
+
 _nickname/*.json
 chat/*.json
 bilibili_live/*.json
