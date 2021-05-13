@@ -5,6 +5,9 @@ test.*
 _nickname/
 clock_in/
 group/
+
+#数据
+rua/data/*.gif
 #json数据
 data.json
 
