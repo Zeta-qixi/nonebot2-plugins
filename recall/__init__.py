@@ -2,7 +2,7 @@
 
 from nonebot import on_command, on_message, on_notice
 from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import (Event, GroupRecallNoticeEvent)
+from nonebot.adapters.cqhttp.event import Event, GroupRecallNoticeEvent
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot.rule import to_me
 from nonebot.typing import T_State
@@ -10,7 +10,7 @@ from nonebot.typing import T_State
 rc = on_notice()
 
 @rc.handle()
-async def rc_h(bot: Bot, event: GroupRecallNoticeEvent):
+async def rc_handle(bot: Bot, event: GroupRecallNoticeEvent):
     id = event.message_id
     data = await bot.get_msg(message_id=id)
     raw_msg = data['message']

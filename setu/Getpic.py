@@ -10,6 +10,7 @@ class setubot:
         self.key = '335515915f9b5c853e4e90'
         self.mode = ['day', 'week', 'month', 'day_male', 'day_female', 'week_rookie', 'week_original']
         self.mode_ = 3
+        self.pic_id = 0 
 
 
     def Cmode(self, num):

@@ -27,7 +27,6 @@ chat = on_message(priority=99)
 @chat.handle()
 async def chat_handle(bot: Bot, event: GroupMessageEvent):
     message = str(event.raw_message)
-    print(message)
     group_id = event.group_id
     user_id = event.user_id
     

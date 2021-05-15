@@ -28,7 +28,7 @@ master = get_driver().config.master
 ##bot 指令
 setu = on_command('setu',aliases={'Setu'})
 @setu.handle()
-async def maimaidx(bot: Bot, event: Event, state: T_State):
+async def setu_handle(bot: Bot, event: Event, state: T_State):
 
     #获取关键词，数量 并处理
     comman = str(event.message).split(' ')
@@ -82,13 +82,18 @@ async def maimaidx(bot: Bot, event: Event, state: T_State):
             ml = f'wget {u} -O {ourl}'
             os.system(ml)
             #await bot.send(event, message = MessageSegment.image(f'file://{ourl}'))
-            await bot.send_group_msg(group_id=event.group_id, message = MessageSegment.image(f'file://{ourl}'))
+            pic_id = await bot.send_group_msg(group_id=event.group_id, message = MessageSegment.image(f'file://{ourl}'))
+            setubot.pic_id = pic_id['message_id']
             os.system(f'rm {ourl} -f')    
         times[user_id] += num
     except:
         await bot.send_private_msg(user_id=master[0], message='error setu')
 
 
+recall_setu = on_command('撤回')
+@recall_setu.handle()
+async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
+    await bot.delete_msg(message_id=setubot.pic_id)
 # @on_command('r18', only_to_me=False)
 # async def r18(session: CommandSession):
 #     user_id=session.ctx['user_id']

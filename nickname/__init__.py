@@ -41,8 +41,8 @@ class nickname:
 
 nn = nickname()
 
-nc = on_command('nickname')
-@nc.handle()
+set_nickname = on_command('nickname')
+@set_nickname.handle()
 async def nc_handle(bot: Bot, event: MessageEvent, state: T_State):
     user_id=str(event.user_id)
     name = str(event.get_message())
