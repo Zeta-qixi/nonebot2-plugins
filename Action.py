@@ -5,7 +5,7 @@ import nonebot
 import asyncio
 
 '''
-广播
+广播test
 '''
 ban_group = nonebot.get_driver().config
 
