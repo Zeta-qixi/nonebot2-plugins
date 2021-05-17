@@ -44,8 +44,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
             await bot.send(event, message=f'{nn.my_name(user_id)}{msg}')
         else:
             await bot.send(event, message=MessageSegment.at(user_id)+msg)
-    else:
-        await bot.send(event, message='你今天已经测过人品值了哦～')
+    
 
 
 @scheduler.scheduled_job('cron', hour='0', minute='0', second='0', misfire_grace_time=60) # = UTC+8 1445
