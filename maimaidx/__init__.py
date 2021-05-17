@@ -7,11 +7,10 @@ from nonebot.adapters.cqhttp.event import Event
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 
 from nonebot.typing import T_State
-from . import maimaidxbot, maidx
+from . import maidx
 
-#dxbot = maimaidxbot.maimaidxbot()
 dxbot = maidx.maibot()
-random_song = on_command('maimai', aliases={'买买', '麦麦', '舞萌'})
+random_song = on_command('maimai', aliases={'买买', '麦麦', '舞萌', 'Mai'})
 
 
 @random_song.handle()
@@ -29,7 +28,7 @@ async def maimaidx(bot: Bot, event: Event, state: T_State):
             if num > 4:
                 await bot.send(message = f'您搁这抽卡呢？')
                 return 0
-        Rlist = {'红': 2, '紫': 3, '白':4}
+        Rlist = {'红': 2, '紫': 3, '白':4} #数组的index
         if comman[0][0] in Rlist.keys():
             rank =  Rlist[comman[0][0]]
             lv = comman[0][1:]
@@ -45,6 +44,9 @@ async def maimaidx(bot: Bot, event: Event, state: T_State):
         print('err')
         return
 
-    
-    for msg in list:
-        await bot.send(event, message = msg)
+    msg = ''
+    for i in list:
+        if msg :
+            msg += '\n----------------\n'
+        msg += i
+    await bot.send(event, message = msg)

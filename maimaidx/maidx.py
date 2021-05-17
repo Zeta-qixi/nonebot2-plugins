@@ -9,6 +9,16 @@ class maibot:
         self.rank = ['dx_lev_bas','dx_lev_adv','dx_lev_exp', 'dx_lev_mas','dx_lev_remas','lev_bas','lev_adv','lev_exp', 'lev_mas','lev_remas']
         self.num_rank = ['6' ,'6+', '7', '7+', '8', '8+', '9', '9+', '10', '10+', '11', '11+' ,'12', '12+', '13', '13+', '14', '14+', '15']
         self.rank_color = {'bas': '🟢', 'adv': '🟡', 'exp': '🔴', 'mas': '🟣', 'remas': '⚪️'}
+        #rank = {'B': '🟢BASIC', 'A': '🟡ADVANCED', 'E': '🔴EXPERT', 'M': '🟣MASTER', 'R': '⚪️RE:MASTER'}
+        self.classes_list = {
+        'niconicoボーカロイド':'niconico & VOCALOID', 
+        'POPSアニメ':'流行 & 动漫', 
+        '東方Project':'东方Project',
+        'ゲームバラエティ':'其他游戏', 
+        'maimai':'舞萌',
+        'オンゲキCHUNITHM':'音击/中二节奏'
+        }
+
 
     def get_song(self, lv:str) -> pd.DataFrame:
         '''
@@ -67,7 +77,7 @@ class maibot:
                     rank = rank + self.rank_color[R]
                     break
 
-            rank = rank + item[item['rank']]
+            rank = rank +' '+ item[item['rank']]
             img = MessageSegment.image(file=item['jacket'])
-            msg.append(f"【{item['catcode']}】\n{item['title']}\n" + img + f"\n{rank}")
+            msg.append(f"【{self.classes_list[item['catcode']]}】\n『{item['title']}』\n" + img + f"\n{rank}")
         return msg
