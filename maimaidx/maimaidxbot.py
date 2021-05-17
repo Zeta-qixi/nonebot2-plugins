@@ -22,12 +22,15 @@ class maimaidxbot:
         num = k['num']
 
         data = self.data
+
+        # 将指定等级添加到list中
         song_index_list = []
         for index, song in enumerate(data):
             R = self.get_keys(song['等级'], lv)
             for r in R:
                 
                 if 'rank' in k.keys():
+                    #指定RANK
                     if r == k['rank']:
                         song_index_list.append((index, r))
                 else:
@@ -35,18 +38,22 @@ class maimaidxbot:
         if len(song_index_list) < num:
             num = len(song_index_list)
             print('buguo')
+
+        #随机发送
         return (self.index2info(random.choices(song_index_list,k = num)))#list
 
     def index2info(self, index_list):
         song_list = []
         
         rank = {'B': '🟢BASIC', 'A': '🟡ADVANCED', 'E': '🔴EXPERT', 'M': '🟣MASTER', 'R': '⚪️RE:MASTER'}
+
         classes_list = {
         'niconico':'niconico & VOCALOID', 
         'pops_anime':'流行 & 动漫', 
         'toho':'东方Project',
         'variety':'综艺节目', 
         'original':'原创乐曲'}
+
         for index, R in index_list:
             song = self.data[index]
             classes = classes_list[song['分类']]

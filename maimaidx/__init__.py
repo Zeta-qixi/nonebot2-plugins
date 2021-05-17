@@ -7,10 +7,10 @@ from nonebot.adapters.cqhttp.event import Event
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 
 from nonebot.typing import T_State
-from . import maimaidxbot
+from . import maimaidxbot, maidx
 
-dxbot = maimaidxbot.maimaidxbot()
-
+#dxbot = maimaidxbot.maimaidxbot()
+dxbot = maidx.maibot()
 random_song = on_command('maimai', aliases={'买买', '麦麦', '舞萌'})
 
 
@@ -33,22 +33,15 @@ async def maimaidx(bot: Bot, event: Event, state: T_State):
         if comman[0][0] in Rlist.keys():
             rank =  Rlist[comman[0][0]]
             lv = comman[0][1:]
-            print(rank, lv)
-            list = dxbot.get_songIndex_by_lv(rank=rank, lv=lv, num=num)
+
         else:
             lv = comman[0]
-            list = dxbot.get_songIndex_by_lv( lv=lv, num=num)
 
-
-            
+        list = dxbot.random_song(lv)
     except:
         print('err')
         return
 
-    for info in list:
-        #info --> [classes, name, type, R, cover]
-        url = 'https://maimai.sega.jp/storage/DX_jacket/'+info[4]+'.jpg'
-
-        #用正则化后直接输出字符
-        img = MessageSegment.image(file=url)
-        await bot.send(event, message = f'【{info[0]}】\n{info[1]}\n' + img + f'\n [{info[2]}]{info[3]}')
+    
+    for msg in list:
+        await bot.send(event, message = msg)

@@ -5,7 +5,7 @@ test.*
 _nickname/
 clock_in/
 group/
-
+*.ipynb
 #数据
 rua/data/*.gif
 #json数据
@@ -14,3 +14,5 @@ data.json
 _nickname/*.json
 chat/*.json
 bilibili_live/*.json
+
+maimaidx/data/*.json
