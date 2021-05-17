@@ -29,15 +29,18 @@ async def maimaidx(bot: Bot, event: Event, state: T_State):
             if num > 4:
                 await bot.send(message = f'您搁这抽卡呢？')
                 return 0
-        Rlist = {'红': 'E', '紫': 'M', '白':'R'}
+        Rlist = {'红': 2, '紫': 3, '白':4}
         if comman[0][0] in Rlist.keys():
             rank =  Rlist[comman[0][0]]
             lv = comman[0][1:]
+            list = dxbot.random_song([lv],num=num, rank=rank)
 
+
+            
         else:
-            lv = comman[0]
+            lv = comman[0].split('-')
 
-        list = dxbot.random_song(lv)
+            list = dxbot.random_song(lv,num=num)
     except:
         print('err')
         return
