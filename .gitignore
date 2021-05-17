@@ -1,11 +1,14 @@
 __pycache__/
 test.*
 
+
 #一些插件
 _nickname/
 clock_in/
 group/
 *.ipynb
+
+maimaidx/maimaidxbot.py
 #数据
 rua/data/*.gif
 #json数据
