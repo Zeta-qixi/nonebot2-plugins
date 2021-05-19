@@ -12,16 +12,24 @@ from nonebot.rule import to_me
 from nonebot.typing import T_State
 
 # -global- #
+repeat_stop = False
 trigger = {} #重复触发词判定
 data = {} #语料数据
 ptalk = {} #群回复率
-focus_id = [] #特别对象
+P = 1
+focus_id = [] #特别对象 无视概率直接回复
+filter_list = []
 
 gpath =os.path.dirname(__file__)
 path = gpath +'/data.json'
-with open(path) as f:
-    data = json.load(f)
 
+try:
+    with open(path) as f:
+        data = json.load(f)
+    with open(gpath +'/filter.json') as f:
+        filter_list = json.load(f)['f']
+except:
+    pass
 
 chat = on_message(priority=99)
 @chat.handle()
@@ -31,7 +39,7 @@ async def chat_handle(bot: Bot, event: GroupMessageEvent):
     user_id = event.user_id
     
     global ptalk
-    ptalk.setdefault(group_id,1)
+    ptalk.setdefault(group_id,P)
     trigger.setdefault(group_id,' ')
    
 
@@ -39,13 +47,13 @@ async def chat_handle(bot: Bot, event: GroupMessageEvent):
         if i in message :
             print(i)
             if len(i) > 3 or i == message:
-                #if trigger[group_id] != i :
+                # 重复回复的
+                if trigger[group_id] != i : 
                     if random.random() < ptalk[group_id] or user_id in focus_id:
-                        #time.sleep(random.randrange(5))
                         await bot.send(event,message=Message(random.choice((data[i]))))
-                        #trigger[group_id] = i
-                        return 0
 
+                        if repeat_stop:
+                            trigger[group_id] = i
 
 
 setp = on_command('setP', aliases={"setp"}, rule = to_me())
@@ -104,19 +112,18 @@ async def setp_got(bot: Bot, event: Event, state: T_State):
             state["value"] = comman[1:]
             #录入库
             save_json(state["key"], state["value"])
-            await bot.send(event ,message= f'ok~')
+            await set_respond.finish(message= f'ok~')
     except:
-        await bot.send(event ,message= f'失败了QAQ')
+        await set_respond.finish(message= f'失败了QAQ')
 
 def filter(word):
-    for i in ["CQ:image,file=2db15d1cf3079187a3477ffc765c6d79.image", "zeta", "Zeta", "泽塔"]:
+    for i in filter_list:
         if i in word:
-            print('过滤')
             return True
     return False
 
 @set_respond.got('value', prompt="要答什么呢～")
-async def setp_got(bot: Bot, event: Event, state: T_State):
+async def setp_got2(bot: Bot, event: Event, state: T_State):
     try:
         
         state["value"] = str(event.get_message()).split()
@@ -127,7 +134,7 @@ async def setp_got(bot: Bot, event: Event, state: T_State):
             return
         #录入库
         save_json(state["key"], state["value"])
-        awaitet_respond.finish(message= f'ok~')
+        await set_respond.finish(message= f'ok~')
     except:
-        await bet_respond.finish(message= f'失败了QAQ')
+        await set_respond.finish(message= f'失败了QAQ')
 
