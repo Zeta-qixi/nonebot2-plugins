@@ -23,6 +23,7 @@ filter_list = []
 gpath =os.path.dirname(__file__)
 path = gpath +'/data.json'
 
+# 读取数据文件
 try:
     with open(path) as f:
         data = json.load(f)
@@ -30,6 +31,24 @@ try:
         filter_list = json.load(f)['f']
 except:
     pass
+
+def save_json(keys, values):
+    '''
+    写数据到json
+    '''
+    global data
+    if keys not in data:
+        data.setdefault(keys,[])
+        data [keys] = values
+    else:  
+        for i in values:
+            if i not in data[keys]: 
+                data[keys].append(i)
+                print(str(i))
+    
+    with open(path, 'w+') as f :
+        tojson = json.dumps(data,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
+        f.write(tojson)
 
 chat = on_message(priority=99)
 @chat.handle()
@@ -70,20 +89,7 @@ async def setp_handle(bot: Bot, event: Event, state: T_State):
 
 
 
-def save_json(keys, values):
-    global data
-    if keys not in data:
-        data.setdefault(keys,[])
-        data [keys] = values
-    else:  
-        for i in values:
-            if i not in data[keys]: 
-                data[keys].append(i)
-                print(str(i))
-    
-    with open(path, 'w+') as f :
-        tojson = json.dumps(data,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
-        f.write(tojson)
+
 
 set_respond = on_command('set')
 @set_respond.handle()
