@@ -17,7 +17,7 @@ trigger = {} #重复触发词判定
 data = {} #语料数据
 ptalk = {} #群回复率
 P = 1
-focus_id = [] #特别对象 无视概率直接回复
+focus_id = [] #特别对象 无视概率直接回复 user_id:int 
 filter_list = []
 
 gpath =os.path.dirname(__file__)
@@ -94,7 +94,9 @@ async def setp_handle(bot: Bot, event: Event, state: T_State):
 set_respond = on_command('set')
 @set_respond.handle()
 async def setp_handle(bot: Bot, event: Event, state: T_State):
-
+    '''
+    设置的问答数据
+    '''
     comman = str(event.get_message()).split()
     if comman:
         print(comman)
