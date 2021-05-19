@@ -95,11 +95,10 @@ set_respond = on_command('set')
 @set_respond.handle()
 async def set_handle(bot: Bot, event: Event, state: T_State):
     '''
-    设置的问答数据
+    设置的问答
     '''
     comman = str(event.get_message()).split()
     if comman:
-        print(comman)
         state["key"] = comman[0]
         if len(comman) >1:
             state["value"] = comman[1:]
@@ -108,17 +107,10 @@ async def set_handle(bot: Bot, event: Event, state: T_State):
 @set_respond.got('key', prompt="设置什么～")
 async def set_got(bot: Bot, event: Event, state: T_State):
 
-        
-    comman = str(event.raw_message).split()
-    print(comman[0])
-    state["key"] = comman[0]
-
+    print(state["key"])
     if ",url=" in state["key"] :
         state["key"] = state["key"].split(",url=")[0]
 
-    if len(comman) > 1:
-        #state["value"] = comman[1:] # 一次设置多个回复 x
-        state["value"] = comman[1]
 
 
 def filter(word):
@@ -130,13 +122,14 @@ def filter(word):
 @set_respond.got('value', prompt="要答什么呢～")
 async def set_got2(bot: Bot, event: Event, state: T_State):
 
-
-    state["value"] = str(event.raw_message).split()
-
-    if filter(state["key"]):
-        await set_respond.finish(Message("[CQ:image,file=cab2ae806af6b0a7b61fdd8534b50093.image]"))
-    else:
-        #录入库
-        save_json(state["key"], state["value"])
-        await set_respond.finish(message='ok~')
+        state["value"] = str(event.raw_message).split() #图片不用url
+        if filter(state["key"]):
+            await set_respond.finish(Message("[CQ:image,file=cab2ae806af6b0a7b61fdd8534b50093.image]"))
+        else:
+            try:
+                #录入库
+                save_json(state["key"], state["value"])
+                await set_respond.finish(message='ok~')
+            except:
+                print('over')
 
