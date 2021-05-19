@@ -93,7 +93,7 @@ async def setp_handle(bot: Bot, event: Event, state: T_State):
 
 set_respond = on_command('set')
 @set_respond.handle()
-async def setp_handle(bot: Bot, event: Event, state: T_State):
+async def set_handle(bot: Bot, event: Event, state: T_State):
     '''
     设置的问答数据
     '''
@@ -106,23 +106,20 @@ async def setp_handle(bot: Bot, event: Event, state: T_State):
 
 
 @set_respond.got('key', prompt="设置什么～")
-async def setp_got(bot: Bot, event: Event, state: T_State):
-    try:
+async def set_got(bot: Bot, event: Event, state: T_State):
+
         
-        comman = str(event.get_message()).split()
-        state["key"] = comman[0]
+    comman = str(event.raw_message).split()
+    print(comman[0])
+    state["key"] = comman[0]
 
-        if ",url=" in state["key"] :
-            state["key"] = state["key"].split(",url=")[0]
+    if ",url=" in state["key"] :
+        state["key"] = state["key"].split(",url=")[0]
 
-        if len(comman) >1:
-            
-            state["value"] = comman[1:]
-            #录入库
-            save_json(state["key"], state["value"])
-            await set_respond.finish(message= f'ok~')
-    except:
-        await set_respond.finish(message= f'失败了QAQ')
+    if len(comman) > 1:
+        #state["value"] = comman[1:] # 一次设置多个回复 x
+        state["value"] = comman[1]
+
 
 def filter(word):
     for i in filter_list:
@@ -131,18 +128,15 @@ def filter(word):
     return False
 
 @set_respond.got('value', prompt="要答什么呢～")
-async def setp_got2(bot: Bot, event: Event, state: T_State):
-    try:
-        
-        state["value"] = str(event.get_message()).split()
+async def set_got2(bot: Bot, event: Event, state: T_State):
 
-        if  filter(state["key"]):
-            await set_respond.finish(Message("[CQ:image,file=cab2ae806af6b0a7b61fdd8534b50093.image,url=http://gchat.qpic.cn/gchatpic_new/1019289695/648868273-2230236507-CAB2AE806AF6B0A7B61FDD8534B50093/0?term=3]"
-  ))
-            return
+
+    state["value"] = str(event.raw_message).split()
+
+    if filter(state["key"]):
+        await set_respond.finish(Message("[CQ:image,file=cab2ae806af6b0a7b61fdd8534b50093.image]"))
+    else:
         #录入库
         save_json(state["key"], state["value"])
-        await set_respond.finish(message= f'ok~')
-    except:
-        await set_respond.finish(message= f'失败了QAQ')
+        await set_respond.finish(message='ok~')
 
