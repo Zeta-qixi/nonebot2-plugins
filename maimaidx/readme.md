@@ -4,7 +4,7 @@
 ## 功能：
 - [x] 等级随歌  ``maimai 12``
 - [x] 范围随歌  ``maimai 12-14``
-- [x] 随多首歌  ``maimai 12+-13 3``
+- [x] 多选随歌  ``maimai 12+-13 3``
 
 ## 数据来源：
 大佬的爬虫项目地址 https://github.com/ST4RCHASER/maimaidx-songs-database
