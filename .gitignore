@@ -6,8 +6,6 @@ test.*
 Action.py
 clock_in/
 *.ipynb
-
-maimaidx/maimaidxbot.py
 majsoul.py
 #数据
 rua/data/*.gif
