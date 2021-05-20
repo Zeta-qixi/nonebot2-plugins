@@ -2,7 +2,7 @@
  文件放到自己bot的插件目录即可，缺少data.json的自行添加
 ## 插件目录（部分未完成）
 
- _Q&A - [ ]
+- [ ] _Q&A
 
     bot问答设置（有chat可以代替实现的功能，但chat是随机的，而且没指定用户）
 
@@ -10,7 +10,7 @@
 
     账号记录、代肝记录 （应该是这样）
 
- bilibili_live - [x]
+- [x] bilibili_live 
 
     b站up直播提醒，给up起个昵称~
 
@@ -42,10 +42,10 @@
 
     sleep_clock 提醒睡觉小助手 （一天睡觉23小时）
 
-- jrrp.py 
+- [x] jrrp.py 
 
     发个随机数而已
 
-- Aciton 
+- [x] Aciton 
 
     弄个广播功能测试一下，忘记加再gitignore里了
