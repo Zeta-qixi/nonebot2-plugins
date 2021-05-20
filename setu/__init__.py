@@ -94,6 +94,7 @@ recall_setu = on_command('撤回')
 @recall_setu.handle()
 async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
     await bot.delete_msg(message_id=setubot.pic_id)
+    await bot.send(event, message = Message('[CQ:image,file=6b76689726a5f82ace76f4f5ce65afec.image]'))
 # @on_command('r18', only_to_me=False)
 # async def r18(session: CommandSession):
 #     user_id=session.ctx['user_id']
