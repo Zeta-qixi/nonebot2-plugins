@@ -3,9 +3,8 @@ test.*
 
 
 #一些插件
-
+Action.py
 clock_in/
-group/
 *.ipynb
 
 maimaidx/maimaidxbot.py

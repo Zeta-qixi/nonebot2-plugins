@@ -2,7 +2,7 @@
  文件放到自己bot的插件目录即可，缺少data.json的自行添加
 
 
-## 已完成功能 （9/12）
+## 已完成功能 （9/13）
 
 ### [bilibili_live](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/bilibili_live)
 b站up直播提醒，给up起个昵称~
@@ -24,14 +24,17 @@ b站up直播提醒，给up起个昵称~
 发个随机数而已
 
 
-## 未完成 （2/12）
+## 未完成 （3/13）
 
 ### _Q&A
 bot问答设置（有chat可以代替实现的功能，但chat是随机的，而且没指定用户）
 ### account 
 账号记录、代肝记录 （应该是这样）
+### atribot
+bot添加好友 群管理 等等等等 
 
-## 其他 （1/12）
+
+## 其他 （1/13）
 
 ### Aciton 
 弄个广播功能测试一下，忘记加再gitignore里了
