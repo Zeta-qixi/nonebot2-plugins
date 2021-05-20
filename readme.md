@@ -9,7 +9,7 @@
 - [x] maimaidx 舞萌随歌
 - [x] nickname 自定义昵称
 - [x] rua 戳一戳群友rua头像，或者rua图片
-- [x] search_pic 搜图
+- [x] search_pic 搜图 [参考项目](https://github.com/pcrbot/Hoshino-plugin-transplant/tree/master/image)
 - [x] setu 大家都懂 lolicon的api （本来有piv的，但现在无了 有空再弄）
 - [x] sleep_clock 提醒睡觉小助手 （一天睡觉23小时）
 
