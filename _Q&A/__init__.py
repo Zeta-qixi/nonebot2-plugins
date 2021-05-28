@@ -22,6 +22,8 @@ path = gpath +'/data.json'
 with open(path) as f:
     data = json.load(f)
 
+def union(gid, uid):
+    return (gid << 32) | uid
 
 chat = on_message(priority=99)
 @chat.handle()
