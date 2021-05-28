@@ -105,7 +105,7 @@ async def set_handle(bot: Bot, event: Event, state: T_State):
 async def set_got(bot: Bot, event: Event, state: T_State):
 
     if ",url=" in state["key"] :
-        state["key"] = state["key"].split(",url=")[0]
+        state["key"] = state["key"].split(",url=")[0]+']'
 def filter(word):
     for i in filter_list:
         if i in word:
