@@ -32,19 +32,17 @@ try:
 except:
     pass
 
-def save_json(keys, values):
+def save_json(keys:str, values:str):
     '''
     写数据到json
     '''
     global data
     if keys not in data:
         data.setdefault(keys,[])
-        data [keys] = values
-    else:  
-        for i in values:
-            if i not in data[keys]: 
-                data[keys].append(i)
-                print(str(i))
+
+
+    if values not in data[keys]: 
+        data[keys].append(values)
     
     with open(path, 'w+') as f :
         tojson = json.dumps(data,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
@@ -101,18 +99,13 @@ async def set_handle(bot: Bot, event: Event, state: T_State):
     if comman:
         state["key"] = comman[0]
         if len(comman) >1:
-            state["value"] = comman[1:]
-
+            state["value"] = comman[1]
 
 @set_respond.got('key', prompt="设置什么～")
 async def set_got(bot: Bot, event: Event, state: T_State):
 
-    print(state["key"])
     if ",url=" in state["key"] :
         state["key"] = state["key"].split(",url=")[0]
-
-
-
 def filter(word):
     for i in filter_list:
         if i in word:
@@ -122,7 +115,8 @@ def filter(word):
 @set_respond.got('value', prompt="要答什么呢～")
 async def set_got2(bot: Bot, event: Event, state: T_State):
 
-        state["value"] = str(event.raw_message).split() #图片不用url
+        if ",url=" in state["value"] :
+            state["value"] = state["value"].split(",url=")[0]+']'
         if filter(state["key"]):
             await set_respond.finish(Message("[CQ:image,file=cab2ae806af6b0a7b61fdd8534b50093.image]"))
         else:
