@@ -23,6 +23,8 @@ filter_list = []
 gpath =os.path.dirname(__file__)
 path = gpath +'/data.json'
 
+def union(gid, uid):
+    return (gid << 32) | uid
 # 读取数据文件
 try:
     with open(path) as f:

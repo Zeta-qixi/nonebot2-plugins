@@ -5,10 +5,12 @@ from nonebot.adapters.cqhttp.event import (Event, GroupMessageEvent,
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot.typing import T_State
 from nonebot import require
-from ..Action import broadcast
 from os import path
 import time
 scheduler = require('nonebot_plugin_apscheduler').scheduler
+groups = [648868273]
+
+
 
 path =path.abspath(__file__).split('__')[0]
 img_src = path + '/data/sleep.png'
@@ -17,8 +19,8 @@ sleep_img = MessageSegment.image(f'file://{img_src}')
 @scheduler.scheduled_job('cron', hour='23',minute='0', misfire_grace_time=60) # = UTC+8 1445
 async def sleep():
     for bot in get_bots().values():
-        
-        await broadcast(bot, sleep_img)
+        for group in groups:
+            await bot.send_group_msg(group_id=group,message=sleep_img)
 
 def get_time():
     now = (time.strftime("%H:%M", time.localtime()))
