@@ -57,14 +57,14 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 async def living():
     for bot in get_bots().values():
     
-        for key in liveroom:
+        for bid in liveroom:
 
-            lm = liveroom[key]
+            lm = liveroom[bid]
             info = live.get_info_(lm['mid'])
             k = info['liveStatus']       
             if k == 1 and lm['status'] == 0:
                 
-                live.change_status(key)
+                live.change_status(bid)
 
                 title = info['title']
                 cover = info['cover']
@@ -74,7 +74,7 @@ async def living():
                 #print(msg)
                 await bot.send_group_msg(group_id=648868273, message=msg) 
             elif k == 0 and lm['status'] == 1:
-                live.change_status(key)
+                live.change_status(bid)
                 msg = f'{lm["nickname"]}下播了。。'
                 await bot.send_group_msg(group_id=648868273, message=msg)
             await asyncio.sleep(0.5)
@@ -96,11 +96,12 @@ def to_add(id, nickname, name=0):
 add_up = on_command('添加关注')
 @add_up.handle()
 async def add(bot: Bot, event: Event, state: T_State):
+    '''
+    >> 添加关注 bid nickname
+    '''
     user_id = event.user_id
-    print(user_id, type(user_id))
     msg = str(event.get_message()).split()
-    print(msg)
-    if(user_id not in master):
+    if(user_id in master):
         if msg[0].isdigit:
             id = msg[0]
             nickname = msg[1]
@@ -115,3 +116,20 @@ async def add(bot: Bot, event: Event, state: T_State):
             tojson = json.dumps(liveroom,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
             f.write(tojson)
         await bot.send(event, message = f'添加成功~')
+
+check_live = on_command("谁在直播")
+@check_live.handle()
+async def check(bot: Bot, event: Event, state: T_State):
+    msg = ''
+    for bid in liveroom:
+        lm = liveroom[bid]
+        if lm['status'] == 1:
+            info = live.get_info_(lm['mid'])
+            url = info['url']
+            if msg != '':
+                msg = msg+'\n'
+            msg = msg + f'{lm["nickname"]}在直播\n({info["title"]}){url}'
+            if msg != '':
+                await bot.send(event, message = (msg))
+            else:
+                await bot.send(event, message = "没有人在直播")
