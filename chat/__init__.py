@@ -24,7 +24,7 @@ gpath =os.path.dirname(__file__)
 path = gpath +'/data.json'
 
 def union(gid, uid):
-    return (gid << 32) | uid
+    return str((gid << 32) | uid)
 # 读取数据文件
 try:
     with open(path) as f:
@@ -34,18 +34,17 @@ try:
 except:
     pass
 
-def save_json(keys:str, values:str):
+def save_json(keys:str, values:str, id:str):
     '''
     写数据到json
     '''
     global data
-    if keys not in data:
-        data.setdefault(keys,[])
-
-
-    if values not in data[keys]: 
-        data[keys].append(values)
-    
+    if id not in data:
+        data[id] = {}
+    if keys not in data[id]:
+        data[id].setdefault(keys,[])
+    if values not in data[id][keys]: 
+        data[id][keys].append(values)
     with open(path, 'w+') as f :
         tojson = json.dumps(data,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
         f.write(tojson)
@@ -61,18 +60,19 @@ async def chat_handle(bot: Bot, event: GroupMessageEvent):
     ptalk.setdefault(group_id,P)
     trigger.setdefault(group_id,' ')
    
-
-    for i in data:
-        if i in message :
-            print(i)
-            if len(i) > 3 or i == message:
-                # 重复回复的
-                if trigger[group_id] != i : 
-                    if random.random() < ptalk[group_id] or user_id in focus_id:
-                        await bot.send(event,message=Message(random.choice((data[i]))))
-
-                        if repeat_stop:
-                            trigger[group_id] = i
+   
+    for id in [1, group_id]:
+        id = union(id, 1)
+        for i in data[id]:
+            if i in message :
+                if len(i) > 3 or i == message:
+                    # 重复回复的
+                    if trigger[group_id] != i : 
+                        if random.random() < ptalk[group_id] or user_id in focus_id:
+                            if repeat_stop:
+                                trigger[group_id] = i
+                            await bot.send(event,message=Message(random.choice((data[id][i]))))
+                            return
 
 
 setp = on_command('setP', aliases={"setp"}, rule = to_me())
@@ -91,12 +91,20 @@ async def setp_handle(bot: Bot, event: Event, state: T_State):
 
 
 
-set_respond = on_command('set')
+set_respond = on_command('set',aliases={"setall"})
 @set_respond.handle()
 async def set_handle(bot: Bot, event: Event, state: T_State):
     '''
     设置的问答
+    setall 时全覆盖
     '''
+    key = str(event.raw_message).split()[0]
+    if key == "setall":
+        state['gid'] = 1
+        state['uid'] = 1
+    else:
+        state['gid'] = event.group_id
+        state['uid'] = event.user_id
     comman = str(event.get_message()).split()
     if comman:
         state["key"] = comman[0]
@@ -124,7 +132,8 @@ async def set_got2(bot: Bot, event: Event, state: T_State):
         else:
             try:
                 #录入库
-                save_json(state["key"], state["value"])
+
+                save_json(state["key"], state["value"], union(state['gid'] , 1))
                 await set_respond.finish(message='ok~')
             except:
                 print('over')
