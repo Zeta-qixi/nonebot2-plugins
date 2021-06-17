@@ -3,6 +3,7 @@ import time
 import datetime
 import re
 import random
+import json
 class setubot:
     def __init__(self):
         #self.T = str((datetime.datetime.now()+datetime.timedelta(days=-2)).strftime("%Y-%m-%d")) #time 或许要用 前天
@@ -10,7 +11,7 @@ class setubot:
         self.key = '335515915f9b5c853e4e90'
         self.mode = ['day', 'week', 'month', 'day_male', 'day_female', 'week_rookie', 'week_original']
         self.mode_ = 3
-        self.pic_id = 0 
+        self.pic_id = []
 
 
     def Cmode(self, num):

@@ -16,8 +16,8 @@ setubot = Getpic.setubot()
 ##变量##
 path =os.path.abspath(__file__).split('__')[0]
 
-img_src = path + '/panci.png'
-img = MessageSegment.image(f'file://{img_src}')
+
+
 
 MAX = 2  # 冲的次数
 times = {} # 记录冲的次数
@@ -26,7 +26,7 @@ r18type= ['关闭','开启']
 master = get_driver().config.master
 
 ##bot 指令
-setu = on_command('setu',aliases={'Setu'})
+setu = on_command('setu',aliases={'Setu', 'SETU'})
 @setu.handle()
 async def setu_handle(bot: Bot, event: Event, state: T_State):
 
@@ -49,52 +49,48 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
         pass
 
     user_id = event.user_id
-    try :
-        if user_id not in times.keys():
+    
+    if user_id not in times.keys():
+        times[user_id] = 0
+    if(user_id not in master):
+        # setu太多发这图片
+        if times[user_id] > MAX:
             times[user_id] = 0
-        if(user_id not in master):
-            
-            if times[user_id] > MAX:
-                times[user_id] = 0
-                await bot.send(event, message = img)
-                return 0
+            img_src = path + '/panci.png'
+            img = MessageSegment.image(f'file://{img_src}')
+            await bot.send(event, message = img)
+            return 0
+        if int(num) > 3:
+            num = 3
+            await bot.send(event, message = f'一次最多3张哦～')
 
-            if int(num) > 3:
-                num = 3
-                await bot.send(event, message = f'一次最多3张哦～')
+    setu_url = setubot.getpic(int(num), keyword)
+    if len(setu_url) == 0:
+        setu_url = setubot.getpic()  
+        await bot.send(event, message = f'找不到{keyword}的色图哦,随机一张吧')
+        
+    ###获取到url
+    for i ,u in enumerate(setu_url):
+        img_path = path + f'data/{i}.jpg'
+        os.system(f'wget {u} -O {img_path}')
+        msg = await bot.send(event, message = MessageSegment.image(f'file://{img_path}'))
+        setubot.pic_id.append(msg['message_id'])
+        os.system(f'rm {img_path} -f')    
+    times[user_id] += num
 
-        setu_url = []
-        print(keyword)
-        print(keyword.isdigit())
-        if keyword == 'rank':
-            setu_url = random.sample(setubot.rank(),num)  
-        elif keyword.isdigit():            
-            setu_url = setubot.artist(int(num), keyword)            
-        else :
-            setu_url = setubot.getpic(int(num), keyword)
-        if len(setu_url) == 0:
-            setu_url = setubot.getpic()  
-            await bot.send(event, message = f'找不到{keyword}的色图哦,随机一张吧')
-            
-        ###获取到url
-        for i ,u in enumerate(setu_url):
-            ourl = f'/home/admin/bot/plugins/setu/setu/{i}.jpg'
-            ml = f'wget {u} -O {ourl}'
-            os.system(ml)
-            #await bot.send(event, message = MessageSegment.image(f'file://{ourl}'))
-            pic_id = await bot.send_group_msg(group_id=event.group_id, message = MessageSegment.image(f'file://{ourl}'))
-            setubot.pic_id = pic_id['message_id']
-            os.system(f'rm {ourl} -f')    
-        times[user_id] += num
-    except:
-        await bot.send_private_msg(user_id=master[0], message='error setu')
 
 
 recall_setu = on_command('撤回')
 @recall_setu.handle()
 async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
-    await bot.delete_msg(message_id=setubot.pic_id)
-    await bot.send(event, message = Message('[CQ:image,file=6b76689726a5f82ace76f4f5ce65afec.image]'))
+
+    for id in setubot.pic_id:
+        await bot.delete_msg(message_id=id)
+    img_src = path + '/recall.png'
+    img = MessageSegment.image(f'file://{img_src}')
+    await bot.send(event, message = img)
+    setubot.pic_id = []
+
 # @on_command('r18', only_to_me=False)
 # async def r18(session: CommandSession):
 #     user_id=session.ctx['user_id']
