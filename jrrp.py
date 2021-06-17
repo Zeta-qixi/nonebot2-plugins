@@ -11,7 +11,7 @@ import nonebot
 from nonebot import require
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 from . import nickname
-
+nn = nickname.nickname()
 master = nonebot.get_driver().config.master
 
 class rp:
@@ -29,11 +29,10 @@ class rp:
             return self.rp[num]
 
 rpbot = rp()
-nn = nickname.nickname()
+
 jrrp = on_command('jrrp')
 @jrrp.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    print('tt')
     msg = event.raw_message
     user_id = event.user_id
     jp = rpbot.RP(user_id)

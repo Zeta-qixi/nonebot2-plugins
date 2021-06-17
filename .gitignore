@@ -9,6 +9,7 @@ clock_in/
 majsoul.py
 #数据
 rua/data/*.gif
+setu/data
 #json数据
 data.json
 chat/*.json

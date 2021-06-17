@@ -60,19 +60,21 @@ async def chat_handle(bot: Bot, event: GroupMessageEvent):
     ptalk.setdefault(group_id,P)
     trigger.setdefault(group_id,' ')
    
-   
-    for id in [1, group_id]:
-        id = union(id, 1)
-        for i in data[id]:
-            if i in message :
-                if len(i) > 3 or i == message:
-                    # 重复回复的
-                    if trigger[group_id] != i : 
-                        if random.random() < ptalk[group_id] or user_id in focus_id:
-                            if repeat_stop:
-                                trigger[group_id] = i
-                            await bot.send(event,message=Message(random.choice((data[id][i]))))
-                            return
+    try:
+        for id in [1, group_id]:
+            id = union(id, 1)
+            for i in data[id]:
+                if i in message :
+                    if len(i) > 3 or i == message:
+                        # 重复回复的
+                        if trigger[group_id] != i : 
+                            if random.random() < ptalk[group_id] or user_id in focus_id:
+                                if repeat_stop:
+                                    trigger[group_id] = i
+                                await bot.send(event,message=Message(random.choice((data[id][i]))))
+                                return
+    except:
+        pass
 
 
 setp = on_command('setP', aliases={"setp"}, rule = to_me())
