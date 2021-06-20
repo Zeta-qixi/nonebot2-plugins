@@ -104,6 +104,9 @@ async def set_handle(bot: Bot, event: Event, state: T_State):
     if key == "setall":
         state['gid'] = 1
         state['uid'] = 1
+        if event.user_id not in bot.config.master: 
+            await set_respond.finish(Message("[CQ:image,file=cab2ae806af6b0a7b61fdd8534b50093.image]"))
+            return
     else:
         state['gid'] = event.group_id
         state['uid'] = event.user_id

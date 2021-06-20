@@ -30,6 +30,7 @@ rua_me = on_notice()
 戳一戳事件
 '''      
 @rua_me.handle()
+
 async def _t3(bot: Bot, event: PokeNotifyEvent):
 
     if event.target_id in master:
@@ -53,6 +54,7 @@ async def _t3(bot: Bot, event: PokeNotifyEvent):
 rua = on_command('rua')
 @rua.handle()
 async def rua_handle(bot: Bot, event: Event, state: T_State):
+
     try:
         msg = (str(event.raw_message).split('rua')[1].strip())
         if ':image' in msg:         
