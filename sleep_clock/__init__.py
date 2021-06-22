@@ -5,8 +5,9 @@ from nonebot.adapters.cqhttp.event import (Event, GroupMessageEvent,
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot.typing import T_State
 from nonebot import require
-from os import path
+from os import path, listdir
 import time
+import random
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 groups = [648868273]
 
@@ -33,6 +34,9 @@ sleep = on_command('睡觉')
 async def _(bot: Bot, event: Event, state: T_State):
     h, _ = get_time()
     if h >= 21 or h <= 2:
-        img_src = path + '/data/睡觉.png'
+    
+        list = listdir(path+'/data/sleep')
+    
+        img_src = path + f'/data/sleep/{random.choice(list)}'
         img = MessageSegment.image(f'file://{img_src}')
         await bot.send(event, message = img)

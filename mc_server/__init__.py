@@ -13,7 +13,7 @@ group = 960349339 #mc群
 class mc_server():
     def __init__(self):
         self.player = []
-        self.cmd = 'docker logs --tail=1 a2'
+        self.cmd = 'docker logs --tail=2 a2'
 
 
     def beat(self):
@@ -35,11 +35,11 @@ class mc_server():
                 if 'dis' in activ:
                     if name in self.player:
                         self.player.remove(name)
-                        info.append(('in', name))
+                        info.append(('out', name))
                 else:
                     if name not in self.player:
                         self.player.append(name)
-                        info.append(('out', name))
+                        info.append(('in', name))
                     
                 #上线
             
