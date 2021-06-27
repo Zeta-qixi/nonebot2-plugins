@@ -13,7 +13,7 @@ group = 960349339 #mc群
 class mc_server():
     def __init__(self):
         self.player = []
-        self.cmd = 'docker logs --tail=3 a2'
+        self.cmd = 'docker logs --tail=5 a2'
 
 
     def beat(self):
