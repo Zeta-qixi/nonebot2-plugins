@@ -13,7 +13,7 @@ group = 960349339 #mc群
 class mc_server():
     def __init__(self):
         self.player = []
-        self.cmd = 'docker logs --tail=2 a2'
+        self.cmd = 'docker logs --tail=3 a2'
 
 
     def beat(self):
@@ -26,27 +26,32 @@ class mc_server():
         msg = os.popen(self.cmd)
 
         info = []
+
+        play_type = {}
+
         for i in msg.readlines():
             if 'Player' in i:
                 words = i.split(',')[0].split(': ', 1)
                 name = words[1]
                 activ = words[0]
-
                 if 'dis' in activ:
-                    if name in self.player:
-                        self.player.remove(name)
-                        info.append(('out', name))
+                    play_type[name] = -1
                 else:
-                    if name not in self.player:
-                        self.player.append(name)
-                        info.append(('in', name))
-                    
-                #上线
+                    play_type[name] = 1
+
+        for name in play_type:
+            if play_type[name] < 0 and name in self.player:
+                self.player.remove(name)
+                info.append(('out', name))
             
+            if play_type[name] > 0 and name not in self.player:
+                self.player.append(name)
+                info.append(('in', name))
+
         return info
 
-mcs = mc_server()
 
+mcs = mc_server()
 ylk = {'in': '加入了游戏～', 'out': '退出了游戏..'}
 @scheduler.scheduled_job('cron', minute='*/1', id='mc_server1')
 async def lmc_server1():

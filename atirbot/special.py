@@ -6,7 +6,7 @@ from nonebot.typing import T_State
 
 change = on_command('更改头衔',aliases={'申请头衔'})
 @change.handle()
-async def special_title(bot: Bot, event: GroupMessageEvent, state: T_State):
+async def special_title(bot: Bot, event: GroupMessageEvent):
     '''
     群头衔
     '''
@@ -17,5 +17,9 @@ async def special_title(bot: Bot, event: GroupMessageEvent, state: T_State):
 
 
 
-
-
+ban_to_sleep = on_command("精致睡眠")
+@ban_to_sleep.handle()
+async def ban_sleep(bot: Bot, event: GroupMessageEvent):
+    id = event.user_id
+    group = event.group_id
+    await bot.set_group_ban(group_id=group, user_id=id, duration=60*60*8)
