@@ -2,16 +2,18 @@ __pycache__/
 test.*
 LICENSE
 
+
 #一些插件
 Action.py
 clock_in/
 *.ipynb
 majsoul.py
+
 #数据
 rua/data/*.gif
 setu/data
+data.*
 #json数据
-data.json
 chat/*.json
 bilibili_live/*.json
 
