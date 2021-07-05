@@ -66,7 +66,7 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
             await bot.send(event, message="添加成功～")
             
 # 查看闹钟
-check = on_command('闹钟')
+check = on_command('查看闹钟')
 @check.handle()
 async def add_handle(bot: Bot, event: Event):
     try:

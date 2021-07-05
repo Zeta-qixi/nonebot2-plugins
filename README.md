@@ -27,6 +27,9 @@ b站up直播提醒，给up起个昵称~
 ## [sleep_clock](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/sleep_clock) 
 提醒睡觉小助手 （一天睡觉23小时）
 
+## [sleep_clock](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/clock) 
+闹钟、提示事项
+
 ## jrrp.py 
 发个随机数而已
 
