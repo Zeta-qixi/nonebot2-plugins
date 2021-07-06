@@ -44,7 +44,8 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
     try:
         time = content[0]
         note = content[1]
-        ones = content[2]
+        if content[2]:
+            ones = 0
     except:
         pass
 
@@ -79,9 +80,9 @@ async def add_handle(bot: Bot, event: Event):
     for i in clock_data:
         if i[2] == id:
             if clock_msg:
-                clock_msg = clock_msg + f'\n「{i[0]}」 ⏰{i[4]} #{ones[i[5]]}#{i[3]}'
+                clock_msg = clock_msg + f'\n\n[{i[0]}] ⏰{i[4]} ({ones[(i[5])]})\n备注: {i[3]}'
             else:
-                clock_msg = clock_msg + f'「{i[0]}」 ⏰{i[4]} #{ones[i[5]]}#{i[3]}'
+                clock_msg = clock_msg + f'[{i[0]}] ⏰{i[4]} ({ones[(i[5])]})\n备注: {i[3]}'
     if clock_msg:
         await bot.send(event, message=clock_msg)
     else:
