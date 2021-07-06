@@ -12,7 +12,7 @@ from nonebot.adapters.cqhttp.event import Event
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot.typing import T_State
 
-master = get_driver().config.master
+
 path = dirname(__file__) +'/data.json'
 with open(path) as f:
     liveroom = json.load(f)
@@ -57,14 +57,14 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 async def living():
     for bot in get_bots().values():
     
-        for bid in liveroom:
+        for room in liveroom:
 
-            lm = liveroom[bid]
+            lm = liveroom[room]
             info = live.get_info_(lm['mid'])
             k = info['liveStatus']       
             if k == 1 and lm['status'] == 0:
                 
-                live.change_status(bid)
+                live.change_status(room)
 
                 title = info['title']
                 cover = info['cover']
@@ -72,11 +72,11 @@ async def living():
                 
                 msg = f'你关注的{lm["nickname"]}开播啦！\n#{title}\n{url}[CQ:image,file={cover}]'
                 #print(msg)
-                await bot.send_group_msg(group_id=648868273, message=msg) 
+                await bot.send_group_msg(group_id=lm['gid'], message=msg) 
             elif k == 0 and lm['status'] == 1:
-                live.change_status(bid)
+                live.change_status(room)
                 msg = f'{lm["nickname"]}下播了。。'
-                await bot.send_group_msg(group_id=648868273, message=msg)
+                await bot.send_group_msg(group_id=lm['gid'], message=msg)
             await asyncio.sleep(0.5)
 
 
@@ -88,10 +88,11 @@ def on_live(msg):
 room.connect()
 
 '''
-def to_add(id, nickname, name=0):
-    if name == 0:
-        name = len(liveroom)
-        liveroom[id] = {'mid':id, 'nickname': nickname, 'status': 0}
+def union(gid, uid):
+    return (gid << 32) | uid
+
+def to_add(gid: int, bid: int, nickname):
+    liveroom[union(gid, bid)] = {'mid':bid, 'nickname': nickname, 'status': 0, 'gid':gid}
 
 add_up = on_command('添加关注')
 @add_up.handle()
@@ -99,9 +100,15 @@ async def add(bot: Bot, event: Event, state: T_State):
     '''
     >> 添加关注 bid nickname
     '''
-    user_id = event.user_id
-    msg = str(event.get_message()).split()
-    if(user_id in master):
+    uid = event.user_id
+    gid = event.group_id
+
+    member_info = await bot.get_group_member_info(group_id=gid, user_id=uid)
+    if member_info['role'] == "member" and uid not in bot.config.master:
+        await bot.send(event, message="你没有该权限哦～")
+    else:
+        msg = str(event.get_message()).split()
+        
         if msg[0].isdigit:
             id = msg[0]
             nickname = msg[1]
@@ -111,7 +118,7 @@ async def add(bot: Bot, event: Event, state: T_State):
         else:
             await bot.send(event, message = f'添加失败勒')
             return
-        to_add(id, nickname)
+        to_add(gid, id, nickname)
         with open(path, 'w+') as f :
             tojson = json.dumps(liveroom,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
             f.write(tojson)
