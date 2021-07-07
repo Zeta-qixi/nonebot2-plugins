@@ -1,7 +1,9 @@
 from .db import *
 import os
-import time
+from  time import strftime, localtime
+from datetime import datetime, timedelta
 import pandas as pd
+import re
 from nonebot import on_command, on_message, get_bots, get_driver
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event, GroupMessageEvent,MessageEvent
@@ -35,7 +37,7 @@ def del_clock(id):
 
 
 # 创建闹钟
-add = on_command('添加闹钟')
+add = on_command('添加闹钟', aliases={'设置闹钟', '添加提醒事项', 'addclock'})
 @add.handle()
 async def add_handle(bot: Bot, event: Event, state: T_State):
     type = event.get_event_name()
@@ -56,6 +58,25 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
     '''
     对time做验证
     '''
+    r = re.match(r'(\d+)[:|\-|：|.](\d+)',time)
+
+    if time.startswith('+'):
+        h = re.search(r"(\d+)[H|h]",time)
+        m = re.search(r"(\d+)[M|m]",time)
+        h=int(h.groups()[0]) if h else 0
+        m=int(m.groups()[0]) if m else 0
+        time = (datetime.now() + timedelta(hours=h, minutes=m)).strftime("%H:%M")
+    elif r:
+        h, m = r.groups()
+        if int(h)>= 24 or int(m) >= 60:
+            await bot.send(event, message="时间格式错误～")
+            return
+        h = f'0{h}' if len(h)==1 else h
+        m = f'0{m}' if len(m)==1 else m
+        time = f'{h}:{m}'
+    else:
+        await bot.send(event, message="时间格式错误～")
+        return
 
     if 'private' in type:
         add_clock(uid, note, time, ones, 'private')
@@ -71,7 +92,7 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
             await bot.send(event, message="添加成功～")
             
 # 查看闹钟
-check = on_command('查看闹钟')
+check = on_command('查看闹钟',  aliases={'提醒事项', '闹钟','⏰'})
 @check.handle()
 async def add_handle(bot: Bot, event: Event):
     try:
@@ -113,7 +134,7 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 async def clock_():
     for i in clock_data:
-        if time.strftime("%H:%M", time.localtime()) == i[4]:
+        if strftime("%H:%M", localtime()) == i[4]:
             for bot in get_bots().values():
                 await bot.send_msg(message_type=i[1], user_id=i[2], group_id=i[2], message=f'⏰ {i[3]}')
             

@@ -1,17 +1,17 @@
 import asyncio
+import json
 import random
 import time
 from datetime import datetime
 from os.path import dirname
 import requests
-import json
-from bilibili_api import live
-from nonebot import get_bots, on_command, on_message, on_notice, require, get_driver
+
+from nonebot import (get_bots, get_driver, on_command, on_message, on_notice,
+                     require)
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot.typing import T_State
-
 
 try:
     master = get_driver().config.master
@@ -24,14 +24,10 @@ with open(path) as f:
 
 class live_:
     def __init__(self):
-        #self.liveroom = liveroom_
         self.headers = {
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)\
-        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88\
-        Safari/537.36 Edg/87.0.664.60',
+    'user-agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
     'Referer': 'https://www.bilibili.com/'
     }
-
 
     def get_info_(self, mid:int):
         url = 'http://api.live.bilibili.com/room/v1/Room/getRoomInfoOld'
@@ -40,20 +36,11 @@ class live_:
         data = r.json()['data']
         return data
 
-    def liveStatus(self, mid:int):
-        print('-----')
-        url = 'http://api.live.bilibili.com/room/v1/Room/getRoomInfoOld'
-        params = {'mid':mid}
-        r = requests.get(url,headers = self.headers, params=params)
-        status = r.json()['data']['liveStatus']
-        return status
-
     def change_status(self, key:str):
         liveroom[key]['status'] = 0 if liveroom[key]['status'] ==1 else 1
         with open(path, 'w+') as f :
             tojson = json.dumps(liveroom,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
             f.write(tojson)
-
 
 live = live_()
 
