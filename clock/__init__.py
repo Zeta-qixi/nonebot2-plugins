@@ -2,7 +2,7 @@ from .db import *
 import os
 import time
 import pandas as pd
-from nonebot import on_command, on_message, get_bots
+from nonebot import on_command, on_message, get_bots, get_driver
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event, GroupMessageEvent,MessageEvent
 from nonebot.adapters.cqhttp.message import Message
@@ -11,6 +11,10 @@ from nonebot import require
 #加载插件时 获取所有闹钟
 # (id, type, user_id, content, c_time, ones) 
 clock_data = select_all() #元组list
+try:
+    master = get_driver().config.master
+except:
+    master = []
 
 def add_clock(uid, note, time, ones, type):
     """添加闹钟"""
@@ -60,7 +64,7 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
     elif 'group' in type:
         gid = event.group_id
         info = await bot.get_group_member_info(group_id=gid, user_id=uid)
-        if info['role'] == "member" and uid not in  bot.config.master:
+        if info['role'] == "member" and uid not in master:
             await bot.send(event, message="你没有该权限哦～")
         else:
             add_clock(gid, note, time, ones, 'group')

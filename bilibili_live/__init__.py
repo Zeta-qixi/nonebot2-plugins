@@ -13,6 +13,11 @@ from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot.typing import T_State
 
 
+try:
+    master = get_driver().config.master
+except:
+    master = []
+
 path = dirname(__file__) +'/data.json'
 with open(path) as f:
     liveroom = json.load(f)
@@ -104,7 +109,7 @@ async def add(bot: Bot, event: Event, state: T_State):
     gid = event.group_id
 
     member_info = await bot.get_group_member_info(group_id=gid, user_id=uid)
-    if member_info['role'] == "member" and uid not in bot.config.master:
+    if member_info['role'] == "member" and uid not in master:
         await bot.send(event, message="你没有该权限哦～")
     else:
         msg = str(event.get_message()).split()

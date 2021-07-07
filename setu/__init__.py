@@ -13,17 +13,19 @@ sys.path.append(os.path.join(os.path.dirname(__file__)))
 from . import Getpic
 setubot = Getpic.setubot()
 
+
+try:
+    master = get_driver().config.master
+except:
+    master = []
 ##变量##
 path =os.path.abspath(__file__).split('__')[0]
-
-
-
 
 MAX = 2  # 冲的次数
 times = {} # 记录冲的次数
 r18type= ['关闭','开启']
 
-master = get_driver().config.master
+
 
 ##bot 指令
 setu = on_command('setu',aliases={'Setu', 'SETU'})

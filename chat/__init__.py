@@ -4,12 +4,18 @@ import random
 import time
 import sys
 
-from nonebot import on_command, on_message
+from nonebot import on_command, on_message, get_driver
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event, GroupMessageEvent,MessageEvent, PokeNotifyEvent
 from nonebot.adapters.cqhttp.message import Message
 from nonebot.rule import to_me
 from nonebot.typing import T_State
+
+try:
+    master = get_driver().config.master
+except:
+    master = []
+    print("没有设置master")
 
 # -global- #
 repeat_stop = False
@@ -60,8 +66,10 @@ async def chat_handle(bot: Bot, event: GroupMessageEvent):
     ptalk.setdefault(group_id,P)
     trigger.setdefault(group_id,' ')
    
-    try:
-        for id in [1, group_id]:
+    
+    for id in [1, group_id]:
+
+        try:
             id = union(id, 1)
             for i in data[id]:
                 if i in message :
@@ -73,9 +81,9 @@ async def chat_handle(bot: Bot, event: GroupMessageEvent):
                                     trigger[group_id] = i
                                 await bot.send(event,message=Message(random.choice((data[id][i]))))
                                 return
-    except:
-        pass
-
+                                
+        except:
+            pass
 
 setp = on_command('setP', aliases={"setp"}, rule = to_me())
 @setp.handle()
@@ -90,9 +98,6 @@ async def setp_handle(bot: Bot, event: Event, state: T_State):
             await setp.finish(f'现在的回复率为：{ptalk[group_id]}')
 
 
-
-
-
 set_respond = on_command('set',aliases={"setall"})
 @set_respond.handle()
 async def set_handle(bot: Bot, event: Event, state: T_State):
@@ -100,11 +105,11 @@ async def set_handle(bot: Bot, event: Event, state: T_State):
     设置的问答
     setall 时全覆盖
     '''
-    key = str(event.raw_message).split()[0]
-    if key == "setall":
+
+    if "setall" in state["_prefix"]["command"]:
         state['gid'] = 1
         state['uid'] = 1
-        if event.user_id not in bot.config.master: 
+        if event.user_id not in master: 
             await set_respond.finish(Message("[CQ:image,file=cab2ae806af6b0a7b61fdd8534b50093.image]"))
             return
     else:
@@ -142,4 +147,3 @@ async def set_got2(bot: Bot, event: Event, state: T_State):
                 await set_respond.finish(message='ok~')
             except:
                 print('over')
-

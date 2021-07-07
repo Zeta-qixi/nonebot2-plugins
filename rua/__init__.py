@@ -16,7 +16,10 @@ from .data_source import generate_gif
 
 
 
-master = get_driver().config.master
+try:
+    master = get_driver().config.master
+except:
+    master = []
 
 
 data_dir = path.join(path.dirname(__file__), 'data')
@@ -78,4 +81,4 @@ async def rua_got(bot: Bot, event: Event, state: T_State):
         await rua.finish(img)
     except:
         
-        await rua.finish('发妮🐴的gif呢')
+        await rua.finish('这图rua nm🐴')
