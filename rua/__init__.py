@@ -22,7 +22,7 @@ except:
     master = []
 
 
-data_dir = path.join(path.dirname(__file__), 'data')
+data_dir = path.join(path.dirname(__file__), 'data/')
 path = path.abspath(__file__).split('__')[0]
 img_src = path +  '/data/output.gif'
 img = MessageSegment.image(f'file://{img_src}')
