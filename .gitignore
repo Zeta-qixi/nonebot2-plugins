@@ -1,9 +1,11 @@
 __pycache__/
 test.*
 _test.*
-LICENSE
 
-/-
+
+LICENSE
+-
+
 #一些插件
 Action.py
 clock_in/
