@@ -9,7 +9,7 @@ from os import path, listdir
 import time
 import random
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-groups = [648868273]
+
 
 
 
