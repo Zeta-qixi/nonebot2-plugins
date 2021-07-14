@@ -3,6 +3,9 @@ import asyncio
 from PIL import Image
 from io import BytesIO
 
+header = {
+  'Referer': 'https://www.pixiv.net',
+  }
 
 
 async def func(session, url):
