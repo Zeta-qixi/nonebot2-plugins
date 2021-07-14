@@ -13,7 +13,7 @@ async def func(session, url):
     return (await res.read())
   
 async def get_pic(url_list):
-  async with aiohttp.ClientSession() as s:
+  async with aiohttp.ClientSession(headers=header) as s:
     tasks = [asyncio.create_task(func(s, url)) for url in url_list]
     done, _ = await asyncio.wait(tasks)
 
