@@ -43,7 +43,7 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
     # 变量只有一个 判定是keyword还是num
     try:
         if len(comman) == 1: 
-            if len(comman[0]) == 1 and comman[0].isdigit():
+            if comman[0].isdigit():
                 num = int(comman[0])
             else:
                 keyword = (comman[0])
