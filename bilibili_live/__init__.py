@@ -84,7 +84,7 @@ def union(gid, uid):
     return (gid << 32) | uid
 
 def to_add(gid: int, bid: int, nickname):
-    liveroom[union(gid, bid)] = {'mid':bid, 'nickname': nickname, 'status': 0, 'gid':gid}
+    liveroom[str(union(int(gid), int(bid)))] = {'mid':bid, 'nickname': nickname, 'status': 0, 'gid':gid}
 
 add_up = on_command('添加关注')
 @add_up.handle()
