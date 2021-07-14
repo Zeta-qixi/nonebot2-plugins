@@ -9,8 +9,11 @@ import os
 import sys
 import requests
 import random
+
+
 sys.path.append(os.path.join(os.path.dirname(__file__)))
-from . import Getpic
+import Getpic
+from aiopic import get_pic
 setubot = Getpic.setubot()
 
 
@@ -71,13 +74,21 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
         setu_url = setubot.getpic()  
         await bot.send(event, message = f'找不到{keyword}的色图哦,随机一张吧')
         
-    ###获取到url
-    for i ,u in enumerate(setu_url):
+    #获取图片信息url
+    pic_list = await get_pic(setu_url)
+    for i in pic_list:
         img_path = path + f'data/{i}.jpg'
-        os.system(f'wget {u} -O {img_path}')
+        i.save(fp=img_path)
         msg = await bot.send(event, message = MessageSegment.image(f'file://{img_path}'))
-        setubot.pic_id.append(msg['message_id'])
-        os.system(f'rm {img_path} -f')    
+        os.system(f'rm {img_path} -f')
+
+    # for i ,u in enumerate(setu_url):
+    #     img_path = path + f'data/{i}.jpg'
+    #     os.system(f'wget -E --referer https://www.pixiv.net {u} -O {img_path}')
+    #     msg = await bot.send(event, message = MessageSegment.image(f'file://{img_path}'))
+    #     setubot.pic_id.append(msg['message_id'])
+    #     os.system(f'rm {img_path} -f')   
+    #  
     times[user_id] += num
 
 
