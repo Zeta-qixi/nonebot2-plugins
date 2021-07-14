@@ -25,19 +25,29 @@ class setubot:
         return self.R18
 
     #检索
-    def getpic(self, num=1, keyword=''):
-        url = 'https://api.lolicon.app/setu/?'
+    def setu_info(self, num=1, tag=''):
+        url = 'https://api.lolicon.app/setu/v2/?' #v2的图太大
         params = {
         'apikey' : self.key,
         'num' : num,
-        'keyword' : f'{keyword}',
+        'tag' : f'{tag}',
         'r18' : self.R18, #  0 false 1 true
-        'size1200' : 'true'
+                          #  'size1200' : 'true'
         }
-        r = requests.get(url,params=params)
-        data = json.loads(r.text)['data']
-        pic = []
-        for item in data:
-            pic.append(item['url'])
-        return pic
+        r = requests.get(url, params=params)
+        try:
+            data = json.loads(r.text)['data']
+            pic_url = []
+            for item in data:
+                pic_url.append(item['urls']['original'])
 
+            return pic_url
+        except:
+            print(r)
+            return []
+
+
+
+#https://i.pixiv.cat/img-master/img/2021/01/13/23/48/44/87033047_p0_master1200.jpg
+
+#https://i.pixiv.cat/img-original/img/2020/07/31/15/06/48/81664783_p0.png

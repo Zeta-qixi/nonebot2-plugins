@@ -9,11 +9,13 @@ header = {
 
 
 async def func(session, url):
-  async with session.get(url, verify_ssl=False) as res: 
+  async with session.get(url, verify_ssl=False) as res:
+
+    assert res.status == 200
     return (await res.read())
   
 async def get_pic(url_list):
-  async with aiohttp.ClientSession(headers=header) as s:
+  async with aiohttp.ClientSession() as s:
     tasks = [asyncio.create_task(func(s, url)) for url in url_list]
     done, _ = await asyncio.wait(tasks)
 
@@ -23,4 +25,5 @@ async def get_pic(url_list):
       pic = Image.open(BytesIO(i.result()))
       pic_list.append(pic)
     return pic_list
+    
     

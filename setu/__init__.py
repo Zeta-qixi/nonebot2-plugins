@@ -9,8 +9,9 @@ import os
 import sys
 import requests
 import random
-
-
+import asyncio
+from PIL import Image
+from io import BytesIO
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 import Getpic
 from aiopic import get_pic
@@ -69,28 +70,24 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
             num = 3
             await bot.send(event, message = f'一次最多3张哦～')
 
-    setu_url = setubot.getpic(int(num), keyword)
+    setu_url = setubot.setu_info(int(num), keyword)
     if len(setu_url) == 0:
-        setu_url = setubot.getpic()  
+        setu_url = setubot.setu_info()  
         await bot.send(event, message = f'找不到{keyword}的色图哦,随机一张吧')
         
     #获取图片信息url
-    pic_list = await get_pic(setu_url)
-    for i ,p in enumerate(pic_list):
-        img_path = path + f'data/{i}-{str(setu_url[i][-26:])}'
-        p.save(fp=img_path, quality=95)
-        msg = await bot.send(event, message = MessageSegment.image(f'file://{img_path}'))
-        setubot.pic_id.append(msg['message_id'])
-        os.system(f'rm {img_path} -f')
-
-    # for i ,u in enumerate(setu_url):
-    #     img_path = path + f'data/{i}.jpg'
-    #     os.system(f'wget -E --referer https://www.pixiv.net {u} -O {img_path}')
-    #     msg = await bot.send(event, message = MessageSegment.image(f'file://{img_path}'))
-    #     setubot.pic_id.append(msg['message_id'])
-    #     os.system(f'rm {img_path} -f')   
-    #  
-    times[user_id] += num
+    if setu_url:
+        try:
+            pic_list = await get_pic(setu_url)
+            for i ,pic in enumerate(pic_list):
+                img_path = path + f'data/{setu_url[i][-5:]}'
+                pic.save(fp=img_path, quality=95)
+                msg = await bot.send(event, message = MessageSegment.image(f'file://{img_path}'))
+                setubot.pic_id.append(msg['message_id'])
+                os.system(f'rm {img_path} -f')
+            times[user_id] += num
+        except:
+            await bot.send(event, message = f'你🐛的太快啦')
 
 
 
@@ -105,6 +102,19 @@ async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
     await bot.send(event, message = img)
     setubot.pic_id = []
 
+r18 = on_command('r18')
+@r18.handle()
+async def r18_handle(bot: Bot, event: Event):
+    user_id = event.user_id
+
+    if(user_id not in master):
+        img_src = path + '/recall.png'
+        img = MessageSegment.image(f'file://{img_src}')
+        await bot.finish(event, message = img)
+    
+    r18_type = ['关闭', '开启']
+    await bot.send(event, message = r18_type[setubot.tR18()])
+    
 # @on_command('r18', only_to_me=False)
 # async def r18(session: CommandSession):
 #     user_id=session.ctx['user_id']
