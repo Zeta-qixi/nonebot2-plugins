@@ -29,10 +29,8 @@ MAX = 2  # 冲的次数
 times = {} # 记录冲的次数
 r18type= ['关闭','开启']
 
-
-
 ##bot 指令
-setu = on_command('setu',aliases={'Setu', 'SETU'})
+setu = on_command('setu',aliases={'Setu', 'SETU', '色图'})
 @setu.handle()
 async def setu_handle(bot: Bot, event: Event, state: T_State):
 

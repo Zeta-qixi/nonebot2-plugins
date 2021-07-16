@@ -1,7 +1,7 @@
 # 基于nonebot2的插件库
 ## 文件放到自己bot的插件目录即可，缺少data.json的自行添加
 
-# 已完成功能 （9）
+# 已完成功能 
 
 ## [bilibili_live](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/bilibili_live)
 b站up直播提醒，给up起个昵称~
@@ -33,10 +33,8 @@ b站up直播提醒，给up起个昵称~
 ## jrrp.py 
 发个随机数而已
 
-# 未完成 （3）
+# 未完成 
 
-## _Q&A
-bot问答设置（有chat可以代替实现的功能，但chat是随机的，而且没指定用户）
 ## account 
 账号记录、代肝记录 （应该是这样）
 ## atribot

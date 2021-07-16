@@ -35,12 +35,12 @@ class setubot:
                           #  'size1200' : 'true'
         }
         r = requests.get(url, params=params)
+        assert r.status_code == 200
         try:
             data = json.loads(r.text)['data']
             pic_url = []
             for item in data:
                 pic_url.append(item['urls']['original'])
-
             return pic_url
         except:
             print(r)
