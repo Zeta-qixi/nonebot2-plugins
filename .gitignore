@@ -1,6 +1,6 @@
 __pycache__/
 test.*
-_test.*
+*test*
 
 
 
@@ -22,3 +22,4 @@ chat/*.json
 bilibili_live/*.json
 
 maimaidx/data/*.json
+.gitignore
