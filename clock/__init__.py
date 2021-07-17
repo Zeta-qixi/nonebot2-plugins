@@ -109,7 +109,7 @@ async def add_handle(bot: Bot, event: Event):
             else:
                 clock_msg = clock_msg + f'[{i[0]}] ⏰{i[4]} ({ones[(i[5])]})\n备注: {i[3]}'
     if clock_msg:
-        await bot.send(event, message=clock_msg)
+        await bot.send(event, message= Message(clock_msg))
     else:
        
         await bot.send(event, message='目前没有闹钟')
