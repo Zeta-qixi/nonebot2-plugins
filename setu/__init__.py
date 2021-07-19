@@ -78,11 +78,8 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
         try:
             pic_list = await get_pic(setu_url)
             for i ,pic in enumerate(pic_list):
-                img_path = path + f'data/{setu_url[i][-5:]}'
-                pic.save(fp=img_path, quality=95)
-                msg = await bot.send(event, message = MessageSegment.image(f'file://{img_path}'))
+                msg = await bot.send(event, message = MessageSegment.image(f'base64://{pic}'))
                 setubot.pic_id.append(msg['message_id'])
-                os.system(f'rm {img_path} -f')
             times[user_id] += num
         except:
             await bot.send(event, message = f'你🐛的太快啦')
