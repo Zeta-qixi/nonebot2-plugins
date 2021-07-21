@@ -21,7 +21,7 @@ def get_data_from_db():
 
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-@scheduler.scheduled_job('cron', minute='*/40', id='dynamic_sched_')
+@scheduler.scheduled_job('cron', minute='*/30', id='dynamic_sched_')
 async def push_dynamic():
 
     for item in get_data_from_db().values():
@@ -38,7 +38,7 @@ async def push_dynamic():
                     msg_pic = MessageSegment.image(f'base64://{base64}')
                     
                     # 更新时间
-                    upadte(gid, mid, 'latest_dynamic', info[3])
+                    upadte(item["gid"], item["mid"], 'latest_dynamic', info[3])
                     for bot in get_bots().values():
                         await bot.send_group_msg(group_id = item["gid"], message=f'{info[0]}发布了动态: {info[2]}' + msg_pic)
 

@@ -19,7 +19,6 @@ CREATE TABLE clocks(
 '''
 import sqlite3
 import os
-from pandas import DataFrame
 
 path =os.path.dirname(__file__)
 db = path+ '/data.db'

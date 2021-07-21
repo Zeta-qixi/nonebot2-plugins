@@ -8,7 +8,6 @@ class setubot:
     def __init__(self):
         #self.T = str((datetime.datetime.now()+datetime.timedelta(days=-2)).strftime("%Y-%m-%d")) #time 或许要用 前天
         self.R18 = 0
-        self.key = '335515915f9b5c853e4e90'
         self.mode = ['day', 'week', 'month', 'day_male', 'day_female', 'week_rookie', 'week_original']
         self.mode_ = 3
         self.pic_id = []
@@ -28,7 +27,6 @@ class setubot:
     def setu_info(self, num=1, tag=''):
         url = 'https://api.lolicon.app/setu/v2/?' #v2的图太大
         params = {
-        'apikey' : self.key,
         'num' : num,
         'tag' : f'{tag}',
         'r18' : self.R18, #  0 false 1 true

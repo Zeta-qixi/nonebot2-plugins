@@ -4,6 +4,7 @@ from PIL import Image
 from io import BytesIO
 import base64
 header = {
+  'user-agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
   'Referer': 'https://www.pixiv.net',
   }
 
@@ -14,7 +15,7 @@ async def func(session, url):
     return (await res.read())
   
 async def get_pic(url_list):
-  async with aiohttp.ClientSession() as s:
+  async with aiohttp.ClientSession(headers=header) as s:
     tasks = [asyncio.create_task(func(s, url)) for url in url_list]
     done, _ = await asyncio.wait(tasks)
 

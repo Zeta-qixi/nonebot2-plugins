@@ -67,18 +67,23 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
         if int(num) > 3:
             num = 3
             await bot.send(event, message = f'一次最多3张哦～')
+    
+    for i in range(3):
+        try:
+            setu_url = setubot.setu_info(int(num), keyword)
+            if setu_url:
+                break
+        except:
+            pass
 
-    setu_url = setubot.setu_info(int(num), keyword)
-    if len(setu_url) == 0:
-        setu_url = setubot.setu_info()  
-        await bot.send(event, message = f'找不到{keyword}的色图哦,随机一张吧')
-        
+    await bot.send(event, message = f'找不到{keyword}的色图哦,随机一张吧')
+    
     #获取图片信息url
     if setu_url:
         try:
             pic_list = await get_pic(setu_url)
-            for i ,pic in enumerate(pic_list):
-                msg = await bot.send(event, message = MessageSegment.image(f'base64://{pic}'))
+            for i ,base64 in enumerate(pic_list):
+                msg = await bot.send(event, message = MessageSegment.image(f'base64://{base64}'))
                 setubot.pic_id.append(msg['message_id'])
             times[user_id] += num
         except:
@@ -90,12 +95,13 @@ recall_setu = on_command('撤回')
 @recall_setu.handle()
 async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
 
-    for id in setubot.pic_id:
-        await bot.delete_msg(message_id=id)
-    img_src = path + '/recall.png'
-    img = MessageSegment.image(f'file://{img_src}')
-    await bot.send(event, message = img)
-    setubot.pic_id = []
+    if setubot.pic_id:
+        for id in setubot.pic_id:
+            await bot.delete_msg(message_id=id)
+        img_src = path + '/recall.png'
+        img = MessageSegment.image(f'file://{img_src}')
+        await bot.send(event, message = img)
+        setubot.pic_id = []
 
 r18 = on_command('r18')
 @r18.handle()
