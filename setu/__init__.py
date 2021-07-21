@@ -75,8 +75,6 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
                 break
         except:
             pass
-
-    await bot.send(event, message = f'找不到{keyword}的色图哦,随机一张吧')
     
     #获取图片信息url
     if setu_url:

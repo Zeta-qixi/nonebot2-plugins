@@ -4,11 +4,17 @@ from ..db import *
 import asyncio
 import time
 import random
-from nonebot import get_bots, on_command
+from nonebot import get_bots, on_command, get_driver
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot import require
+
+try:
+    master = get_driver().config.master
+except:
+    master = []
+
 
 
 def get_data_from_db():
@@ -53,9 +59,10 @@ async def check_dynamic_handle(bot: Bot, event):
         dy = Dynamic(dy)
         info = dy.get()   
         url = info[2] 
-        base64 = await get_dynamic_screenshot(url) 
-        msg_pic =  MessageSegment.image(f'base64://{base64}')
-        await bot.send(event, message=msg_pic)
+        if item['gid'] == event.group_id:
+            base64 = await get_dynamic_screenshot(url) 
+            msg_pic =  MessageSegment.image(f'base64://{base64}')
+            await bot.send(event, message=msg_pic)
 
 
 push_dynamic = on_command("推送动态")
