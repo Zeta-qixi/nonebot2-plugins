@@ -3,7 +3,9 @@ from .GetData import *
 from ..db import *
 import asyncio
 import time
+from datetime import datetime, timedelta
 import random
+
 from nonebot import get_bots, on_command, get_driver
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event
@@ -35,18 +37,19 @@ async def push_dynamic():
         for dy in data['cards'][3::-1]:
             
             dy = Dynamic(dy)
-            info = dy.get()
-            url = info[2]
+            url = dy.url
             # 判断是否最新的
-            if item["lastest"] < info[3]:
-                if info[1] != 1:
+            if item["lastest"] < dy.time and dy.time > datetime.now().timestamp() - timedelta(minutes=30).seconds:
+                if dy.type != 1:
+                   
                     base64 = await get_dynamic_screenshot(url) 
                     msg_pic = MessageSegment.image(f'base64://{base64}')
                     
                     # 更新时间
-                    upadte(item["gid"], item["mid"], 'latest_dynamic', info[3])
+                    upadte(item["gid"], item["mid"], 'latest_dynamic', dy.time)
                     for bot in get_bots().values():
-                        await bot.send_group_msg(group_id = item["gid"], message=f'{info[0]}发布了动态: {info[2]}' + msg_pic)
+                        print(dy.time, item["lastest"])
+                        await bot.send_group_msg(group_id = item["gid"], message=f'{dy.name}发布了动态: {dy.url}' + msg_pic)
 
 
 check_dynamic = on_command("最新动态")

@@ -73,7 +73,7 @@ async def living():
 
 
 
-add_up = on_command('添加关注', aliases=["关注"])
+add_up = on_command('添加关注', aliases={"关注"})
 @add_up.handle()
 async def add(bot: Bot, event: Event, state: T_State):
     '''
@@ -104,7 +104,7 @@ async def add(bot: Bot, event: Event, state: T_State):
         await bot.send(event, message=f"请输入正确的id")
 
 
-del_up = on_command('取消关注', aliases='不再关注')
+del_up = on_command('取消关注', aliases={'不再关注'})
 @del_up.handle()
 async def add(bot: Bot, event):
     uid = event.user_id
