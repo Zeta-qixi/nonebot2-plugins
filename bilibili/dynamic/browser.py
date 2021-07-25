@@ -24,7 +24,7 @@ async def get_browser(**kwargs) -> Browser:
     return _browser or await init(**kwargs)
 
  
-async def get_dynamic_screenshot(url):
+async def get_dynamic_screenshot(url, f=None):
     browser = await get_browser()
     page = None
     try:
@@ -34,8 +34,19 @@ async def get_dynamic_screenshot(url):
         card = await page.query_selector(".card")
         assert card is not None
         clip = await card.bounding_box()
-
         assert clip is not None
+
+        # 获取动态文本
+        text_content = await page.query_selector(".post-content")
+        text = await text_content.text_content()
+
+        print(f)
+        if f:
+            if f not in text:
+                print(text)
+                raise UserWarning('过滤')
+            
+
         bar = await page.query_selector(".text-bar")
         assert bar is not None
         bar_bound = await bar.bounding_box()

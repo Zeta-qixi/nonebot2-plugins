@@ -18,14 +18,15 @@ except:
     master = []
 
 
-
 def get_data_from_db():
     dict = {}
     for i, item in enumerate(select_dynamic()):
         dict[i] = {
-            "gid":item[0], "mid":item[1], "lastest":item[4]
+            "gid":item[0], "mid":item[1], "lastest":item[5], "filter":item[6]
         }
+
     return dict
+
 
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
@@ -40,18 +41,21 @@ async def push_dynamic():
             url = dy.url
             # 判断是否最新的
             if item["lastest"] < dy.time and dy.time > datetime.now().timestamp() - timedelta(minutes=30).seconds:
-                if dy.type != 1:
-                   
-                    base64 = await get_dynamic_screenshot(url) 
-                    msg_pic = MessageSegment.image(f'base64://{base64}')
-                    
-                    # 更新时间
-                    upadte(item["gid"], item["mid"], 'latest_dynamic', dy.time)
-                    for bot in get_bots().values():
-                        print(dy.time, item["lastest"])
-                        await bot.send_group_msg(group_id = item["gid"], message=f'{dy.name}发布了动态: {dy.url}' + msg_pic)
+                try:
+                    if dy.type != 1:
+                        base64 = await get_dynamic_screenshot(url, item['filter']) 
+                        msg_pic = MessageSegment.image(f'base64://{base64}')
+                        
+                        # 更新时间
+                        upadte(item["gid"], item["mid"], 'latest_dynamic', dy.time)
+                        for bot in get_bots().values():
+                            print(dy.time, item["lastest"])
+                            await bot.send_group_msg(group_id = item["gid"], message=f'{dy.name}发布了动态: {dy.url}' + msg_pic)
+                except:
+                    pass
 
 
+# 测试用
 check_dynamic = on_command("最新动态")
 @check_dynamic.handle()
 async def check_dynamic_handle(bot: Bot, event):
@@ -63,26 +67,15 @@ async def check_dynamic_handle(bot: Bot, event):
         info = dy.get()   
         url = info[2] 
         if item['gid'] == event.group_id:
-            base64 = await get_dynamic_screenshot(url) 
-            msg_pic =  MessageSegment.image(f'base64://{base64}')
-            await bot.send(event, message=msg_pic)
+            try:
+                base64 = await get_dynamic_screenshot(url, item['filter']) 
+                raise
+                msg_pic =  MessageSegment.image(f'base64://{base64}')
+                await bot.send(event, message=msg_pic)
+
+            except BaseException as e:
+                print(repr(e))
 
 
-push_dynamic = on_command("推送动态")
-@push_dynamic.handle()
-async def push_dynamic_handle(bot: Bot, event):
-    uid = event.user_id
-    gid = event.group_id
 
-    member_info = await bot.get_group_member_info(group_id=gid, user_id=uid)
-    if member_info['role'] == "member" and uid not in master:
-        await bot.send(event, message="你没有该权限哦～")
-        return
 
-    try:
-        mid = int(str(event.get_message()))
-        upadte(gid, mid, 'dynamic', 1)
-        await bot.send(event, message=f"ok")
-    except:
-        await bot.send(event, message=f"失败了～")
-    

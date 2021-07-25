@@ -47,7 +47,7 @@ async def living():
     for bot in get_bots().values():
     
         for item in LIVE.values():
-
+            await asyncio.sleep(3)
             info = get_info(item["mid"])
             
             liveroom_lifo = info['live_room']
@@ -68,7 +68,7 @@ async def living():
                 item['status'] = 0
                 msg = f'{info["name"]}下播了。。'
                 await bot.send_group_msg(group_id = item[0], message=msg)
-            await asyncio.sleep(1)
+            
 
 
 

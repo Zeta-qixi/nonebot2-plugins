@@ -68,7 +68,7 @@ def upadte(gid, mid ,field: str, value):
 
       field: 字段
     """
-    execute(f'UPDATE {TABLE} set {field} = {value} WHERE mid = {mid} and gid = {gid}')
+    execute(f'UPDATE {TABLE} set {field} = "{value}" WHERE mid = {mid} and gid = {gid}')
 
 
 def delete_focus(gid, mid):
