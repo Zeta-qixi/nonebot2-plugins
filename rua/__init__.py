@@ -78,7 +78,7 @@ async def rua_got(bot: Bot, event: Event, state: T_State):
     try:
         avatar = Image.open(BytesIO(resp_cont))
         generate_gif(data_dir, avatar)
-        await rua.finish(img)
+        bot.send(event, message=img)
     except:
         
-        await rua.finish('这图rua nm🐴')
+        await rua.finish('失败了..')

@@ -8,12 +8,12 @@ from nonebot import require
 import time
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 group = 960349339 #mc群
-
+image = '3e'
 
 class mc_server():
     def __init__(self):
         self.player = []
-        self.cmd = 'docker logs --tail=5 a2'
+        self.cmd = f'docker logs --tail=5 {image}'
 
 
     def beat(self):
