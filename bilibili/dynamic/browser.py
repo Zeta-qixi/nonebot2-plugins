@@ -64,3 +64,11 @@ async def get_dynamic_screenshot(url, f=None):
 
 
 
+def install():
+    """自动安装、更新 Chromium"""
+    import sys
+    from playwright.__main__ import main
+    sys.argv = ['', 'install', 'webkit']
+    main()
+#第一次
+#install()
