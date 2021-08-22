@@ -59,21 +59,22 @@ async def push_dynamic():
 check_dynamic = on_command("最新动态")
 @check_dynamic.handle()
 async def check_dynamic_handle(bot: Bot, event):
-
     for item in get_data_from_db().values():
         data = get_dynamic(item['mid'])
         dy = data['cards'][0]
         dy = Dynamic(dy)
         info = dy.get()   
-        url = info[2] 
-        if item['gid'] == event.group_id:
+        url = info[2]
+
+        comman = str(event.get_message())
+        if item['gid'] == event.group_id or comman == 'test':
             try:
                 base64 = await get_dynamic_screenshot(url, item['filter']) 
-                raise
                 msg_pic =  MessageSegment.image(f'base64://{base64}')
                 await bot.send(event, message=msg_pic)
 
             except BaseException as e:
+                print('error')
                 print(repr(e))
 
 

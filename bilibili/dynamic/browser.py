@@ -43,7 +43,7 @@ async def get_dynamic_screenshot(url, f=None):
         print(f)
         if f:
             if f not in text:
-                print(text)
+                print('过滤了' + text)
                 raise UserWarning('过滤')
             
 

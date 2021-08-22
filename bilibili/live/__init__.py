@@ -67,7 +67,7 @@ async def living():
                 
                 item['status'] = 0
                 msg = f'{info["name"]}下播了。。'
-                await bot.send_group_msg(group_id = item[0], message=msg)
+                await bot.send_group_msg(group_id = item["gid"], message=msg)
             
 
 
