@@ -18,7 +18,6 @@ class nickname:
 
     def read_data(self):
         with open(path) as f:
-            
             try:
                 self.data = json.load(f)
                 self.data ['0'] = '0'

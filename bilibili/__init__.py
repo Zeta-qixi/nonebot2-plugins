@@ -9,6 +9,10 @@ from nonebot.adapters.cqhttp.message import Message, MessageSegment
 
 
 push_dynamic = on_command("更新推送")
+'''
+直接修改数据库的对应字段
+mid filter(动态|直播|过滤) value([0,1],[0,1],['过滤字段'])
+'''
 @push_dynamic.handle()
 async def push_dynamic_handle(bot: Bot, event):
     uid = event.user_id
