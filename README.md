@@ -30,6 +30,9 @@ b站up直播提醒，给up起个昵称~
 ## [⏰ clock](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/clock) 
 闹钟、提示事项
 
+## [漫画更新提醒](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/comic_push) 
+属于是爬虫了
+
 ## jrrp.py 
 发个随机数而已
 
