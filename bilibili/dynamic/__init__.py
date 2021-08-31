@@ -41,18 +41,21 @@ async def push_dynamic():
             url = dy.url
             # 判断是否最新的
             if item["lastest"] < dy.time and dy.time > datetime.now().timestamp() - timedelta(minutes=30).seconds:
-                try:
-                    if dy.type != 1:
-                        base64 = await get_dynamic_screenshot(url, item['filter']) 
-                        msg_pic = MessageSegment.image(f'base64://{base64}')
-                        
-                        # 更新时间
-                        upadte(item["gid"], item["mid"], 'latest_dynamic', dy.time)
-                        for bot in get_bots().values():
-                            print(dy.time, item["lastest"])
-                            await bot.send_group_msg(group_id = item["gid"], message=f'{dy.name}发布了动态: {dy.url}' + msg_pic)
-                except:
-                    pass
+  
+                if dy.type != 1:
+                    res_list = await get_dynamic_screenshot(url, item['filter'])
+
+                    for bot in get_bots().values():  
+                        msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
+                        await bot.send_group_msg(group_id = item["gid"], message=f'{dy.name}发布了动态: {dy.url}' + msg_pic)
+                        if 'pic' in res_list:
+                            print('2')
+                            msg_pic = MessageSegment.image(url = res_list['pic'])
+                            await bot.send_group_msg(group_id = item["gid"], message= msg_pic)
+
+                    # 更新时间
+                    upadte(item["gid"], item["mid"], 'latest_dynamic', dy.time)
+         
 
 
 # 测试用
@@ -65,14 +68,17 @@ async def check_dynamic_handle(bot: Bot, event):
         dy = Dynamic(dy)
         info = dy.get()   
         url = info[2]
-
         comman = str(event.get_message())
         if item['gid'] == event.group_id or comman == 'test':
             try:
-                base64 = await get_dynamic_screenshot(url, item['filter']) 
-                msg_pic =  MessageSegment.image(f'base64://{base64}')
+                res_list = await get_dynamic_screenshot(url, item['filter']) 
+                msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
                 await bot.send(event, message=msg_pic)
-
+                if 'pic' in res_list:
+                    print('2')
+                    msg_pic = MessageSegment.image(res_list['pic'])
+                    print(res_list['pic'])
+                    await bot.send(event, message=msg_pic)
             except BaseException as e:
                 print('error')
                 print(repr(e))

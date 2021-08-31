@@ -31,7 +31,7 @@ async def comic_add_handle(bot: Bot, event: MessageEvent):
     await bot.send(event, message= f'添加漫画「{title}」（{cid}）')
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-@scheduler.scheduled_job('cron', hour='*/20', id='comic_pusher')
+@scheduler.scheduled_job('cron', hour='*/6', id='comic_pusher')
 async def push_comic():
     print(data)
     for uid in data:

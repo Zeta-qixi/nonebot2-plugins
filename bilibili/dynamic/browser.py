@@ -9,7 +9,7 @@ import asyncio
 from PIL import Image
 from io import BytesIO
 from playwright.async_api import Browser, async_playwright
-
+import re
 _browser: Optional[Browser] = None
 
 
@@ -24,9 +24,10 @@ async def get_browser(**kwargs) -> Browser:
     return _browser or await init(**kwargs)
 
  
-async def get_dynamic_screenshot(url, f=None):
+async def get_dynamic_screenshot(url, filter=None):
     browser = await get_browser()
     page = None
+    res = {}
     try:
         page = await browser.new_page()
         await page.goto(url, wait_until='networkidle', timeout=10000)
@@ -39,11 +40,16 @@ async def get_dynamic_screenshot(url, f=None):
         # 获取动态文本
         text_content = await page.query_selector(".post-content")
         text = await text_content.text_content()
+        try:
+            img_content_ = await text_content.query_selector(".card-1")
+            img_inner_html = await (img_content_.inner_html())
+            img_url = "https:" + (re.search(r"//.*jpg",img_inner_html)).group()
+            res['pic'] = img_url
+        except Exception as e:
+            print(e)
 
-        print(f)
-        if f:
-            if f not in text:
-                print('过滤了' + text)
+        if filter:
+            if filter not in text:
                 raise UserWarning('过滤')
             
 
@@ -55,7 +61,9 @@ async def get_dynamic_screenshot(url, f=None):
         image = await page.screenshot(clip=clip)
 
         await page.close()
-        return base64.b64encode(image).decode()
+        pic_b64 = base64.b64encode(image).decode()
+        res['dy'] = pic_b64
+        return res
 
     except Exception:
         if page:
