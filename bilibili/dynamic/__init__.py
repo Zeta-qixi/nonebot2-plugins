@@ -49,8 +49,8 @@ async def push_dynamic():
                         msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
                         await bot.send_group_msg(group_id = item["gid"], message=f'{dy.name}发布了动态: {dy.url}' + msg_pic)
                         if 'pic' in res_list:
-                            print('2')
-                            msg_pic = MessageSegment.image(url = res_list['pic'])
+                           
+                            msg_pic = MessageSegment.image(res_list['pic'])
                             await bot.send_group_msg(group_id = item["gid"], message= msg_pic)
 
                     # 更新时间
@@ -75,9 +75,8 @@ async def check_dynamic_handle(bot: Bot, event):
                 msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
                 await bot.send(event, message=msg_pic)
                 if 'pic' in res_list:
-                    print('2')
+                 
                     msg_pic = MessageSegment.image(res_list['pic'])
-                    print(res_list['pic'])
                     await bot.send(event, message=msg_pic)
             except BaseException as e:
                 print('error')
