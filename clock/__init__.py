@@ -136,7 +136,10 @@ async def clock_():
     for i in clock_data:
         if strftime("%H:%M", localtime()) == i[4]:
             for bot in get_bots().values():
-                await bot.send_msg(message_type=i[1], user_id=i[2], group_id=i[2], message=f'⏰{i[3]}')
+                s = i[3]
+                if s == '':
+                    s = '⏰'
+                await bot.send_msg(message_type=i[1], user_id=i[2], group_id=i[2], message=s)
                 print('123')
             
             if i[5] == 1:
