@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/root/miniconda3/envs/nonebot2/bin/python"
+    "python.pythonPath": "/root/miniconda3/envs/nonebot2/bin/python",
+    "search.followSymlinks": false
 }

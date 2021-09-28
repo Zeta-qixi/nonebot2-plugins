@@ -17,8 +17,3 @@ async def broadcast(bot: Bot, msg, this_group = None):
             continue
         await asyncio.sleep(0.2)
         await bot.send_group_msg(group_id=group,message=msg)
-
-
-
-
-    

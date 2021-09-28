@@ -42,7 +42,7 @@ def get_info(mid:int):
     return r.json()['data']
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-@scheduler.scheduled_job('cron', second='*/30', id='live_sched')
+@scheduler.scheduled_job('cron', minute='*/1', id='live_sched')
 async def living():
     for bot in get_bots().values():
     
@@ -51,24 +51,26 @@ async def living():
             info = get_info(item["mid"])
             
             liveroom_lifo = info['live_room']
-            status = liveroom_lifo['liveStatus']       
-            if status == 1 and item['status'] == 0:
-            
-                title = liveroom_lifo['title']
-                cover = liveroom_lifo['cover']
-                url = liveroom_lifo['url']
+            status = liveroom_lifo['liveStatus']
+            try:      
+                if status == 1 and item['status'] == 0:
                 
-                item['status'] = 1
-                msg = f'你关注的{info["name"]}正在直播！\n#{title}\n{url}[CQ:image,file={cover}]'
-                await bot.send_group_msg(group_id = item["gid"], message=msg) 
+                    title = liveroom_lifo['title']
+                    cover = liveroom_lifo['cover']
+                    url = liveroom_lifo['url']
+                    
+                    item['status'] = 1
+                    msg = f'你关注的{info["name"]}正在直播！\n#{title}\n{url}[CQ:image,file={cover}]'
+                    await bot.send_group_msg(group_id = item["gid"], message=msg) 
 
 
-            elif status == 0 and item['status'] == 1:
-                
-                item['status'] = 0
-                msg = f'{info["name"]}下播了。。'
-                await bot.send_group_msg(group_id = item["gid"], message=msg)
-            
+                elif status == 0 and item['status'] == 1:
+                    
+                    item['status'] = 0
+                    msg = f'{info["name"]}下播了。。'
+                    await bot.send_group_msg(group_id = item["gid"], message=msg)
+            finally:
+                pass
 
 
 

@@ -7,7 +7,6 @@ from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 
-
 push_dynamic = on_command("更新推送")
 '''
 直接修改数据库的对应字段

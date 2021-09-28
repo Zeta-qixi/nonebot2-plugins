@@ -6,6 +6,8 @@ import time
 from datetime import datetime, timedelta
 import random
 
+from nonebot.log import logger
+
 from nonebot import get_bots, on_command, get_driver
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event
@@ -30,7 +32,7 @@ def get_data_from_db():
 
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-@scheduler.scheduled_job('cron', minute='*/30', id='dynamic_sched_')
+@scheduler.scheduled_job('cron', minute='*/10', id='dynamic_sched_')
 async def push_dynamic():
 
     for item in get_data_from_db().values():
