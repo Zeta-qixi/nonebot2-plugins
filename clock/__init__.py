@@ -35,6 +35,8 @@ def del_clock(id):
             clock_data.remove(i)
             return True
 
+def create_time(t):
+    return (f"null null null null null {t}")
 
 # 创建闹钟
 add = on_command('添加闹钟', aliases={'设置闹钟', '添加提醒事项', 'addclock'})
@@ -79,7 +81,7 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
         return
 
     if 'private' in type:
-        add_clock(uid, note, time, ones, 'private')
+        add_clock(uid, note, create_time(time), ones, 'private')
         await bot.send(event, message="添加成功～")
     
     elif 'group' in type:
@@ -88,7 +90,7 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
         if info['role'] == "member" and uid not in master:
             await bot.send(event, message="你没有该权限哦～")
         else:
-            add_clock(gid, note, time, ones, 'group')
+            add_clock(gid, note, create_time(time), ones, 'group')
             await bot.send(event, message="添加成功～")
             
 # 查看闹钟
@@ -134,7 +136,8 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 async def clock_():
     for i in clock_data:
-        if strftime("%H:%M", localtime()) == i[4]:
+        time_list = i[4].split()
+        if strftime("%H:%M", localtime()) == time_list[-1]:
             for bot in get_bots().values():
                 s = i[3]
                 if s == '':
