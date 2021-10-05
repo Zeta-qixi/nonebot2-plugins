@@ -9,7 +9,9 @@ import os
 import sys
 import requests
 import random
+from nonebot.log import logger
 import asyncio
+import time
 from PIL import Image
 from io import BytesIO
 sys.path.append(os.path.join(os.path.dirname(__file__)))
@@ -29,16 +31,15 @@ MAX = 2  # 冲的次数
 times = {} # 记录冲的次数
 r18type= ['关闭','开启']
 
-##bot 指令
+## setu
 setu = on_command('setu',aliases={'Setu', 'SETU', '色图'})
 @setu.handle()
-async def setu_handle(bot: Bot, event: Event, state: T_State):
 
+async def setu_handle(bot: Bot, event: Event, state: T_State):
     #获取关键词，数量 并处理
     comman = str(event.message).split(' ')
     keyword = ''
     num = 1
-    print(comman)
     # 变量只有一个 判定是keyword还是num
     try:
         if len(comman) == 1: 
@@ -52,30 +53,34 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
     except :
         pass
 
-    user_id = event.user_id
-    
+   
+    user_id = event.user_id  
     if user_id not in times.keys():
         times[user_id] = 0
     if(user_id not in master):
-        # setu太多发这图片
-        if times[user_id] > MAX:
-            times[user_id] = 0
-            img_src = path + '/panci.png'
-            img = MessageSegment.image(f'file://{img_src}')
-            await bot.send(event, message = img)
-            return 0
+        # 用户限定次数
+
+        # if times[user_id] > MAX:
+        #     times[user_id] = 0
+        #     img_src = path + '/panci.png'
+        #     img = MessageSegment.image(f'file://{img_src}')
+        #     await bot.send(event, message = img)
+        #     return 0
+        
         if int(num) > 3:
             num = 3
             await bot.send(event, message = f'一次最多3张哦～')
     
+    # 尝试3次请求
     for i in range(3):
         try:
             setu_url = setubot.setu_info(int(num), keyword)
+            print(setu_url)
             if setu_url:
                 break
-        except:
-            pass
-    
+        except BaseException as e:
+            logger.info(e.args)
+
     #获取图片信息url
     if setu_url:
         try:
@@ -83,8 +88,10 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
             for i ,base64 in enumerate(pic_list):
                 msg = await bot.send(event, message = MessageSegment.image(f'base64://{base64}'))
                 setubot.pic_id.append(msg['message_id'])
+                time.sleep(1)
             times[user_id] += num
-        except:
+        except BaseException as e:
+            logger.info(e)
             await bot.send(event, message = f'你🐛的太快啦')
 
 

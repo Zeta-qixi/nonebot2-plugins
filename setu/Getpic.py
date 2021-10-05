@@ -25,10 +25,11 @@ class setubot:
 
     #检索
     def setu_info(self, num=1, tag=''):
-        url = 'https://api.lolicon.app/setu/v2/?' #v2的图太大
+        url = 'https://api.lolicon.app/setu/v2/?'
         params = {
-        'num' : num,
-        'tag' : f'{tag}',
+        'num' : 
+        num,
+        'keyword' : f'{tag}',
         'r18' : self.R18, #  0 false 1 true
                           #  'size1200' : 'true'
         }
@@ -41,7 +42,6 @@ class setubot:
                 pic_url.append(item['urls']['original'])
             return pic_url
         except:
-            print(r)
             return []
 
 
