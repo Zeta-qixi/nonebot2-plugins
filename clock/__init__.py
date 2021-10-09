@@ -105,6 +105,7 @@ async def add_handle(bot: Bot, event: Event):
     clock_msg = ''
     ones=['days', 'ones']
     for i in clock_data:
+        print(i)
         if i[2] == id:
             if clock_msg:
                 clock_msg = clock_msg + f'\n\n[{i[0]}] ⏰{i[4]} ({ones[(i[5])]})\n备注: {i[3]}'
@@ -143,8 +144,8 @@ async def clock_():
                 if s == '':
                     s = '⏰'
                 await bot.send_msg(message_type=i[1], user_id=i[2], group_id=i[2], message=s)
-                print('123')
-            
+
+            # 删除闹钟            
             if i[5] == 1:
                 del_clock_db(i[0])
                 clock_data.remove(i)

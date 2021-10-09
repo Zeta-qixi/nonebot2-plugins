@@ -17,4 +17,6 @@ restart = on_command('restart')
 async def _restart(bot: Bot, event: MessageEvent, state: T_State):
     uid = event.user_id
     if uid in master:
-        await bot.set_restart()
+        await bot.send(event, message = "正在重启...")
+        #不兼容
+        #zawait bot.set_restart()
