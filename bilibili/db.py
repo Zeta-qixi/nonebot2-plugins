@@ -2,7 +2,7 @@
 CREATE TABLE bilibili(  
     gid INTEGER not null,
     mid INTEGER not null,
-    name, char(50),
+    name char(50),
     live INTEGER,
     dynamic INTEGER,
     latest_dynamic INTEGER,
@@ -62,7 +62,7 @@ def select_dynamic():
 '''
 UPDATE
 '''
-def upadte(gid, mid ,field: str, value):
+def update(gid, mid ,field: str, value):
     """
       :更新up的关注
 

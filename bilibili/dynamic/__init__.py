@@ -55,7 +55,7 @@ async def push_dynamic():
                             await bot.send_group_msg(group_id = item["gid"], message= msg_pic)
 
                     # 更新时间
-                    upadte(item["gid"], item["mid"], 'latest_dynamic', dy.time)
+                    update(item["gid"], item["mid"], 'latest_dynamic', dy.time)
          
 
 

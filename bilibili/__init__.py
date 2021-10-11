@@ -36,7 +36,7 @@ async def push_dynamic_handle(bot: Bot, event):
         if value.isdigit():
             value = int(value)
 
-        upadte(gid, mid, filter, value)
+        update(gid, mid, filter, value)
         await bot.send(event, message=f"ok")
     except:
         await bot.send(event, message=f"失败了～ 发送 mid 字段 内容")
