@@ -6,6 +6,7 @@ CREATE TABLE bilibili(
     live INTEGER,
     dynamic INTEGER,
     latest_dynamic INTEGER,
+    dy_filter char(50),
     primary key(gid, mid)
 );
 '''

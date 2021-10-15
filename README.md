@@ -1,13 +1,13 @@
 # 基于nonebot2的插件库
-## 文件放到自己bot的插件目录即可，缺少data.json的自行添加
+## 文件放到自己bot的插件目录即可，缺少data.json/data.db的自行添加
 
 # 已完成功能 
 
-## [bilibili_live](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/bilibili_live)
-b站up直播提醒，给up起个昵称~
+## [bilibili](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/bilibili)
+b站up直播提醒，动态转发
 
 ## [chat](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/chat)
-差不多问答，一问对多答，随机答，可以调整回复概率 （吃什么也被群友加了不少数据）
+对话插件，支持 一问对多答，随机答，可以调整回复概率 
 
 ## [maimaidx](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/maimaidx)
 舞萌随歌
