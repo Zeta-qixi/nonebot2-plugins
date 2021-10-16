@@ -27,8 +27,8 @@ class setubot:
     def setu_info(self, num=1, tag=''):
         url = 'https://api.lolicon.app/setu/v2/?'
         params = {
-        'num' : 
-        num,
+        'num' : num,
+        'size' : 'regular',
         'keyword' : f'{tag}',
         'r18' : self.R18, #  0 false 1 true
                           #  'size1200' : 'true'
@@ -39,7 +39,7 @@ class setubot:
             data = json.loads(r.text)['data']
             pic_url = []
             for item in data:
-                pic_url.append(item['urls']['original'])
+                pic_url.append(item['urls']['regular']) #原图 original 同时改 31 行
             return pic_url
         except:
             return []
