@@ -39,8 +39,6 @@ async def _t3(bot: Bot, event: PokeNotifyEvent):
         creep_id = event.sender_id
     else: creep_id = event.target_id
 
-
-
     url = f'http://q1.qlogo.cn/g?b=qq&nk={creep_id}&s=160'
     resp = requests.get(url)
     resp_cont = resp.content
