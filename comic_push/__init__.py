@@ -7,10 +7,14 @@ from nonebot.adapters.cqhttp.event import Event, MessageEvent
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot import require
 
-data = {}
-path = os.path.dirname(__file__) + "/data.json"
-with open(path) as f: 
-    data = json.load(f)  
+
+try:
+    path = os.path.dirname(__file__) + "/data.json"
+    with open(path) as f: 
+        data = json.load(f)  
+except:
+    data = {}
+
 def update():
     with open(path, 'w+') as f :
         tojson = json.dumps(data,sort_keys=True, ensure_ascii=False, indent=6,separators=(',',': '))
@@ -21,9 +25,12 @@ comic_add = on_command('追漫')
 async def comic_add_handle(bot: Bot, event: MessageEvent):
     uid = str(event.user_id)
     cid = str(event.get_message())
+    if uid not in data:
+        data[uid] = {}
+
     if cid.isdigit():
         cid = f'/{cid}bz/'
-
+        
     title, latest, url_ = crawler(cid)
     data[uid][cid] = latest
     update()
