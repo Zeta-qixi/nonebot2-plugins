@@ -17,24 +17,23 @@ search = on_command('搜图')
 @search.handle()
 async def search_handle(bot: Bot, event: Event, state: T_State):
     
-    if event.user_id not in bot.config.master:
-        search.finish()
+    if event.user_id in master:
+        if str(event.message) != '':
+            state['ret'] = str(event.message)
+    else:
+        state["ret"] = False
+        await search.finish("不是Master不行的哦~")
     msg = str(event.get_message())
-    if 'CQ:image' in msg:
-        state["url"] = msg.split('url=')[-1][:-1]
 
 
 
-@search.got('url', prompt='图呢')
+
+@search.got('ret', prompt='图呢')
 async def search_got(bot: Bot, event: Event, state: T_State):
 
-    if event.user_id not in master:
-        await search.finish("不是Master不行的哦~")
-        
-    msg = str(event.get_message())
+    if state['ret']:
+        ret = re.search(r"\[CQ:image,file=(.*)?,url=(.*)\]", str(state['ret']))
+        pic_url = ret.group(2)
 
-    if 'CQ:image' in msg:
-        state["url"] = msg.split('url=')[-1][:-1]
-
-    data = await tool.get_image_data(state["url"])
+    data = await tool.get_image_data(pic_url)
     await search.finish(data)

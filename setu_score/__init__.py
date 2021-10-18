@@ -50,23 +50,28 @@ def porn_pic(pic_url):
 setu_score = on_command('评分')
 @setu_score.handle()
 async def _(bot: Bot, event: MessageEvent, state: T_State):
-    if str(event.message) != '':
-        state['ret'] = str(event.message)
+    uid = event.user_id
+    gid = event.group_id
+    member_info = await bot.get_group_member_info(group_id=gid, user_id=uid)
+    if member_info['role'] == "owner" or uid in master:
+        if str(event.message) != '':
+            state['ret'] = str(event.message)
+    else:
+        state['ret'] = False
+        await bot.send(event, message='你没有权限哦～')
+        
 
 
 @setu_score.got("ret", prompt="色图呢?")
 async def setu_got(bot: Bot, event: MessageEvent, state: T_State):
 
-    uid = event.user_id
-    gid = event.group_id
-    member_info = await bot.get_group_member_info(group_id=gid, user_id=uid)
-    if member_info['role'] == "owner" or uid in master:
 
-        ret = re.search(r"\[CQ:image,file=(.*)?,url=(.*)\]", str(state['ret']))
-        pic_url = ret.group(2)
-        s = porn_pic(pic_url)
+        if state['ret']:
 
-        await bot.send(event, message=MessageSegment.image(pic_url)+f'色图评分为{s}')
-    else:
-        await bot.send(event, message='你没有权限哦～')
+            ret = re.search(r"\[CQ:image,file=(.*)?,url=(.*)\]", str(state['ret']))
+            pic_url = ret.group(2)
+            s = porn_pic(pic_url)
+
+            await bot.send(event, message=MessageSegment.image(pic_url)+f'色图评分为{s}')
+
 
