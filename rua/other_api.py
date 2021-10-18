@@ -27,9 +27,16 @@ pa = on_command('爬', aliases={'撕了', '吃了'})
 async def pa_handle(bot:Bot, event: MessageEvent):
 
         msg = str(event.raw_message)
-        ret = re.search(r"(.*)?\[CQ:at,qq=(.*)\]", msg)
-        comm = str(ret.group(1))
-        qq = int(ret.group(2))
+        print(msg)
+        try:
+            ret = re.search(r"(.*)?\[CQ:at,qq=(.*)\]", msg)
+            comm = str(ret.group(1))
+            qq = int(ret.group(2))
+        except:
+            ret = msg.split()
+            comm = ret[0]
+            qq = ret[1]
+            
         if qq in master:
             qq = event.user_id
         await bot.send(event, message = Message(f"[CQ:image,file=http://ovooa.com/API/{api_dict[comm]}/api.php?QQ={qq}]"))
