@@ -25,7 +25,7 @@ for k in api_dict:
         keywords = k
     else:
         keywords = keywords + '|' + k
-pa = on_regex(f"({keywords})?(.*)")
+pa = on_regex(f"({keywords})?(.*)", block=False)
 @pa.handle()
 async def pa_handle(bot:Bot, event: MessageEvent, state: T_State):
     regex = (state['_matched_groups'])
