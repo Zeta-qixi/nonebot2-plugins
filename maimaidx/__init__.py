@@ -41,7 +41,6 @@ async def maimaidx(bot: Bot, event: Event, state: T_State):
 
             list = dxbot.random_song(lv,num=num)
     except:
-        print('err')
         return
 
     msg = ''

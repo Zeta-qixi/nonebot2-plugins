@@ -10,6 +10,7 @@ from PIL import Image
 from io import BytesIO
 from playwright.async_api import Browser, async_playwright
 import re
+from nonebot import logger
 _browser: Optional[Browser] = None
 
 
@@ -46,7 +47,7 @@ async def get_dynamic_screenshot(url, filter=None):
             img_url = "https:" + (re.search(r"//.*jpg",img_inner_html)).group()
             res['pic'] = img_url
         except Exception as e:
-            print(e)
+            logger.error(repr(e))
 
         if filter:
             if filter not in text:

@@ -75,11 +75,11 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
     for i in range(3):
         try:
             setu_url = setubot.setu_info(int(num), keyword)
-            print(setu_url)
+            #print(setu_url)
             if setu_url:
                 break
         except BaseException as e:
-            logger.info(e.args)
+            logger.error(repr(e))
 
     #获取图片信息url
     if setu_url:
@@ -91,7 +91,7 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
                 time.sleep(1)
             times[user_id] += num
         except BaseException as e:
-            logger.info(e)
+            logger.error(repr(e))
             await bot.send(event, message = f'你🐛的太快啦')
 
 

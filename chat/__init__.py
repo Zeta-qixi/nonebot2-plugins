@@ -1,13 +1,15 @@
 import json
 import os
 import random
-import time
 import sys
+import time
 
-from nonebot import on_command, on_message, get_driver
+from nonebot import get_driver, on_command, on_message
 from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import Event, GroupMessageEvent,MessageEvent, PokeNotifyEvent
+from nonebot.adapters.cqhttp.event import (Event, GroupMessageEvent,
+                                           MessageEvent, PokeNotifyEvent)
 from nonebot.adapters.cqhttp.message import Message
+from nonebot.log import logger
 from nonebot.rule import to_me
 from nonebot.typing import T_State
 
@@ -145,5 +147,5 @@ async def set_got2(bot: Bot, event: Event, state: T_State):
 
                 save_json(state["key"], state["value"], union(state['gid'] , 1))
                 await set_respond.finish(message='ok~')
-            except:
-                print('over')
+            except BaseException as e:
+                logger.error(repr(e))

@@ -1,17 +1,17 @@
-import requests 
-import re
-import os
 import json
-from nonebot import on_command
+import os
+import re
+
+import nonebot
+import requests
+from nonebot import on_command, require
 from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import (MessageEvent, PokeNotifyEvent)
+from nonebot.adapters.cqhttp.event import MessageEvent, PokeNotifyEvent
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
+from nonebot.log import logger
 from nonebot.rule import to_me
 from nonebot.typing import T_State
-from nonebot.typing import T_State
-from nonebot.log import logger
-import nonebot
-from nonebot import require
+
 master = nonebot.get_driver().config.master
 
 try:
@@ -38,7 +38,6 @@ def porn_pic(pic_url):
     params = {"imgUrl":pic_url}
     response = requests.post(request_url, data=params, headers=headers)
     data = response.json()['data'][0]
-    print(data)
     if data['type'] == 1:
 
         score = round((data['probability']) * 100,2)

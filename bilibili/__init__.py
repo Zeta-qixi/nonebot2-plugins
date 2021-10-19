@@ -1,11 +1,10 @@
 
-from .live import *
-from .dynamic import *
-
 from nonebot import on_command
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
+from .dynamic import *
+from .live import *
 
 push_dynamic = on_command("更新推送")
 '''

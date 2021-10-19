@@ -40,11 +40,9 @@ async def comic_add_handle(bot: Bot, event: MessageEvent):
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 @scheduler.scheduled_job('cron', hour='*/6', id='comic_pusher')
 async def push_comic():
-    print(data)
     for uid in data:
         for cid in data[uid]:
             title, latest, url_ = crawler(cid)
-            print(title)
             if latest != data[uid][cid]:
                 data[uid][cid] = latest
                 update()
