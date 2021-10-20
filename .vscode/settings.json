@@ -1,4 +1,5 @@
 {
     "python.pythonPath": "/root/miniconda3/envs/nonebot2/bin/python",
+    "python.autoComplete.addBrackets": true,
     "search.followSymlinks": false
 }

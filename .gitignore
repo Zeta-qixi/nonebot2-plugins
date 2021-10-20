@@ -15,13 +15,14 @@ Action.py
 clock_in/
 *.ipynb
 majsoul.py
-
+azurlane/
 
 #数据
 rua/data/*.gif
 setu/data
 data.*
 #json数据
+
 chat/*.json
 bilibili_live/*.json
 
