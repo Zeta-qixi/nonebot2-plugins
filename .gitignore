@@ -1,19 +1,21 @@
 __pycache__/
 test.*
 *test*
-
+.vscode/
 LICENSE
 -
 
 #自用插件
 mc_server/
 python_cmd/
+setu/Getpic_z.py
 #一些插件
 Action.py
 clock_in/
 *.ipynb
 majsoul.py
 azurlane/
+account/
 
 #数据
 rua/data/*.gif
@@ -26,3 +28,4 @@ bilibili_live/*.json
 
 maimaidx/data/*.json
 .gitignore
+
