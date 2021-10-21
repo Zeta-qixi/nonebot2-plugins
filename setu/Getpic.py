@@ -4,6 +4,7 @@ import datetime
 import re
 import random
 import json
+from aiopic import get_pic
 class setubot:
     def __init__(self):
         #self.T = str((datetime.datetime.now()+datetime.timedelta(days=-2)).strftime("%Y-%m-%d")) #time 或许要用 前天
@@ -24,7 +25,7 @@ class setubot:
         return self.R18
 
     #检索
-    def setu_info(self, num=1, tag=''):
+    async def setu_info(self, num=1, tag=''):
         url = 'https://api.lolicon.app/setu/v2/?'
         params = {
         'num' : num,
@@ -35,14 +36,19 @@ class setubot:
         }
         r = requests.get(url, params=params)
         assert r.status_code == 200
+
         try:
             data = json.loads(r.text)['data']
             pic_url = []
             for item in data:
                 pic_url.append(item['urls']['regular']) #原图 original 同时改 31 行
-            return pic_url
+            pic_list = await get_pic(setu_url)
+            return(1000, pic_list)
         except:
-            return []
+            if len(pic_url) == 0:
+                return(1100, None)
+            
+            return(1001, pic_url)
 
 
 
