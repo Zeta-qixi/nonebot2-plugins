@@ -105,7 +105,6 @@ async def add_handle(bot: Bot, event: Event):
     clock_msg = ''
     ones=['days', 'ones']
     for i in clock_data:
-        print(i)
         if i[2] == id:
             if clock_msg:
                 clock_msg = clock_msg + f'\n\n[{i[0]}] ⏰{i[4]} ({ones[(i[5])]})\n备注: {i[3]}'

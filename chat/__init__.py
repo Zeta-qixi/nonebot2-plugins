@@ -17,7 +17,7 @@ try:
     master = get_driver().config.master
 except:
     master = []
-    print("没有设置master")
+    logger.info("没有设置master")
 
 # -global- #
 repeat_stop = False

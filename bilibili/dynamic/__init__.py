@@ -79,8 +79,8 @@ async def check_dynamic_handle(bot: Bot, event):
                     msg_pic = MessageSegment.image(res_list['pic'])
                     await bot.send(event, message=msg_pic)
             except BaseException as e:
-                print('error')
-                print(repr(e))
+
+                logger.error(repr(e))
 
 
 

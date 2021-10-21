@@ -38,6 +38,8 @@ b站up直播提醒，动态转发
 
 # 未完成 
 
+## setu_score  
+调用百度api为色图打分  
 ## account 
 账号记录、代肝记录 （应该是这样）
 ## atribot

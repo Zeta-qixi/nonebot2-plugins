@@ -44,7 +44,6 @@ class maibot:
         if len(lv) == 2:
             i = self.num_rank.index(lv[0])+1
             j = self.num_rank.index(lv[1])+1
-            print(self.num_rank[i:j])
             for lv in self.num_rank[i:j]:
                 df = df.append(self.get_song(lv))
 
