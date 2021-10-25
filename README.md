@@ -1,5 +1,5 @@
 # 基于nonebot2的插件库
-## 文件放到自己bot的插件目录即可，缺少data.json/data.db的自行添加
+## 文件放到自己bot的插件目录即可，缺少的 data.json 或 data.db 请自行添加
 
 # 已完成功能 
 
