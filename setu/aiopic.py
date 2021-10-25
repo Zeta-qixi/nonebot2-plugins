@@ -3,13 +3,14 @@ import asyncio
 from PIL import Image
 from io import BytesIO
 import base64
+from nonebot.log import logger
 header = {
   'user-agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
   }
 async def func(session, url):
   async with session.get(url, verify_ssl=False) as res:
     assert res.status == 200
-    return (await res.read())
+    return (await res.json())
   
 async def get_pic(url_list):
   async with aiohttp.ClientSession(headers=header) as s:

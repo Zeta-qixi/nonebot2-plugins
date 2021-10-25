@@ -1,57 +1,37 @@
-import requests
-import time
-import datetime
-import re
+from pixiv_api import Pixiv
 import random
-import json
-from aiopic import get_pic
-class setubot:
-    def __init__(self):
-        #self.T = str((datetime.datetime.now()+datetime.timedelta(days=-2)).strftime("%Y-%m-%d")) #time 或许要用 前天
-        self.R18 = 0
-        self.mode = ['day', 'week', 'month', 'day_male', 'day_female', 'week_rookie', 'week_original']
-        self.mode_ = 3
-        self.pic_id = []
+from PIL import Image
+from io import BytesIO
+import os, sys
 
 
-    def Cmode(self, num):
-        self.mode_ = int(num)
-        return self.mode[self.mode_]
-    def tR18(self):
-        if self.R18 ==0:
-            self.R18 = 1
-        else :
-            self.R18 = 0
-        return self.R18
+PATH = os.path.dirname(__file__)
+class SetuBot(Pixiv):
+  def __init__(self):
+    super(SetuBot, self).__init__()
 
-    #检索
-    async def setu_info(self, num=1, tag=''):
-        url = 'https://api.lolicon.app/setu/v2/?'
-        params = {
-        'num' : num,
-        'size' : 'regular',
-        'keyword' : f'{tag}',
-        'r18' : self.R18, #  0 false 1 true
-                          #  'size1200' : 'true'
-        }
-        r = requests.get(url, params=params)
-        assert r.status_code == 200
+  async def get_setu_info(self, num = 1, keyword = None):
+    """
 
-        try:
-            data = json.loads(r.text)['data']
-            pic_url = []
-            for item in data:
-                pic_url.append(item['urls']['regular']) #原图 original 同时改 31 行
-            pic_list = await get_pic(setu_url)
-            return(1000, pic_list)
-        except:
-            if len(pic_url) == 0:
-                return(1100, None)
-            
-            return(1001, pic_url)
+     return -> 状态码, path 列表
+    """
+    if keyword in self.rank_storage.keys() or not keyword:
+      keyword = keyword or self.mode
+      works = await self.illust_ranking(mode = keyword)
+    else:
+      works = await self.search_illust(word = keyword)
 
+    if num > len(works):
+      num = len(works)
+    
+    works = random.choices(works, k = num)
+    picb64 = await self.get_pic(self.get_large_url(works))
 
+    path_list = []
+    for work, b64 in zip(works, picb64):
+      img = Image.open(BytesIO(b64))
+      path = PATH + f'/data/{work.id}.png'
+      img.save(path)
+      path_list.append(path)
 
-#https://i.pixiv.cat/img-master/img/2021/01/13/23/48/44/87033047_p0_master1200.jpg
-
-#https://i.pixiv.cat/img-original/img/2020/07/31/15/06/48/81664783_p0.png
+    return (1000, path_list)

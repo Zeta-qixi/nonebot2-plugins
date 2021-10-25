@@ -17,19 +17,22 @@ from io import BytesIO
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 
-try:
-    import Getpic_z as Getpic
-except:
-    import Getpic
-    
-setubot = Getpic.setubot()
+from Getpic import SetuBot
+
+class setubot(SetuBot):
+    def __init__(self):
+        super(setubot, self).__init__()
+        self.pic_id = []
+
+setubot = setubot()
+
 try:
     master = get_driver().config.master
 except:
     master = []
 
 ##变量##
-path =os.path.abspath(__file__).split('__')[0]
+path =os.path.dirname(__file__)
 MAX = 3  # 冲的次数
 times = {} # 记录冲的次数
 r18type= ['关闭','开启']
@@ -54,9 +57,7 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
             keyword = comman[0]
             num = int(comman[1])
     except :
-        pass
-
-   
+        pass   
     user_id = event.user_id  
     if user_id not in times.keys():
         times[user_id] = 0
@@ -72,19 +73,11 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
             num = 3
             await bot.send(event, message = f'一次最多3张哦～')
     
-    res, res_data = await setubot.setu_info(int(num), keyword)  
+    res, res_data = await setubot.get_setu_info(int(num), keyword)  
 
     if res == 1000:
-        for i ,base64 in enumerate(res_data):
-            
-            #image = MessageSegment.image(f'base64://{base64}')
-
-            # 保存到本地滴
-            img = Image.open(BytesIO(base64))
-            img_src = path + f'/data/setu{i}.jpg'
-            img.save(img_src)
-
-            image = MessageSegment.image(f'file://{img_src}')
+        for pic_path in (res_data):
+            image = MessageSegment.image(f'file://{pic_path}')
             msg = await bot.send(event, message = image)
             setubot.pic_id.append(msg['message_id'])
             time.sleep(1)
@@ -97,9 +90,7 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
     elif res == 1100:
         await bot.send(event, message = '你🐛的太快啦')
         
-
-
-recall_setu = on_command('撤回')
+recall_setu = on_command('撤回',aliases={'太色了'})
 @recall_setu.handle()
 async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
 
