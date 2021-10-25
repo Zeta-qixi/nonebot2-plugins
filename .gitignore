@@ -8,7 +8,7 @@ LICENSE
 #自用插件
 mc_server/
 python_cmd/
-setu/Getpic_z.py
+setu/Getpic_former.py
 #一些插件
 Action.py
 clock_in/
