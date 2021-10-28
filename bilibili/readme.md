@@ -9,10 +9,12 @@
 ### 2. 创建表
 ```sql
 CREATE TABLE bilibili(  
+    id int primary key AUTOINCREMENT,
     gid INTEGER not null,     -- 群id
     mid INTEGER not null,     -- b站id
     name char(50),            -- 主播名称
     live INTEGER,             --（0 or 1）是否推送直播消息
+    is_live INTEGER,          -- 直播状态
     dynamic INTEGER,          --（0 or 1）是否推送动态消息
     latest_dynamic INTEGER,   -- 最新动态时间
     dy_filter char(50),       -- 动态过滤字段 （过滤没有该字段的动态）

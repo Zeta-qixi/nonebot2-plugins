@@ -19,23 +19,20 @@ try:
 except:
     master = []
 
-
+# (id, gid, mid, name, live, is_live, dynamic, lastest_dynamic, dy_filter) 
 def get_data_from_db():
-    dict = {}
-    for i, item in enumerate(select_dynamic()):
-        dict[i] = {
-            "gid":item[0], "mid":item[1], "lastest":item[5], "filter":item[6]
-        }
-
-    return dict
-
-
+    data = []
+    for item in (select_dynamic()):
+        data.append({
+            "gid":item[1], "mid":item[2], "lastest":item[-2], "filter":item[-1]
+        })
+    return data
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 @scheduler.scheduled_job('cron', minute='*/10', id='dynamic_sched_')
 async def push_dynamic():
 
-    for item in get_data_from_db().values():
+    for item in get_data_from_db():
         data = get_dynamic(item['mid'])
         for dy in data['cards'][3::-1]:
             

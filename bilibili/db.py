@@ -1,15 +1,3 @@
-'''
-CREATE TABLE bilibili(  
-    gid INTEGER not null,
-    mid INTEGER not null,
-    name char(50),
-    live INTEGER,
-    dynamic INTEGER,
-    latest_dynamic INTEGER,
-    dy_filter char(50),
-    primary key(gid, mid)
-);
-'''
 import sqlite3
 import os
 import time
@@ -36,8 +24,8 @@ INSERT
 '''
 def add_focus(gid:int, mid:int,name:str, live=0, dynamic=0):
 
-   sql = f'''INSERT INTO {TABLE} (gid, mid, name, live, dynamic, latest_dynamic) 
-   values ("{gid}", {mid}, "{name}", "{live}", "{dynamic}", {time.time()});'''
+   sql = f'''INSERT INTO {TABLE} (gid, mid, name, live, is_live,dynamic, latest_dynamic) 
+   values ("{gid}", {mid}, "{name}", "{live}", "0", "{dynamic}", {time.time()});'''
    execute(sql)
 
 
@@ -60,15 +48,8 @@ def select_dynamic():
     return execute(BASE_SELECT_SQL + " where dynamic = 1")
 
 
-'''
-UPDATE
-'''
-def update(gid, mid ,field: str, value):
-    """
-      :更新up的关注
 
-      field: 字段
-    """
+def update(gid, mid ,field: str, value):
     execute(f'UPDATE {TABLE} set {field} = "{value}" WHERE mid = {mid} and gid = {gid}')
 
 

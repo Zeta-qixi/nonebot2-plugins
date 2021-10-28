@@ -3,29 +3,26 @@ test.*
 *test*
 .vscode/
 LICENSE
+*.ipynb
 -
 
-#自用插件
+#一些插件
+
 mc_server/
 python_cmd/
 setu/Getpic_former.py
-#一些插件
+
 Action.py
 clock_in/
-*.ipynb
 majsoul.py
 azurlane/
 account/
 
 #数据
-rua/data/*.gif
-setu/data
+data/
+*.db
 data.*
-#json数据
-
-chat/*.json
-bilibili_live/*.json
-
-maimaidx/data/*.json
 .gitignore
 
+chat/filter.json
+.gitignore
