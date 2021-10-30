@@ -10,10 +10,24 @@ class SetuBot(Pixiv):
   def __init__(self):
     super(SetuBot, self).__init__()
 
-  async def get_setu_info(self, num = 1, keyword = None):
-    """
+  async def get_pic(self, works, num=1):
+    # 获取 or 下载图片
+    works = random.choices(works, k = num)
+    picb64 = await self.get_pic_bytes(self.get_original_url(works))
 
-     return -> 状态码, path 列表
+    path_list = []
+    for work, b64 in zip(works, picb64):
+      img = Image.open(BytesIO(b64))
+      path = PATH + f'/data/image/{work.id}.png'
+      img.save(path)
+      path_list.append((work.id, path))
+    return path_list
+
+
+  async def get_setu_base(self,keyword = None, num = 1):
+    """
+    索引搜索和rank合并
+     return -> 状态码, path_list
     """
     if keyword in self.rank_storage.keys() or not keyword:
       keyword = keyword or self.mode
@@ -24,14 +38,14 @@ class SetuBot(Pixiv):
     if num > len(works):
       num = len(works)
     
-    works = random.choices(works, k = num)
-    picb64 = await self.get_pic(self.get_large_url(works))
+    pic = await self.get_pic(works, num)
+    return (1000, pic)
 
-    path_list = []
-    for work, b64 in zip(works, picb64):
-      img = Image.open(BytesIO(b64))
-      path = PATH + f'/data/{work.id}.png'
-      img.save(path)
-      path_list.append(path)
-
-    return (1000, path_list)
+  async def get_setu_artist(self, name, num=1):
+    """
+    索引搜索和rank合并
+     return -> 状态码, path_list
+    """
+    works = await self.user_illusts(name)
+    pic = await self.get_pic(works, num)
+    return (1000, pic)

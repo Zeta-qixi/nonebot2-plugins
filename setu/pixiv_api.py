@@ -3,6 +3,7 @@ from pixivpy_async import AppPixivAPI, PixivAPI
 from typing import List
 import aiohttp
 import asyncio
+import random
 import json
 import os
 
@@ -27,8 +28,8 @@ class Pixiv(AppPixivAPI):
         super(Pixiv, self).__init__(**requests_kwargs)
 
         self.date = ''
+        self.myid = 'no_r18' # 对应json中没开启r18的账号
         self.mode = 'day_male'
-        self.refresh_token = TOKEN
         self.reset_storage()
 
     def reset_storage(self):
@@ -46,6 +47,17 @@ class Pixiv(AppPixivAPI):
     def filter_(self, res: List) -> List:
         return [work for work in res if work.type == 'illust']
         
+    def set_user(self, id):
+        self.user = str(id)
+
+    async def login(self):
+        if self.user in TOKEN.keys():
+            token = TOKEN[self.user]
+        else:
+            #token= random.choice(list(TOKEN.values()))
+            token = TOKEN[self.myid]
+        return (await super().login(refresh_token=token))
+
     def update_date(self):
         yesterday = datetime.today() + timedelta(-2)
         yesterday_format = yesterday.strftime('%Y-%m-%d')
@@ -55,7 +67,7 @@ class Pixiv(AppPixivAPI):
             return True
         return False
 
-    def get_large_url(self, works: List) -> List[str]:
+    def get_original_url(self, works: List) -> List[str]:
         """
         input: 已重写的方法返回的result集合
          或 父类方法的result['illusts']
@@ -65,12 +77,15 @@ class Pixiv(AppPixivAPI):
         urls = []
         for work in works:
             try:
-                urls.append(work['image_urls']['large'])
+                for w in work['meta_single_page'].values():
+                    urls.append(w)
+                for w in work['meta_pages']:
+                    urls.append(w['image_urls']['original'])
             except:
-                urls.append(work['image_urls']['medium'])
+                pass
         return urls
 
-    async def get_pic(self, urls: List[str]) -> List[bytes]:
+    async def get_pic_bytes(self, urls: List[str]) -> List[bytes]:
         async def func(session, url):
             fin = bytes()
             async with session.get(url, verify_ssl=False, proxy=PROXY) as res:
@@ -88,35 +103,59 @@ class Pixiv(AppPixivAPI):
                 picb64_list.append(res_.result())
             return picb64_list
         
+    async def get_more_illust(self, func, nums = 50, **kwargs):
+        '''
+        获取翻页内容
+        '''
+        await self.login()
+        data = []
+        results = await func(**kwargs)
+        data = (self.filter_(results['illusts']))
+        try:
+            while (len(data)<nums):
+                    next_kwargs = self.parse_qs(results.next_url)
+                    results = await func(**next_kwargs)
+                    data =+ (self.filter_(results['illusts']))
+        except:
+            pass
+        return data
 
     async def search_illust(self, **kwargs) -> List:
         """
         word: tag
         search_target:
-            1:'partial_match_for_tags',
-            2:'exact_match_for_tags',
-            3:'title_and_caption'
+            'partial_match_for_tags',
+            'exact_match_for_tags',
+            'title_and_caption' - 标题说明文
+        sort:
+            'data_desc', 'data_asc', 'popular_desc'
         """
-        await self.login()
-        kwargs.setdefault('word', None)
-        kwargs.setdefault('search_target', 'exact_match_for_tags')
-        results = await super().search_illust(**kwargs)
-        return self.filter_(results['illusts'])
-        #await self.search_illust(tag, search_types[search_type])
+        tags = ['10000users入り', '5000users入り', '1000users入り']
+        kwargs['word'] = kwargs['word'] + ' ' + random.choice(tags)
+        return(await self.get_more_illust(super().search_illust, **kwargs))
+
 
     async def illust_ranking(self, **kwargs):
         kwargs.setdefault('mode', self.date)
         if self.update_date() or not self.rank_storage[kwargs['mode']]:    
             kwargs.setdefault('date', self.date)
-            await self.login()
-            results = await super().illust_ranking(**kwargs)
-            self.rank_storage[kwargs['mode']] = (self.filter_(results['illusts']))
-            try:
-                while len(self.rank_storage[kwargs['mode']]) < 100:
-                    next_kwargs = self.parse_qs(results.next_url)
-                    results = await super().illust_ranking(**next_kwargs)
-                    self.rank_storage[kwargs['mode']].extend(self.filter_(results['illusts']))
-            except:
-                pass
-            
+            await self.login()      
+            results = await self.get_more_illust(super().illust_ranking, **kwargs)
+            self.rank_storage[kwargs['mode']] = results
+
         return self.rank_storage[kwargs['mode']]
+
+    async def user_illusts(self, name):
+        '''
+        画师id 或 名称
+        '''
+        await self.login()
+        
+        if isinstance(name, int):
+            id = name
+        else:
+            info_ = await self.search_user(name)
+            id = info_['user_previews'][0]['user']['id']
+        return (await self.get_more_illust(super().user_illusts, user_id=id))
+
+
