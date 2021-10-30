@@ -9,7 +9,6 @@ from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import MessageEvent, PokeNotifyEvent
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot.log import logger
-from nonebot.rule import to_me
 from nonebot.typing import T_State
 
 master = nonebot.get_driver().config.master
@@ -52,12 +51,16 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
     uid = event.user_id
     gid = event.group_id
     member_info = await bot.get_group_member_info(group_id=gid, user_id=uid)
-    if member_info['role'] == "owner" or uid in master:
-        if str(event.message) != '':
+    
+    if str(event.message) != '':
             state['ret'] = str(event.message)
-    else:
-        state['ret'] = False
-        await bot.send(event, message='你没有权限哦～')
+    
+    # if member_info['role'] == "owner" or uid in master:
+    #     if str(event.message) != '':
+    #         state['ret'] = str(event.message)
+    # else:
+    #     state['ret'] = False
+    #     await bot.send(event, message='你没有权限哦～')
         
 
 
