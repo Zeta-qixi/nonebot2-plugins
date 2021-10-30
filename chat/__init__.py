@@ -10,7 +10,6 @@ from nonebot.adapters.cqhttp.event import (Event, GroupMessageEvent,
                                            MessageEvent, PokeNotifyEvent)
 from nonebot.adapters.cqhttp.message import Message
 from nonebot.log import logger
-from nonebot.rule import to_me
 from nonebot.typing import T_State
 
 try:
@@ -43,51 +42,48 @@ except:
     pass
 
 def save_json(keys:str, values:str, id:str):
-    '''
-    写数据到json
-    '''
-    global data
-    if id not in data:
-        data[id] = {}
-    if keys not in data[id]:
-        data[id].setdefault(keys,[])
-    if values not in data[id][keys]: 
-        data[id][keys].append(values)
-    with open(path, 'w+') as f :
-        tojson = json.dumps(data,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
-        f.write(tojson)
+		'''
+		写数据到json
+		'''
+		global data
+		if id not in data:
+				data[id] = {}
+		if keys not in data[id]:
+				data[id].setdefault(keys,[])
+		if values not in data[id][keys]: 
+				data[id][keys].append(values)
+		with open(path, 'w+') as f :
+				tojson = json.dumps(data,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
+				f.write(tojson)
 
 chat = on_message(priority=99)
 @chat.handle()
 async def chat_handle(bot: Bot, event: GroupMessageEvent):
-    message = str(event.raw_message)
-    group_id = event.group_id
-    user_id = event.user_id
-    
-    global ptalk
-    ptalk.setdefault(group_id,P)
-    trigger.setdefault(group_id,' ')
-   
-    
-    for id in [1, group_id]:
+  message = str(event.raw_message)
+  group_id = event.group_id
+  user_id = event.user_id
+  
+  global ptalk
+  ptalk.setdefault(group_id,P)
+  trigger.setdefault(group_id,' ')
+  
+  for id in [1, group_id]:
+    try:
+      id = union(id, 1)
+      for i in data[id]:
+        if i in message :
+          if len(i) > 3 or i == message:
+            # 重复的触发词不触发
+            if trigger[group_id] != i : 
+              if random.random() < ptalk[group_id] or user_id in focus_id:
+                if repeat_stop:
+                  trigger[group_id] = i
+                await bot.send(event,message=Message(random.choice((data[id][i]))))
+                return            
+    except:
+      pass
 
-        try:
-            id = union(id, 1)
-            for i in data[id]:
-                if i in message :
-                    if len(i) > 3 or i == message:
-                        # 重复回复的
-                        if trigger[group_id] != i : 
-                            if random.random() < ptalk[group_id] or user_id in focus_id:
-                                if repeat_stop:
-                                    trigger[group_id] = i
-                                await bot.send(event,message=Message(random.choice((data[id][i]))))
-                                return
-                                
-        except:
-            pass
-
-setp = on_command('setP', aliases={"setp"}, rule = to_me())
+setp = on_command('setP', aliases={"setp"})
 @setp.handle()
 async def setp_handle(bot: Bot, event: Event, state: T_State):
     group_id = event.group_id
@@ -107,7 +103,6 @@ async def set_handle(bot: Bot, event: Event, state: T_State):
     设置的问答
     setall 时全覆盖
     '''
-
     if "setall" in state["_prefix"]["command"]:
         state['gid'] = 1
         state['uid'] = 1
