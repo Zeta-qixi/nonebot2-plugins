@@ -4,7 +4,6 @@ from nonebot import on_command, on_message, on_notice
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event, GroupRecallNoticeEvent
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
-from nonebot.rule import to_me
 from nonebot.typing import T_State
 
 rc = on_notice()
