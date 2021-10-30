@@ -56,7 +56,7 @@ async def living():
                 if status == 1 and item['status'] == 0:
                 
                     item['status'] = 1
-                    update(gid, mid, "is_live", 1)
+                    update(item["gid"], mid, "is_live", 1)
                     msg = f'''
                     你关注的{info["name"]}正在直播！\n
                     #{liveroom["title"]}\n
@@ -66,7 +66,7 @@ async def living():
 
                 elif status == 0 and item['status'] == 1:
                     item['status'] = 0
-                    update(gid, mid, "is_live", 0)
+                    update(item["gid"], mid, "is_live", 0)
                     msg = f'{info["name"]}下播了。。'
                     await bot.send_group_msg(group_id = item["gid"], message=msg)
             finally:
@@ -90,17 +90,17 @@ async def add(bot: Bot, event: Event, state: T_State):
         return
 
     try:
-        mid = int(str(event.get_message()))
+        mid = (str(event.get_message()))
+        if 'uid' in mid:
+            mid = mid.split(':')[-1]
+        mid = int(mid)
         info = get_info(mid)
         name = info['name']
-        info = get_info(mid)
-        name = info['name']
-        add_focus(gid, mid, name, 1, 0)
-
-        await bot.send(event, message=f"添加关注 {name}")
-
-    except sqlite3.IntegrityError:
-        await bot.send(event, message=f"已经在关注 {name} 了哦")
+        if not select_one(gid, mid):
+            add_focus(gid, mid, name, 1, 0)
+            await bot.send(event, message=f"添加关注 {name}")
+        else:
+            await bot.send(event, message=f"已经在关注 {name} 了哦")
     except KeyError:
         await bot.send(event, message=f"找不到这个id哦～")
     except ValueError:
