@@ -51,11 +51,7 @@ class Pixiv(AppPixivAPI):
         self.user = str(id)
 
     async def login(self):
-        if self.user in TOKEN.keys():
-            token = TOKEN[self.user]
-        else:
-            #token= random.choice(list(TOKEN.values()))
-            token = TOKEN[self.myid]
+        token= random.choice(list(TOKEN.values()))
         return (await super().login(refresh_token=token))
 
     def update_date(self):
@@ -139,7 +135,7 @@ class Pixiv(AppPixivAPI):
         kwargs.setdefault('mode', self.date)
         if self.update_date() or not self.rank_storage[kwargs['mode']]:    
             kwargs.setdefault('date', self.date)
-            await self.login()      
+            await self.login()
             results = await self.get_more_illust(super().illust_ranking, **kwargs)
             self.rank_storage[kwargs['mode']] = results
 

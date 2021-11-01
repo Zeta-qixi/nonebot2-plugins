@@ -11,7 +11,17 @@ class SetuBot(Pixiv):
     super(SetuBot, self).__init__()
 
   async def get_pic(self, works, num=1):
-    # 获取 or 下载图片
+    '''
+      input : 
+        works: api返回的setu信息数组
+        num: 随机的数量
+
+      下载setu到本地
+
+      return :
+        setu绝对路径 List合集
+    '''
+
     works = random.choices(works, k = num)
     picb64 = await self.get_pic_bytes(self.get_original_url(works))
 
@@ -26,8 +36,7 @@ class SetuBot(Pixiv):
 
   async def get_setu_base(self,keyword = None, num = 1):
     """
-    索引搜索和rank合并
-     return -> 状态码, path_list
+     return -> 状态码, (id, path_list)
     """
     if keyword in self.rank_storage.keys() or not keyword:
       keyword = keyword or self.mode
@@ -43,9 +52,22 @@ class SetuBot(Pixiv):
 
   async def get_setu_artist(self, name, num=1):
     """
-    索引搜索和rank合并
-     return -> 状态码, path_list
+     return -> 状态码, (id, path_list)
     """
     works = await self.user_illusts(name)
-    pic = await self.get_pic(works, num)
-    return (1000, pic)
+    return(1000, await self.get_pic(works, num))
+
+
+  async def get_setu_by_id(self,id: int):
+      await self.login()
+      work = await self.illust_detail(id)
+      work = work['illust']
+      return(1000, await self.get_pic([work], 1))
+
+
+  async def get_setu_recommend(self, id: int, num:int =1):
+    await self.login()
+    works = await self.illust_recommended(id)
+    if works:
+      works = works['illusts']
+      return(1000, await self.get_pic(works, num))
