@@ -3,7 +3,6 @@ from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import (Event, GroupMessageEvent,
                                            MessageEvent, PokeNotifyEvent)
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
-from nonebot.rule import to_me
 from nonebot.typing import T_State
 import time
 import random
