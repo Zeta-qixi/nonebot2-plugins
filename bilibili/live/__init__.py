@@ -45,7 +45,7 @@ def get_info(mid:int):
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 @scheduler.scheduled_job('cron', minute='*/1', id='live_sched')
 async def living():
-    for bot in get_bots().values():
+    for bot in list(get_bots().values()):
     
         for item in LIVE.values():
             await asyncio.sleep(3)
@@ -56,17 +56,14 @@ async def living():
                 if status == 1 and item['status'] == 0:
                 
                     item['status'] = 1
-                    update(item["gid"], mid, "is_live", 1)
-                    msg = f'''
-                    你关注的{info["name"]}正在直播！\n
-                    #{liveroom["title"]}\n
-                    # {liveroom["url"]}[CQ:image,file={liveroom["cover"]}]'''
+                    update(item["gid"], item["mid"], "is_live", 1)
+                    msg = f'你关注的{info["name"]}正在直播！\n#{liveroom["title"]}\n{liveroom["url"]}[CQ:image,file={liveroom["cover"]}]'
 
                     await bot.send_group_msg(group_id = item["gid"], message=msg) 
 
                 elif status == 0 and item['status'] == 1:
                     item['status'] = 0
-                    update(item["gid"], mid, "is_live", 0)
+                    update(item["gid"], item["mid"], "is_live", 0)
                     msg = f'{info["name"]}下播了。。'
                     await bot.send_group_msg(group_id = item["gid"], message=msg)
             finally:

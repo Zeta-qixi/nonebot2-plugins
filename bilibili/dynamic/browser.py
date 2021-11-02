@@ -51,7 +51,7 @@ async def get_dynamic_screenshot(url, filter=None):
 
         if filter:
             if filter not in text:
-                raise UserWarning('过滤')
+                raise UserWarning('过滤动态')
             
 
         bar = await page.query_selector(".text-bar")
