@@ -23,9 +23,6 @@ except:
 
 ##变量##
 path =os.path.dirname(__file__) + '/data'
-MAX = 3  # 冲的次数
-times = {} # 记录冲的次数
-r18type= ['关闭','开启']
 
 ## setubot
 class setubot(SetuBot):
@@ -61,20 +58,17 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
     if ret:
         if ret.group(1) == '推荐':
             res, res_data = await setubot.get_setu_recommend(int(ret.group(2)),num)
-        
         elif ret.group(1) in ['搜索', '搜图']:
             res, res_data = await setubot.get_setu_by_id(int(ret.group(2)))
-        
         else:
             res, res_data = await setubot.get_setu_artist(ret.group(2), num)
-    
     else:
         res, res_data = await setubot.get_setu_base(keyword, num)
 
     if res == 1000:
         for info, pic_path in (res_data):
             image = MessageSegment.image(f'file://{pic_path}')
-            msg = await bot.send(event, message = f'id: {info}\n' + image)
+            msg = await bot.send(event, message = info + image)
             setubot.push_pic_id(uid, msg['message_id'])
 
     elif res == 1001:

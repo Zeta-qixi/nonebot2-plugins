@@ -30,7 +30,8 @@ class SetuBot(Pixiv):
       img = Image.open(BytesIO(b64))
       path = PATH + f'/data/image/{work.id}.png'
       img.save(path)
-      path_list.append((work.id, path))
+      msg = f'id:{work.id}\n画师:{work.user.id}\n'
+      path_list.append((msg, path))
     return path_list
 
 

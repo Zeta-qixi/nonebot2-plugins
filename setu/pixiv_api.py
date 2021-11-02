@@ -8,19 +8,16 @@ import json
 import os
 
 HEADERS = {'Referer': 'https://www.pixiv.net',}
-
 PROXY = ""
 TOKEN = ""
 try:
-    path = os.path.dirname(__file__) + "/data.json"
-    with open(path) as f:
+    PATH = os.path.dirname(__file__) + "/data.json"
+    with open(PATH) as f:
         data = json.load(f)
         PROXY = data['PROXY']
         TOKEN = data['TOKEN'] 
 except:
     pass
-
-
 
 class Pixiv(AppPixivAPI):
     def __init__(self, **requests_kwargs):
@@ -28,8 +25,7 @@ class Pixiv(AppPixivAPI):
         super(Pixiv, self).__init__(**requests_kwargs)
 
         self.date = ''
-        self.myid = 'no_r18' # 对应json中没开启r18的账号
-        self.mode = 'day_male'
+        self.mode = 'day'
         self.reset_storage()
 
     def reset_storage(self):
@@ -103,7 +99,6 @@ class Pixiv(AppPixivAPI):
         '''
         获取翻页内容
         '''
-        await self.login()
         data = []
         results = await func(**kwargs)
         data = (self.filter_(results['illusts']))
@@ -126,12 +121,20 @@ class Pixiv(AppPixivAPI):
         sort:
             'data_desc', 'data_asc', 'popular_desc'
         """
-        tags = ['10000users入り', '5000users入り', '1000users入り']
-        kwargs['word'] = kwargs['word'] + ' ' + random.choice(tags)
-        return(await self.get_more_illust(super().search_illust, **kwargs))
+        await self.login()
+
+        tags = ['10000', '5000', '3000', '1000']
+        base_tag = kwargs['word']
+        res = []
+        for tag in tags:
+            kwargs['word'] = f'{base_tag} {tag}users入り'
+            res += await self.get_more_illust(super().search_illust, 10 , **kwargs)
+        return res
 
 
     async def illust_ranking(self, **kwargs):
+        await self.login()
+
         kwargs.setdefault('mode', self.date)
         if self.update_date() or not self.rank_storage[kwargs['mode']]:    
             kwargs.setdefault('date', self.date)
@@ -147,11 +150,12 @@ class Pixiv(AppPixivAPI):
         '''
         await self.login()
         
-        if isinstance(name, int):
-            id = name
+        if name.isdigit():
+            id = int(name)
         else:
             info_ = await self.search_user(name)
             id = info_['user_previews'][0]['user']['id']
+            
         return (await self.get_more_illust(super().user_illusts, user_id=id))
 
 
