@@ -13,10 +13,10 @@ b站up直播提醒，动态转发
 舞萌随歌
 
 ## [nickname](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/nickname)
-自定义昵称
+自定义昵称 （没什么用）
 
 ## [rua](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/rua)
-戳一戳群友rua头像，或者rua图片
+戳一戳群友rua头像，或者rua图片。 （还有其他头像合成表情）
 
 ## [search_pic](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/search_pic)
 搜图 参考 [hoshino项目](https://github.com/pcrbot/Hoshino-plugin-transplant/tree/master/image)
@@ -33,16 +33,19 @@ b站up直播提醒，动态转发
 ## [漫画更新提醒](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/comic_push) 
 属于是爬虫了
 
+## [涩图评分](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/setu_score) 
+调用百度智能云的图片瑟琴风控api
+
+## [申请管理、群管理等](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/atirbot)
+bot添加好友 群管理 等等等等 
+
 ## jrrp.py 
 发个随机数而已
 
 # 未完成 
 
-## setu_score  
-调用百度api为色图打分  
 ## account 
 账号记录、代肝记录 （应该是这样）
-## atribot
-bot添加好友 群管理 等等等等 
+
 
 
