@@ -3,7 +3,6 @@ from lxml import etree
 from kth_timeoutdecorator import *
 import json
 
-# 之后写到bot配置中
 SAUCENAO_KEY = "22e3b750875fdd61ccd55426a1d7ee95bc8a4105" # SauceNAO 的 API key
 
 TIMELIMIT_IMAGE = 7 # 识图功能的时间限制

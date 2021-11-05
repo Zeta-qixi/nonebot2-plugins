@@ -53,9 +53,8 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
     else:
         keyword = str(event.message)
     num = 3 if num > 3 else num
-    ret = re.search(r'(画师|作者|搜[索图]|推荐)\s?(.*)', keyword)
-    
-    if ret:
+        
+    if ret := re.search(r'(画师|作者|搜[索图]|推荐)\s?(.*)', keyword):
         if ret.group(1) == '推荐':
             res, res_data = await setubot.get_setu_recommend(int(ret.group(2)),num)
         elif ret.group(1) in ['搜索', '搜图']:
