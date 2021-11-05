@@ -24,7 +24,6 @@ trigger = {} #重复触发词判定
 data = {} #语料数据
 ptalk = {} #群回复率
 P = 1
-focus_id = [] #特别对象 无视概率直接回复 user_id:int 
 filter_list = []
 
 gpath =os.path.dirname(__file__)
@@ -56,6 +55,7 @@ def save_json(keys:str, values:str, id:str):
 				tojson = json.dumps(data,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
 				f.write(tojson)
 
+
 chat = on_message(priority=99)
 @chat.handle()
 async def chat_handle(bot: Bot, event: GroupMessageEvent):
@@ -68,32 +68,10 @@ async def chat_handle(bot: Bot, event: GroupMessageEvent):
   trigger.setdefault(group_id,' ')
   
   for id in [1, group_id]:
-    try:
-      id = union(id, 1)
-      for i in data[id]:
-        if i in message :
-          if len(i) > 3 or i == message:
-            # 重复的触发词不触发
-            if trigger[group_id] != i : 
-              if random.random() < ptalk[group_id] or user_id in focus_id:
-                if repeat_stop:
-                  trigger[group_id] = i
-                await bot.send(event,message=Message(random.choice((data[id][i]))))
-                return            
-    except:
-      pass
-
-setp = on_command('setP', aliases={"setp"})
-@setp.handle()
-async def setp_handle(bot: Bot, event: Event, state: T_State):
-    group_id = event.group_id
-    user_id = event.user_id
-    if user_id in bot.config.master:
-        args = str(event.get_message()).strip()
-        global ptalk
-        if args:
-            ptalk[group_id] = float(args)
-            await setp.finish(f'现在的回复率为：{ptalk[group_id]}')
+    union_id = union(id, 1)
+    if message in data[union_id]:
+        await bot.send(event,message=Message(random.choice((data[union_id][message]))))
+        return            
 
 
 set_respond = on_command('set',aliases={"setall"})
