@@ -6,18 +6,22 @@
 TOKEN为p站的`refresh_token` 在网页登陆pixiv账号 然后 `f12` 自己找就好  
 - 如果有pixiv会员账号 请修改`pixiv_api.py`第13行的 `VIP = True`  
 - 如果没有vip账号 建议添加多个账号  
+./data.json
 ```json
-// ./data.json 
+ 
 {
     "PROXY": "你的代理服务器",
     "TOKEN": {
         "setu1" : "o-HYGiZqb****ny7RSwX7**********UD9He9Vgk",
         "setu2" : "-AJFpYE****DdbRS*********UJq_tBmgXRJFNY4",
-        "setu3" : "pYjbX65N****qXO1D2OlXDMKjrxKaEa2itntWIqvQaHA",
+        "setu3" : "pYjbX65N****qXO1D2O********xKaEa2itntWIqvQaHA",
         "no_r18" : "XMRudbQvup****u3N19K************ujTvt0NQ"
     }
 }
 ```
+## 关于data
+该插件会下载setu原图到`data/image`  
+`data/nosese`是撤回setu后随机发送的  
 
 ## 功能
 ### 基础色图功能
