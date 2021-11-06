@@ -22,7 +22,7 @@ b站up直播提醒，动态转发
 搜图 参考 [hoshino项目](https://github.com/pcrbot/Hoshino-plugin-transplant/tree/master/image)
 
 ## [setu](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/setu) 
-大家都懂 lolicon的api （本来有piv的，但现在无了 有空再弄）
+基于[pixivpy_async](https://github.com/Mikubill/pixivpy-async)的setu插件
 
 ## [sleep_clock](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/sleep_clock) 
 提醒睡觉小助手 （一天睡觉23小时）

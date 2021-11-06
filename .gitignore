@@ -20,6 +20,8 @@ account/
 
 #数据
 data/
+!setu/data
+setu/data/image
 *.db
 data.*
 .gitignore
