@@ -12,6 +12,7 @@ import requests
 import random
 import asyncio
 import time
+from collections import defaultdict
 from PIL import Image
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 from Getpic import SetuBot
@@ -28,10 +29,8 @@ path =os.path.dirname(__file__) + '/data'
 class setubot(SetuBot):
     def __init__(self):
         super(setubot, self).__init__()
-        self.pic_message = {}
-
+        self.pic_message = defaultdict(list)
     def push_pic_id(self, uid, pid):
-        self.pic_message.setdefault(uid, [])
         self.pic_message[uid].append(pid)
 
 setubot = setubot()
@@ -78,19 +77,40 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
     elif res == 1100:
         await bot.send(event, message = '你🐛的太快啦')
         
-recall_setu = on_regex('撤回色图|太[涩色瑟]了', block=False)
+recall_setu = on_regex('撤回|太[涩色瑟]了', block=False)
 @recall_setu.handle()
 async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
 
     id = event.user_id
-    for pid in setubot.pic_message[id]:
-        await bot.delete_msg(message_id=pid)
-        setubot.pic_message[id].remove(pid)
-    img_src = path + '/recall.png'
-    await bot.send(event, message = MessageSegment.image(f'file://{img_src}'))
+    if setubot.pic_message[id]:
+        for pid in setubot.pic_message[id]:
+            await bot.delete_msg(message_id=pid)
+            setubot.pic_message[id].remove(pid)
+
+        dir = path + '/nosese'
+        img_src = dir + '/' + random.choice(os.listdir(dir))
+        print(img_src)
+
+        await bot.send(event, message = MessageSegment.image(f'file://{img_src}'))
 
 
+my_follow = on_regex('来(.?)份[涩色瑟]图', block=False)
+@my_follow.handle()
+async def my_follow_(bot: Bot, event: Event, state: T_State):
+    
+    num = str(state['_matched_groups'][0])
+    num = int(num) if num.isdigit() else 1
 
+    uid = event.user_id
+    res, res_data = await setubot.get_follow_setu(uid, num)
+    if res == 400:
+        await bot.send(event, message = "你的🆔没在列表内登记哦～")
+
+    if res == 1000:
+        for info, pic_path in (res_data):
+            image = MessageSegment.image(f'file://{pic_path}')
+            msg = await bot.send(event, message = info + image)
+            setubot.push_pic_id(uid, msg['message_id'])
 
 chack_pixiv = on_command("查询个人信息")
 @chack_pixiv.handle()

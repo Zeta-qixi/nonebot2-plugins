@@ -1,4 +1,4 @@
-from pixiv_api import Pixiv
+from pixiv_api import Pixiv, TOKEN
 import random
 from PIL import Image
 from io import BytesIO
@@ -59,6 +59,16 @@ class SetuBot(Pixiv):
     return(1000, await self.get_pic(works, num))
 
 
+  async def get_follow_setu(self, uid: str, num=1):
+    if str(uid) not in TOKEN.keys():
+      return (400, 0)
+    works = await self.illust_follow(TOKEN[str(uid)])
+    if works:
+      return(1000, await self.get_pic(works, num))
+
+# ---- 重构 ⬆️ ---- #
+
+# ---- 直接使用 ⬇️ ---- #
   async def get_setu_by_id(self,id: int):
       await self.login()
       work = await self.illust_detail(id)
