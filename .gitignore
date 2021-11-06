@@ -11,7 +11,7 @@ LICENSE
 mc_server/
 python_cmd/
 setu/Getpic_former.py
-
+maimaidx2/
 Action.py
 clock_in/
 majsoul.py
@@ -22,6 +22,7 @@ account/
 data/
 !setu/data
 setu/data/image
+
 *.db
 data.*
 .gitignore
