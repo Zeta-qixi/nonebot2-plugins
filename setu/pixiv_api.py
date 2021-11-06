@@ -10,14 +10,17 @@ import os
 HEADERS = {'Referer': 'https://www.pixiv.net',}
 PROXY = ""
 TOKEN = ""
+VIP = False
 try:
     PATH = os.path.dirname(__file__) + "/data.json"
     with open(PATH) as f:
         data = json.load(f)
         PROXY = data['PROXY']
-        TOKEN = data['TOKEN'] 
+        TOKEN = data['TOKEN']
 except:
     pass
+
+
 
 class Pixiv(AppPixivAPI):
     def __init__(self, **requests_kwargs):
@@ -25,9 +28,9 @@ class Pixiv(AppPixivAPI):
         super(Pixiv, self).__init__(**requests_kwargs)
 
         self.date = ''
-        self.mode = 'day'
+        self.mode = 'day_male'
         self.reset_storage()
-
+     
     def reset_storage(self):
         self.rank_storage = {
         "day":[], "week":[], "month":[], 
@@ -46,8 +49,9 @@ class Pixiv(AppPixivAPI):
     def set_user(self, id):
         self.user = str(id)
 
-    async def login(self):
-        token= random.choice(list(TOKEN.values()))
+    async def login(self, token = None):
+        if not token:
+            token= random.choice(list(TOKEN.values()))
         return (await super().login(refresh_token=token))
 
     def update_date(self):
@@ -122,13 +126,16 @@ class Pixiv(AppPixivAPI):
             'data_desc', 'data_asc', 'popular_desc'
         """
         await self.login()
-
-        tags = ['10000', '5000', '3000', '1000']
-        base_tag = kwargs['word']
+            
         res = []
-        for tag in tags:
-            kwargs['word'] = f'{base_tag} {tag}users入り'
-            res += await self.get_more_illust(super().search_illust, 10 , **kwargs)
+        if 'users入り' in kwargs['word'] or VIP:
+            res += await self.get_more_illust(super().search_illust, 30 , **kwargs)
+        else:
+            tags = ['50000', '10000', '5000', '3000', '1000']
+            base_tag = kwargs['word']
+            for tag in tags:
+                kwargs['word'] = f'{base_tag} {tag}users入り'
+                res += await self.get_more_illust(super().search_illust, 10 , **kwargs)
         return res
 
 
@@ -159,3 +166,9 @@ class Pixiv(AppPixivAPI):
         return (await self.get_more_illust(super().user_illusts, user_id=id))
 
 
+    async def illust_follow(self, token):
+        '''
+        关注列表新作
+        '''
+        await self.login(token)
+        return (await self.get_more_illust(super().illust_follow, nums=30, req_auth=True))
