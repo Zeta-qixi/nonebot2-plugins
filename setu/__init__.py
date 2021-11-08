@@ -5,6 +5,7 @@ from nonebot.adapters.cqhttp.event import Event
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot.typing import T_State
 from nonebot.log import logger
+from .utils import set_random_seed
 import re
 import os
 import sys
@@ -30,8 +31,10 @@ class setubot(SetuBot):
     def __init__(self):
         super(setubot, self).__init__()
         self.pic_message = defaultdict(list)
-    def push_pic_id(self, uid, pid):
-        self.pic_message[uid].append(pid)
+        self.group_token = {}
+
+    def push_pic_id(self, uid, pid_list):
+        self.pic_message[uid] += pid_list
 
 setubot = setubot()
 
@@ -40,7 +43,11 @@ setu = on_command('setu',aliases={'Setu', 'SETU', '色图'})
 async def setu_handle(bot: Bot, event: Event, state: T_State):
 
     uid = event.user_id
-    
+    gid = event.group_id
+    set_random_seed(uid)
+    token_sign = setubot.group_token.get(gid, None)
+
+
     comman = str(event.message).rsplit(' ', 1)
     keyword = ''
     num = 1
@@ -55,19 +62,21 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
         
     if ret := re.search(r'(画师|作者|搜[索图]|推荐)\s?(.*)', keyword):
         if ret.group(1) == '推荐':
-            res, res_data = await setubot.get_setu_recommend(int(ret.group(2)),num)
+            res, res_data = await setubot.get_setu_recommend(int(ret.group(2)), num, token_sign)
         elif ret.group(1) in ['搜索', '搜图']:
-            res, res_data = await setubot.get_setu_by_id(int(ret.group(2)))
+            res, res_data = await setubot.get_setu_by_id(int(ret.group(2)), token_sign)
         else:
-            res, res_data = await setubot.get_setu_artist(ret.group(2), num)
+            res, res_data = await setubot.get_setu_artist(ret.group(2), num, token_sign)
     else:
-        res, res_data = await setubot.get_setu_base(keyword, num)
+        res, res_data = await setubot.get_setu_base(keyword, num, token_sign)
 
     if res == 1000:
+        msg_list = []
         for info, pic_path in (res_data):
             image = MessageSegment.image(f'file://{pic_path}')
             msg = await bot.send(event, message = info + image)
-            setubot.push_pic_id(uid, msg['message_id'])
+            msg_list.append(msg['message_id'])
+        setubot.push_pic_id(uid, msg_list)
 
     elif res == 1001:
         msg = '好像不能发送图片了..'
@@ -89,8 +98,6 @@ async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
 
         dir = path + '/nosese'
         img_src = dir + '/' + random.choice(os.listdir(dir))
-        print(img_src)
-
         await bot.send(event, message = MessageSegment.image(f'file://{img_src}'))
 
 
@@ -102,17 +109,38 @@ async def my_follow_(bot: Bot, event: Event, state: T_State):
     num = int(num) if num.isdigit() else 1
 
     uid = event.user_id
-    res, res_data = await setubot.get_follow_setu(uid, num)
+    res, res_data = await setubot.get_follow_setu(num, uid)
     if res == 400:
         await bot.send(event, message = "你的🆔没在列表内登记哦～")
 
     if res == 1000:
+        msg_list = []
         for info, pic_path in (res_data):
             image = MessageSegment.image(f'file://{pic_path}')
             msg = await bot.send(event, message = info + image)
-            setubot.push_pic_id(uid, msg['message_id'])
+            msg_list.append(msg['message_id'])
+        setubot.push_pic_id(uid, msg_list)
 
 chack_pixiv = on_command("查询个人信息")
 @chack_pixiv.handle()
 async def chack_handle(bot: Bot, event: Event, state: T_State):
     pass
+
+no_r18_command = on_regex("(不可以|强制)色色", block=False)
+@no_r18_command.handle()
+async def no_r18_handle(bot: Bot, event: Event, state: T_State):
+    gid = event.group_id
+    uid = event.user_id
+    member_info = await bot.get_group_member_info(group_id=gid, user_id=uid)
+    if member_info['role'] == "owner" or member_info['role'] == "admin" or uid in master:
+
+        if str(state['_matched_groups'][0]) == '不可以':
+            setubot.group_token[gid] = 'no_r18'
+            img_src = path+'/bkyss.png'
+        else:
+            setubot.group_token[gid] = None
+            img_src = path+'/ss.png'
+        await bot.send(event, message = MessageSegment.image(f'file://{img_src}'))
+
+    else:
+        await bot.send(event, message = MessageSegment.image(f'你没有发动权限'))

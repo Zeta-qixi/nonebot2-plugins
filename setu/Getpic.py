@@ -10,6 +10,13 @@ class SetuBot(Pixiv):
   def __init__(self):
     super(SetuBot, self).__init__()
 
+  async def login(self, token):
+
+    if not token:
+        token= random.choice(list(TOKEN.values()))
+    return (await super().login(refresh_token=token))
+
+
   async def get_pic(self, works, num=1):
     '''
       input : 
@@ -21,7 +28,6 @@ class SetuBot(Pixiv):
       return :
         setu绝对路径 List合集
     '''
-
     works = random.choices(works, k = num)
     picb64 = await self.get_pic_bytes(self.get_original_url(works))
 
@@ -35,10 +41,14 @@ class SetuBot(Pixiv):
     return path_list
 
 
-  async def get_setu_base(self,keyword = None, num = 1):
+  async def get_setu_base(self,keyword = None, num = 1, token=None):
     """
      return -> 状态码, (id, path_list)
     """
+    if token:
+      token = TOKEN[token]
+    await self.login(token)
+
     if keyword in self.rank_storage.keys() or not keyword:
       keyword = keyword or self.mode
       works = await self.illust_ranking(mode = keyword)
@@ -51,15 +61,18 @@ class SetuBot(Pixiv):
     pic = await self.get_pic(works, num)
     return (1000, pic)
 
-  async def get_setu_artist(self, name, num=1):
+  async def get_setu_artist(self, name, num=1, token=None):
     """
      return -> 状态码, (id, path_list)
     """
+    if token:
+      token = TOKEN[token]
+    await self.login(token)
     works = await self.user_illusts(name)
     return(1000, await self.get_pic(works, num))
 
 
-  async def get_follow_setu(self, uid: str, num=1):
+  async def get_follow_setu(self, num=1, uid=None):
     if str(uid) not in TOKEN.keys():
       return (400, 0)
     works = await self.illust_follow(TOKEN[str(uid)])
@@ -69,15 +82,22 @@ class SetuBot(Pixiv):
 # ---- 重构 ⬆️ ---- #
 
 # ---- 直接使用 ⬇️ ---- #
-  async def get_setu_by_id(self,id: int):
-      await self.login()
+  async def get_setu_by_id(self,id , token=None):
+
+      if token:
+        token = TOKEN[token]
+      await self.login(token)
+
       work = await self.illust_detail(id)
       work = work['illust']
       return(1000, await self.get_pic([work], 1))
 
 
-  async def get_setu_recommend(self, id: int, num:int =1):
-    await self.login()
+  async def get_setu_recommend(self, id: int, num=1, token=None):
+    if token:
+      token = TOKEN[token]
+    await self.login(token)
+
     works = await self.illust_recommended(id)
     if works:
       works = works['illusts']

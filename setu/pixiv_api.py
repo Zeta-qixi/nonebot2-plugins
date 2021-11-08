@@ -49,10 +49,7 @@ class Pixiv(AppPixivAPI):
     def set_user(self, id):
         self.user = str(id)
 
-    async def login(self, token = None):
-        if not token:
-            token= random.choice(list(TOKEN.values()))
-        return (await super().login(refresh_token=token))
+
 
     def update_date(self):
         yesterday = datetime.today() + timedelta(-2)
@@ -124,9 +121,7 @@ class Pixiv(AppPixivAPI):
             'title_and_caption' - 标题说明文
         sort:
             'data_desc', 'data_asc', 'popular_desc'
-        """
-        await self.login()
-            
+        """ 
         res = []
         if 'users入り' in kwargs['word'] or VIP:
             res += await self.get_more_illust(super().search_illust, 30 , **kwargs)
@@ -140,12 +135,9 @@ class Pixiv(AppPixivAPI):
 
 
     async def illust_ranking(self, **kwargs):
-        await self.login()
-
         kwargs.setdefault('mode', self.date)
         if self.update_date() or not self.rank_storage[kwargs['mode']]:    
             kwargs.setdefault('date', self.date)
-            await self.login()
             results = await self.get_more_illust(super().illust_ranking, **kwargs)
             self.rank_storage[kwargs['mode']] = results
 
@@ -155,8 +147,6 @@ class Pixiv(AppPixivAPI):
         '''
         画师id 或 名称
         '''
-        await self.login()
-        
         if name.isdigit():
             id = int(name)
         else:
@@ -170,5 +160,4 @@ class Pixiv(AppPixivAPI):
         '''
         关注列表新作
         '''
-        await self.login(token)
         return (await self.get_more_illust(super().illust_follow, nums=30, req_auth=True))
