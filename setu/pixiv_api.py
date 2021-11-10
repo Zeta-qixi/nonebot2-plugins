@@ -156,7 +156,7 @@ class Pixiv(AppPixivAPI):
         return (await self.get_more_illust(super().user_illusts, user_id=id))
 
 
-    async def illust_follow(self, token):
+    async def illust_follow(self):
         '''
         关注列表新作
         '''

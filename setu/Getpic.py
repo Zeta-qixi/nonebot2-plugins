@@ -13,7 +13,7 @@ class SetuBot(Pixiv):
   async def login(self, token):
 
     if not token:
-        token= random.choice(list(TOKEN.values())[:-1])
+        token = random.choice(list(TOKEN.values())[:-1])
     return (await super().login(refresh_token=token))
 
 
@@ -75,7 +75,8 @@ class SetuBot(Pixiv):
   async def get_follow_setu(self, num=1, uid=None):
     if str(uid) not in TOKEN.keys():
       return (400, 0)
-    works = await self.illust_follow(TOKEN[str(uid)])
+    await self.login(TOKEN[str(uid)])
+    works = await self.illust_follow()
     if works:
       return(1000, await self.get_pic(works, num))
 
