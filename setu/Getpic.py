@@ -13,7 +13,7 @@ class SetuBot(Pixiv):
   async def login(self, token):
 
     if not token:
-        token= random.choice(list(TOKEN.values()))
+        token= random.choice(list(TOKEN.values())[:-1])
     return (await super().login(refresh_token=token))
 
 
@@ -98,7 +98,7 @@ class SetuBot(Pixiv):
       token = TOKEN[token]
     await self.login(token)
 
-    works = await self.illust_recommended(id)
+    works = await self.illust_related(id)
     if works:
       works = works['illusts']
       return(1000, await self.get_pic(works, num))

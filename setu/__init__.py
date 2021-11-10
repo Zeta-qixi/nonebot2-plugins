@@ -92,6 +92,7 @@ async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
 
     id = event.user_id
     if setubot.pic_message[id]:
+        await asyncio.sleep(3)
         for pid in setubot.pic_message[id]:
             await bot.delete_msg(message_id=pid)
             setubot.pic_message[id].remove(pid)
