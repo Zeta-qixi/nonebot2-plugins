@@ -22,7 +22,10 @@ try:
     master = get_driver().config.master
 except:
     master = []
-
+TRAN = {
+    '一':1, '二':2, '两':2, '三':3, '四':4, '五':5,
+    '六':6,
+}
 ##变量##
 path =os.path.dirname(__file__) + '/data'
 
@@ -107,7 +110,9 @@ my_follow = on_regex('来(.?)份[涩色瑟]图', block=False)
 async def my_follow_(bot: Bot, event: Event, state: T_State):
     
     num = str(state['_matched_groups'][0])
-    num = int(num) if num.isdigit() else 1
+    num = TRAN.get(num)
+    if not num:
+        num = int(num) if num.isdigit() else 1
 
     uid = event.user_id
     res, res_data = await setubot.get_follow_setu(num, uid)
