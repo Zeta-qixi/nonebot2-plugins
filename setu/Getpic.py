@@ -28,7 +28,8 @@ class SetuBot(Pixiv):
       return :
         setu绝对路径 List合集
     '''
-    works = random.choices(works, k = num)
+    if num < len(works):
+      works = random.choices(works, k = num)
     picb64 = await self.get_pic_bytes(self.get_original_url(works))
 
     path_list = []
@@ -54,9 +55,6 @@ class SetuBot(Pixiv):
       works = await self.illust_ranking(mode = keyword)
     else:
       works = await self.search_illust(word = keyword)
-
-    if num > len(works):
-      num = len(works)
     
     pic = await self.get_pic(works, num)
     return (1000, pic)

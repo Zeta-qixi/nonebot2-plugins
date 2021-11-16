@@ -37,7 +37,7 @@ class setubot(SetuBot):
         self.group_token = {}
 
     def push_pic_id(self, uid, pid_list):
-        self.pic_message[uid] += pid_list
+        self.pic_message[uid] = pid_list
 
 setubot = setubot()
 
@@ -48,7 +48,7 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
     uid = event.user_id
     gid = event.group_id
     set_random_seed(uid)
-    token_sign = setubot.group_token.get(gid, None)
+    token_sign = setubot.group_token.get(gid, 'no_r18')
 
 
     comman = str(event.message).rsplit(' ', 1)
@@ -76,6 +76,7 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
     if res == 1000:
         msg_list = []
         for info, pic_path in (res_data):
+            print(pic_path)
             image = MessageSegment.image(f'file://{pic_path}')
             msg = await bot.send(event, message = info + image)
             msg_list.append(msg['message_id'])
@@ -95,8 +96,9 @@ async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
 
     id = event.user_id
     if setubot.pic_message[id]:
-        await asyncio.sleep(3)
+        
         for pid in setubot.pic_message[id]:
+            await asyncio.sleep(3)
             await bot.delete_msg(message_id=pid)
             setubot.pic_message[id].remove(pid)
 
