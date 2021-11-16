@@ -2,9 +2,9 @@ from .special import *
 from .request import *
 #from .notice import *
 from .banatri import *
-
-from nonebot import on_command, get_driver
+from .speak import *
 from nonebot.typing import T_State
+from nonebot import on_command, on_message, get_driver
 from nonebot.adapters.cqhttp.event import MessageEvent
 
 try:
@@ -19,4 +19,4 @@ async def _restart(bot: Bot, event: MessageEvent, state: T_State):
     if uid in master:
         await bot.send(event, message = "正在重启...")
         #不兼容
-        #zawait bot.set_restart()
+        #await bot.set_restart()
