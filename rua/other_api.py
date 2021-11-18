@@ -37,6 +37,7 @@ async def pa_handle(bot:Bot, event: MessageEvent, state: T_State):
             qq = int(qq_)
         elif 'CQ:at' in qq_:
             qq = re.search(r"\[CQ:at,qq=(.*)\]", qq_).group(1)
+
         if qq in master:
             qq = event.user_id
         await bot.send(event, message = Message(f"[CQ:image,file=http://ovooa.com/API/{api_dict[comm]}/api.php?QQ={qq}]"))

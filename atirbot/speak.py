@@ -17,7 +17,6 @@ def get_voice() -> str :
 test_voice = on_message(rule=to_me(), priority=55)
 @test_voice.handle()
 async def voice_handle(bot: Bot, event: MessageEvent, state: T_State):
-    print(bot.self_id)
     await bot.send(event,message= MessageSegment.record(f'file://{get_voice()}'))
 
 

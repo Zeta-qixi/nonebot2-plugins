@@ -1,4 +1,4 @@
-from nonebot import on_command, on_message, on_notice
+from nonebot import on_command
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import (Event, GroupMessageEvent,
                                            MessageEvent, PokeNotifyEvent)

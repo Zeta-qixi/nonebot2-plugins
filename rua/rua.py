@@ -28,7 +28,7 @@ img_src = data_dir +  '/output.gif'
 img = MessageSegment.image(f'file://{img_src}')
 
 
-rua_me = on_notice()
+rua_me = on_notice(priority=60)
 '''
 戳一戳事件
 '''      
@@ -37,6 +37,8 @@ async def _t3(bot: Bot, event: PokeNotifyEvent):
 
     if event.target_id in master:
         creep_id = event.sender_id
+    elif event.target_id == int(bot.self_id):
+        pass
     else: creep_id = event.target_id
 
     url = f'http://q1.qlogo.cn/g?b=qq&nk={creep_id}&s=160'

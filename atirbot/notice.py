@@ -10,6 +10,7 @@ async def group_ban(bot: Bot, event:GroupBanNoticeEvent):
     群禁言
     '''
     if (event.sub_type) == "ban":
-        pass
+        event.operator_id
+        event.user_id
     if (event.sub_type) == "lift_ban":
         pass

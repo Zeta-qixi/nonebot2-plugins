@@ -1,6 +1,6 @@
 
 
-from nonebot import on_command, on_message, on_notice
+from nonebot import on_notice
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event, GroupRecallNoticeEvent
 from nonebot.adapters.cqhttp.message import Message, MessageSegment

@@ -43,6 +43,9 @@ class Pixiv(AppPixivAPI):
         # "day_r18_manga":[], "week_r18_manga":[], "week_r18g_manga":[]
         }
 
+    def get_rank_keys(self) -> List:
+        return list(self.rank_storage.keys())
+        
     def filter_(self, res: List) -> List:
         return [work for work in res if work.type == 'illust']
         

@@ -1,4 +1,3 @@
-
 from nonebot import on_command, get_driver, on_regex
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event
@@ -26,22 +25,23 @@ TRAN = {
     '一':1, '二':2, '两':2, '三':3, '四':4, '五':5,
     '六':6,
 }
-##变量##
 path =os.path.dirname(__file__) + '/data'
 
 ## setubot
 class setubot(SetuBot):
     def __init__(self):
         super(setubot, self).__init__()
-        self.pic_message = defaultdict(list)
+        self.picID_by_user = defaultdict(list)
+        self.rank_mode_list = self.get_rank_keys()
+        self.user_rank_mode = defaultdict(int)
         self.group_token = {}
 
     def push_pic_id(self, uid, pid_list):
-        self.pic_message[uid] = pid_list
-
+        self.picID_by_user[uid] = pid_list
 setubot = setubot()
 
-setu = on_command('setu',aliases={'Setu', 'SETU', '色图'})
+
+setu = on_command('setu',aliases={'Setu', 'SETU', '色图'}, priority=30)
 @setu.handle()
 async def setu_handle(bot: Bot, event: Event, state: T_State):
 
@@ -49,20 +49,20 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
     gid = event.group_id
     set_random_seed(uid)
     token_sign = setubot.group_token.get(gid, 'no_r18')
-
-
+    keyword = setubot.rank_mode_list[setubot.user_rank_mode[uid]]
     comman = str(event.message).rsplit(' ', 1)
-    keyword = ''
     num = 1
+
     # 变量只有一个 判定是keyword还是num
     if comman[-1].isdigit() and len(comman[-1]) == 1:
         num = int(comman[-1])
-        if len(comman)>=2:
+        if len(comman) == 2:
             keyword = comman[0]
     else:
-        keyword = str(event.message)
+        if str(event.message) != '':
+            keyword = str(event.message)
     num = 3 if num > 3 else num
-        
+
     if ret := re.search(r'(画师|作者|搜[索图]|推荐)\s?(.*)', keyword):
         if ret.group(1) == '推荐':
             res, res_data = await setubot.get_setu_recommend(int(ret.group(2)), num, token_sign)
@@ -73,38 +73,47 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
     else:
         res, res_data = await setubot.get_setu_base(keyword, num, token_sign)
 
+    state['token_sign'] = token_sign
+    state['keyword'] = keyword
+
     if res == 1000:
         msg_list = []
         for info, pic_path in (res_data):
-            print(pic_path)
-            image = MessageSegment.image(f'file://{pic_path}')
-            msg = await bot.send(event, message = info + image)
+            msg = await bot.send(event, message = info + MessageSegment.image(f'file://{pic_path}'))
             msg_list.append(msg['message_id'])
         setubot.push_pic_id(uid, msg_list)
+    else:
+        await setu.finish(message = '你🐛的太快啦')
 
-    elif res == 1001:
-        msg = '好像不能发送图片了..'
-        for url in (res_data):
-            msg = f'{msg}\n{url}'
-        await bot.send(event, message = msg)
-    elif res == 1100:
-        await bot.send(event, message = '你🐛的太快啦')
-        
+@setu.receive()
+async def setu_receive(bot: Bot, event: Event, state: T_State):
+    if str(event.message) == '不够色':
+        res, res_data = await setubot.get_setu_base(state['keyword'], 1, state['token_sign'])
+        msg_list = []
+        for info, pic_path in (res_data):
+            msg = await setu.finish(message = info + MessageSegment.image(f'file://{pic_path}'))
+            msg_list.append(msg['message_id'])
+        setubot.push_pic_id(event.user_id, msg_list)
+
+
+
+
 recall_setu = on_regex('撤回|太[涩色瑟]了', block=False)
 @recall_setu.handle()
 async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
 
     id = event.user_id
-    if setubot.pic_message[id]:
         
-        for pid in setubot.pic_message[id]:
-            await asyncio.sleep(3)
-            await bot.delete_msg(message_id=pid)
-            setubot.pic_message[id].remove(pid)
+    for pid in setubot.picID_by_user[id]:
+        await asyncio.sleep(3)
+        await bot.delete_msg(message_id=pid)
+        setubot.pic_message[id].remove(pid)
 
-        dir = path + '/nosese'
-        img_src = dir + '/' + random.choice(os.listdir(dir))
-        await bot.send(event, message = MessageSegment.image(f'file://{img_src}'))
+    dir = path + '/nosese'
+    img_src = dir + '/' + random.choice(os.listdir(dir))
+    await bot.send(event, message = MessageSegment.image(f'file://{img_src}'))
+
+
 
 
 my_follow = on_regex('来(.?)份[涩色瑟]图', block=False)
@@ -124,21 +133,19 @@ async def my_follow_(bot: Bot, event: Event, state: T_State):
     if res == 1000:
         msg_list = []
         for info, pic_path in (res_data):
-            image = MessageSegment.image(f'file://{pic_path}')
-            msg = await bot.send(event, message = info + image)
+            msg = await bot.send(event, message = info + MessageSegment.image(f'file://{pic_path}'))
             msg_list.append(msg['message_id'])
         setubot.push_pic_id(uid, msg_list)
 
-chack_pixiv = on_command("查询个人信息")
-@chack_pixiv.handle()
-async def chack_handle(bot: Bot, event: Event, state: T_State):
-    pass
+
+
 
 no_r18_command = on_regex("(不可以|强制)色色", block=False)
 @no_r18_command.handle()
 async def no_r18_handle(bot: Bot, event: Event, state: T_State):
     gid = event.group_id
     uid = event.user_id
+
     member_info = await bot.get_group_member_info(group_id=gid, user_id=uid)
     if member_info['role'] == "owner" or member_info['role'] == "admin" or uid in master:
 
@@ -152,3 +159,29 @@ async def no_r18_handle(bot: Bot, event: Event, state: T_State):
 
     else:
         await bot.send(event, message = MessageSegment.image(f'你没有发动权限'))
+
+
+
+
+change_rank_mode = on_command("setumode", priority=10)
+@change_rank_mode.handle()
+async def change_rank_mode_handle(bot: Bot, event: Event, state: T_State):
+    if (mode:= str(event.message)) != '':
+        state['mode_index'] = mode
+    state['uid'] = event.user_id
+
+mode_info = '要选什么模式呢～'
+for index, info in enumerate(setubot.rank_mode_list):
+    mode_info += f'\n[{index}] {info}'
+
+@change_rank_mode.got('mode_index', prompt=mode_info)
+async def set_got(bot: Bot, event: Event, state: T_State):
+    try:
+        if (mode := str(state['mode_index'])) in setubot.rank_mode_list:
+            index = setubot.rank_mode_list.index(mode)
+        else:
+            index = int(state['mode_index'])
+        setubot.user_rank_mode[state['uid']] = index
+        await change_rank_mode.finish(event, message = "设置成功")
+    except:
+        await change_rank_mode.finish(message = "设置失败了")

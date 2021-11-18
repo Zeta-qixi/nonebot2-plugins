@@ -1,8 +1,7 @@
-from nonebot import on_command, on_request, on_notice
+from nonebot import on_command
 from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import GroupMessageEvent, GroupRequestEvent, Event, GroupBanNoticeEvent
-from nonebot.adapters.cqhttp.message import Message, MessageSegment
-from nonebot.typing import T_State
+from nonebot.adapters.cqhttp.event import GroupMessageEvent
+
 
 change = on_command('更改头衔',aliases={'申请头衔'})
 @change.handle()

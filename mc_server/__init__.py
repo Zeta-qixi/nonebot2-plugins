@@ -8,7 +8,7 @@ from nonebot import require
 import time
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 group = 960349339 #mc群
-image = '38'
+image = 'be'
 
 class mc_server():
     def __init__(self):
@@ -52,6 +52,7 @@ class mc_server():
 
 
 mcs = mc_server()
+
 ylk = {'in': '加入了游戏～', 'out': '退出了游戏..'}
 @scheduler.scheduled_job('cron', minute='*/1', id='mc_server1')
 async def lmc_server1():
