@@ -39,6 +39,9 @@ b站up直播提醒，动态转发
 ## [申请管理、群管理等](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/atirbot)
 bot添加好友 群管理 等等等等 
 
+## [插件管理](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/command_block)
+修改block实现的关键字触发阻断, 从而实现类似插件管理的功能
+
 ## jrrp.py 
 发个随机数而已
 
