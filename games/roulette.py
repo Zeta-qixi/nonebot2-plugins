@@ -38,7 +38,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await fill.finish(message='已有装填, 请【开枪】')
 
     nums = int(str(event.message))
-    if nums >= 6:
+    if nums >= 6 or nums<=0:
         msg = MessageSegment.image(f'file://{PATH}')
         await fill.finish(message=msg)
     else:
