@@ -10,6 +10,7 @@ from nonebot.adapters.cqhttp.event import Event, GroupMessageEvent,MessageEvent
 from nonebot.adapters.cqhttp.message import Message
 from nonebot.typing import T_State
 from nonebot import require
+
 #加载插件时 获取所有闹钟
 # (id, type, user_id, content, c_time, ones) 
 clock_data = select_all() #元组list
@@ -42,11 +43,9 @@ def create_time(t):
 add = on_command('添加闹钟', aliases={'设置闹钟', '添加提醒事项', 'addclock'})
 @add.handle()
 async def add_handle(bot: Bot, event: Event, state: T_State):
-    type = event.get_event_name()
     uid = event.user_id
-
+    type = event.get_event_name()
     content = str(event.get_message()).split(' ')
-
     note = ''
     ones = 1
     try:
@@ -63,8 +62,8 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
     r = re.match(r'(\d+)[:|\-|：|.](\d+)',time)
 
     if time.startswith('+'):
-        h = re.search(r"(\d+)[H|h]",time)
-        m = re.search(r"(\d+)[M|m]",time)
+        h = re.search(r"(\d+)[Hh时]",time)
+        m = re.search(r"(\d+)[Mm分]",time)
         h=int(h.groups()[0]) if h else 0
         m=int(m.groups()[0]) if m else 0
         time = (datetime.now() + timedelta(hours=h, minutes=m)).strftime("%H:%M")

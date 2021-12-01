@@ -1,19 +1,22 @@
-from nonebot import on_command, get_driver, on_regex
+import asyncio
+import os
+import random
+import re
+import sys
+import time
+from collections import defaultdict
+
+import requests
+from nonebot import get_driver, on_command, on_regex
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
-from nonebot.typing import T_State
 from nonebot.log import logger
-from .utils import set_random_seed
-import re
-import os
-import sys
-import requests
-import random
-import asyncio
-import time
-from collections import defaultdict
+from nonebot.typing import T_State
 from PIL import Image
+
+from .utils import set_random_seed
+
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 from Getpic import SetuBot
 

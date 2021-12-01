@@ -12,19 +12,18 @@ from nonebot.adapters.cqhttp.message import Message
 from nonebot.log import logger
 from nonebot.typing import T_State
 
+
+# -global- #
+P = 1
+
 try:
     master = get_driver().config.master
 except:
     master = []
     logger.info("没有设置master")
 
-# -global- #
-repeat_stop = False
-trigger = {} #重复触发词判定
-data = {} #语料数据
-ptalk = {} #群回复率
-P = 1
-filter_list = []
+DATA = {} # 语料数据
+FILTER = []
 
 gpath =os.path.dirname(__file__)
 path = gpath +'/data.json'
@@ -34,25 +33,25 @@ def union(gid, uid):
 # 读取数据文件
 try:
     with open(path) as f:
-        data = json.load(f)
+        DATA = json.load(f)
     with open(gpath +'/filter.json') as f:
-        filter_list = json.load(f)['f']
+         FILTER = json.load(f)['f']
 except:
-    pass
+    logger.info("缺少filter.json 或 data.json")
 
 def save_json(keys:str, values:str, id:str):
 		'''
 		写数据到json
 		'''
-		global data
-		if id not in data:
-				data[id] = {}
-		if keys not in data[id]:
-				data[id].setdefault(keys,[])
-		if values not in data[id][keys]: 
-				data[id][keys].append(values)
+		global DATA
+		if id not in DATA:
+				DATA[id] = {}
+		if keys not in DATA[id]:
+				DATA[id].setdefault(keys,[])
+		if values not in DATA[id][keys]: 
+				DATA[id][keys].append(values)
 		with open(path, 'w+') as f :
-				tojson = json.dumps(data,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
+				tojson = json.dumps(DATA,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
 				f.write(tojson)
 
 
@@ -63,22 +62,30 @@ async def chat_handle(bot: Bot, event: GroupMessageEvent):
   group_id = event.group_id
   user_id = event.user_id
   
-  global ptalk
-  ptalk.setdefault(group_id,P)
-  trigger.setdefault(group_id,' ')
-  
-  for id in [1, group_id]:
-    union_id = union(id, 1)
-    if message in data[union_id]:
-        await bot.send(event,message=Message(random.choice((data[union_id][message]))))
-        return            
+  if random.random() < P:
+    for id in [1, group_id]:
+        union_id = union(id, 1)
+        if message in DATA[union_id]:
+            await bot.send(event,message=Message(random.choice((DATA[union_id][message]))))
+            return            
+
+'''
+设置问答
+
+'''
+
+def  filter(word):
+    for i in FILTER:
+        if i in word:
+            return True
+    return False
 
 
 set_respond = on_command('set',aliases={"setall"})
 @set_respond.handle()
 async def set_handle(bot: Bot, event: Event, state: T_State):
     '''
-    设置的问答
+
     setall 时全覆盖
     '''
     if "setall" in state["_prefix"]["command"]:
@@ -101,23 +108,17 @@ async def set_got(bot: Bot, event: Event, state: T_State):
 
     if ",url=" in state["key"] :
         state["key"] = state["key"].split(",url=")[0]+']'
-def filter(word):
-    for i in filter_list:
-        if i in word:
-            return True
-    return False
+        
 
 @set_respond.got('value', prompt="要答什么呢～")
 async def set_got2(bot: Bot, event: Event, state: T_State):
 
         if ",url=" in state["value"] :
             state["value"] = state["value"].split(",url=")[0]+']'
-        if filter(state["key"]):
+        if  filter(state["key"]):
             await set_respond.finish(Message("[CQ:image,file=cab2ae806af6b0a7b61fdd8534b50093.image]"))
         else:
             try:
-                #录入库
-
                 save_json(state["key"], state["value"], union(state['gid'] , 1))
                 await set_respond.finish(message='ok~')
             except BaseException as e:
