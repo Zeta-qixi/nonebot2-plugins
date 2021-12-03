@@ -17,7 +17,7 @@ from collections import defaultdict
 gpath = os.path.dirname(__file__)
 path = gpath +'/data.json'
 font = gpath + '/MSYH.TTC'
-mask = np.array(Image.open(gpath + '/mask.jpg'))
+#mask = np.array(Image.open(gpath + '/mask.png'))
 
 
 DATA = defaultdict(dict)
