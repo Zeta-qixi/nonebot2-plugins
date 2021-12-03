@@ -36,14 +36,20 @@ b站up直播提醒，动态转发
 ## [涩图评分](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/setu_score) 
 调用百度智能云的图片瑟琴风控api
 
+## [日常实用功能](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/smdx)  
+目前有天气查询 星期几查询（来点实用的东西了..）
+
 ## [申请管理、群管理等](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/atirbot)
 bot添加好友 群管理 等等等等 
 
 ## [插件管理](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/command_block)
 修改block实现的关键字触发阻断, 从而实现类似插件管理的功能
 
+## [词语生成](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/word_cloud)
+根据聊天记录生成词语, 无需log
+
 ## jrrp.py 
-发个随机数而已
+发个随机数
 
 # 未完成 
 
