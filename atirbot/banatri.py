@@ -2,7 +2,6 @@ from nonebot import on_notice
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import GroupBanNoticeEvent
 
-
 ban_req = on_notice()
 @ban_req.handle()
 async def group_ban(bot: Bot, event:GroupBanNoticeEvent):
@@ -14,5 +13,3 @@ async def group_ban(bot: Bot, event:GroupBanNoticeEvent):
             await bot.set_group_leave(group_id=event.group_id)
     if (event.sub_type) == "lift_ban":
         pass
-
-    

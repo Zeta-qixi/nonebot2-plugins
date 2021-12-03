@@ -43,7 +43,6 @@ def save_json(keys:str, values:str, id:str):
 		'''
 		写数据到json
 		'''
-		global DATA
 		if id not in DATA:
 				DATA[id] = {}
 		if keys not in DATA[id]:

@@ -17,8 +17,8 @@ CREATE TABLE clocks(
     ones INTEGER NOT NULL
 );
 '''
-import sqlite3
 import os
+import sqlite3
 
 path =os.path.dirname(__file__)
 db = path+ '/data.db'
@@ -37,7 +37,6 @@ def execute(sql:str):
     return data
 
 def add_clock_db(user:int, content:str, time:str, ones = 1, type='private'):
-
    sql = f'''INSERT INTO CLOCKS (type, user, content, c_time, ones) 
    values ("{type}", {user}, "{content}", "{time}", {ones});'''
    execute(sql)
