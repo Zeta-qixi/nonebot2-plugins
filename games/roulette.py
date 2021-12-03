@@ -1,18 +1,17 @@
-'''
-俄罗斯转盘
-左轮 6孔
-'''
-from nonebot import  on_command, on_regex
+import os
+import re
+
+from nonebot import on_command, on_regex
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import GroupMessageEvent
-from nonebot.adapters.cqhttp.message import MessageSegment, Message
+from nonebot.adapters.cqhttp.message import Message, MessageSegment
+
 from .tools import RouletteGame
-import os
+
 PATH =os.path.dirname(__file__)+'/asset/longtu.png'
 
 
 roulette_group_list = {}
-
 
 def get_roulette_game(gid):
     roulette_group_list.setdefault(gid, RouletteGame())
@@ -20,8 +19,10 @@ def get_roulette_game(gid):
 
 game = on_command('俄罗斯转盘')
 fill = on_command('装填', aliases={'填装'})
+duel = on_command('决斗', aliases={'⚔️'})
 shooting = on_regex('开枪.*', block=False)
 gameover = on_command('结束')
+
 
 
 @game.handle()
@@ -29,17 +30,18 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await game.finish(message=RouletteGame().rule)
 
 
+
 @fill.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    roulette_game = get_roulette_game(event.group_id)
+    roulette_game    =      get_roulette_game(event.group_id)
+    _, bullet, _     =      roulette_game.get_status()
 
-    _, bullet = roulette_game.get_status()
     if bullet > 0:
         await fill.finish(message='已有装填, 请【开枪】')
 
     nums = int(str(event.message))
     if nums >= 6 or nums<=0:
-        msg = MessageSegment.image(f'file://{PATH}')
+        msg  =   MessageSegment.image(f'file://{PATH}')
         await fill.finish(message=msg)
     else:
         roulette_game.set_bullet(nums)
@@ -47,28 +49,75 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 
 
+@duel.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    message = str(event.message)
+
+    if uid := re.search('\[CQ:at,qq=(\d+)\]', message):
+        qq1              = event.user_id
+        qq2              = int(uid.groups()[0])
+        
+        if qq1 == qq2:
+            msg  =   MessageSegment.image(f'file://{PATH}')
+            duel.finish(message=msg)
+        roulette_game    = get_roulette_game(event.group_id)
+        _, _, duel_time  = roulette_game.get_status()
+
+        if duel_time:
+            await duel.finish(message='现在正在进行对决⚔️')
+            return
+        
+        roulette_game.set_bullet(1)
+        roulette_game.set_duel(qq1, qq2)
+        await duel.finish(message=f'装填子弹1, 开始对决吧！')
+
+    else:
+        await duel.finish(message='请指定对象⚔️')
+
+
 
 @shooting.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    roulette_game = get_roulette_game(event.group_id)
-    times, bullet = roulette_game.get_status()
+    roulette_game              =    get_roulette_game(event.group_id)
+    times, bullet, duel_time   =    roulette_game.get_status()
+
     if bullet == 0:
-        await fill.finish(message=f'现在没有子弹~')
+        await shooting.finish(message=f'现在没有子弹~')
  
-    user_id = event.user_id
-    res = roulette_game.shoot()
-    if res == 0:
-        roulette_game.member.append(event.user_id)
-        await fill.finish(message=f'砰！ 还有{times-1}轮, 剩余子弹{bullet}')
-    else:
-        roulette_game.dead(user_id)
-        roulette_game.set_bullet(0)
-        await fill.finish(message=f'砰！ 你死了, 游戏结束')
     
+    user_id    =    event.user_id
+    if duel_time:
+        if user_id not in roulette_game.get_member():
+            await shooting.finish(message='现在正在进行对决⚔️')
+
+
+        res = roulette_game.shoot()
+        if res == 0:
+            members = roulette_game.get_member()
+            other = members[0] if members[1] == user_id else members[1]
+            await shooting.send(message=Message(f'砰！还有{times-1}轮, 轮到你了[CQ:at,qq={other}]'))
+            if times - 1 == 1:
+                await shooting.finish(message=Message(f'直接给你[CQ:face,id=169], 砰！你死了'))
+        else:
+            roulette_game.set_bullet(0)
+            await shooting.finish(message=f'砰！ 你死了, 游戏结束')
+
+    else:
+        res = roulette_game.shoot()
+        if res == 0:
+            roulette_game.member.append(event.user_id)
+            await shooting.finish(message=f'砰！ 还有{times-1}轮, 剩余子弹{bullet}')
+        else:
+            roulette_game.set_bullet(0)
+            await shooting.finish(message=f'砰！ 你死了, 游戏结束')
+    
+
+
 @gameover.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    roulette_game = get_roulette_game(event.group_id)
-    times, bullet = roulette_game.get_status()
+    roulette_game       =   get_roulette_game(event.group_id)
+    times, bullet,_     =   roulette_game.get_status()
+
     if times == bullet and bullet > 0:
         uid = roulette_game.random_shoot()
         roulette_game.set_bullet(0)
