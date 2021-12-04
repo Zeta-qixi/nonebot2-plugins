@@ -8,7 +8,7 @@ from nonebot import require
 import time
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 group = 960349339 #mc群
-image = 'be'
+image = 'mcbe'
 
 class mc_server():
     def __init__(self):

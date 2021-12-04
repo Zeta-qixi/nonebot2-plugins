@@ -8,7 +8,6 @@ from ..db import *
 from nonebot import get_bots, get_driver, on_command,require
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event
-from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot.typing import T_State
 from nonebot import logger
 try:

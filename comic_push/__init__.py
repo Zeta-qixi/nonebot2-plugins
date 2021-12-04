@@ -3,8 +3,7 @@ import json
 from .pusher import *
 from nonebot import get_bots, on_command
 from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import Event, MessageEvent
-from nonebot.adapters.cqhttp.message import Message, MessageSegment
+from nonebot.adapters.cqhttp.event import MessageEvent
 from nonebot import require
 
 
