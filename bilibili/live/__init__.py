@@ -92,7 +92,7 @@ async def add(bot: Bot, event: Event, state: T_State):
         mid = int(mid)
         info = get_info(mid)
         name = info['name']
-        if not select_one(gid, mid):
+        if not select_by_field(gid, mid):
             add_focus(gid, mid, name, 1, 0)
             await bot.send(event, message=f"添加关注 {name}")
         else:
@@ -117,11 +117,16 @@ async def add(bot: Bot, event):
         return
 
     try:
-        mid = int(str(event.get_message()))
-        info = get_info(mid)
-        name = info['name']
-        delete_focus(gid, mid)
-        await bot.send(event, message=f"已取消关注 {name}")
+        key = str(event.get_message())
+        if key.isdigit():
+            res = select_by_field(gid, int(key))
+        else:
+            res = select_by_field(gid, key, 'name')
+        
+        mid = res[2]
+
+        delete_by_field(gid, mid)
+        await bot.send(event, message=f"已取消关注 {res[3]}")
 
     except sqlite3.IntegrityError:
         await bot.send(event, message=f"不存在该id")

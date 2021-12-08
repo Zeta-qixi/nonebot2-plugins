@@ -38,8 +38,10 @@ BASE_SELECT_SQL = f"SELECT * FROM {TABLE}"
 def select_all():
     return execute(BASE_SELECT_SQL)
 
-def select_one(gid, mid):
-    return execute(BASE_SELECT_SQL + f' where mid = {mid} and gid = {gid}')
+def select_by_field(gid, mid, field = 'mid'):
+    return (execute(BASE_SELECT_SQL + f' where {field} = {mid} and gid = {gid}'))[0]
+
+
 
 def select_live():
     return execute(BASE_SELECT_SQL + " where live = 1")
@@ -48,10 +50,9 @@ def select_dynamic():
     return execute(BASE_SELECT_SQL + " where dynamic = 1")
 
 
-
 def update(gid, mid ,field: str, value):
     execute(f'UPDATE {TABLE} set {field} = "{value}" WHERE mid = {mid} and gid = {gid}')
 
 
-def delete_focus(gid, mid):
-    execute(f'DELETE FROM {TABLE} WHERE mid = {mid} and gid = {gid}')
+def delete_by_field(gid, mid, field = 'mid'):
+    execute(f'DELETE FROM {TABLE} WHERE {field} = {mid} and gid = {gid}')
