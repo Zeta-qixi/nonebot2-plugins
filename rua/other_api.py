@@ -15,7 +15,6 @@ except:
     master = []
 
 api_dict ={
-    '爬': 'pa',
     '撕了': 'si',
     '吃了': 'chi',
 }

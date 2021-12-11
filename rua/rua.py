@@ -54,17 +54,14 @@ async def _t3(bot: Bot, event: PokeNotifyEvent):
 rua = on_command('rua')
 @rua.handle()
 async def rua_handle(bot: Bot, event: Event, state: T_State):
+    msg = event.get_message()
+    for msg_seg in msg:
 
-    try:
-        msg = (str(event.raw_message).split('rua')[1].strip())
-        if ':image' in msg:         
-            state['url'] = (msg.split('url=')[-1][:-2])     
-        elif msg.isdigit():
-            id = int(msg)
+        if msg_seg.type == 'image':
+            state['url'] = msg_seg.data['url']
+        elif id:=str(msg_seg).isdigit():
             state['url'] = f'http://q1.qlogo.cn/g?b=qq&nk={id}&s=160'
-    except:
-        pass
-
+            
 
 @rua.got("url", prompt="要rua点什么～")
 async def rua_got(bot: Bot, event: Event, state: T_State):
