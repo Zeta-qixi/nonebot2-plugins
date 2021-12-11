@@ -131,14 +131,13 @@ async def del_handle(bot: Bot, event: Event):
 # 闹钟本体
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-@scheduler.scheduled_job('cron', minute='*/1', second='1', id='clock_')
-
-async def clock_():
-    for i in clock_data:
-        time_list = i[4].split()
+@scheduler.scheduled_job('cron', minute='*/1', id='clock_')
+async def cheak_clock():
+    for clock in clock_data:
+        time_list = clock[4].split()
         if strftime("%H:%M", localtime()) == time_list[-1]:
             for bot in get_bots().values():
-                s = i[3]
+                s = time_list[3]
                 if s == '':
                     s = '⏰'
                 await bot.send_msg(message_type=i[1], user_id=i[2], group_id=i[2], message=s)
@@ -147,4 +146,3 @@ async def clock_():
             if i[5] == 1:
                 del_clock_db(i[0])
                 clock_data.remove(i)
-
