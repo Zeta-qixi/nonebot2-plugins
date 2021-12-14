@@ -140,7 +140,7 @@ async def cheak_clock():
                 s = time_list[3]
                 if s == '':
                     s = '⏰'
-                await bot.send_msg(message_type=i[1], user_id=i[2], group_id=i[2], message=s)
+                await bot.send_msg(message_type=clock[1], user_id=clock[2], group_id=clock[2], message=s)
 
             # 删除闹钟            
             if i[5] == 1:
