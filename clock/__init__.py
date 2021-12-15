@@ -137,7 +137,7 @@ async def cheak_clock():
         time_list = clock[4].split()
         if strftime("%H:%M", localtime()) == time_list[-1]:
             for bot in get_bots().values():
-                s = time_list[3]
+                s = clock[3]
                 if s == '':
                     s = '⏰'
                 await bot.send_msg(message_type=clock[1], user_id=clock[2], group_id=clock[2], message=s)
