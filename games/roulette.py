@@ -20,9 +20,8 @@ def get_roulette_game(gid):
 game = on_command('俄罗斯转盘')
 fill = on_command('装填', aliases={'填装'})
 duel = on_command('决斗', aliases={'⚔️'})
-shooting = on_regex('开枪.*', block=False)
+shooting = on_command('开枪')
 gameover = on_command('结束')
-
 
 
 @game.handle()

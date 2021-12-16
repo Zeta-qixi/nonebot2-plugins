@@ -3,6 +3,7 @@ import os
 import random
 import sys
 import time
+from collections import defaultdict
 
 from nonebot import get_driver, on_command, on_message
 from nonebot.adapters.cqhttp.bot import Bot
@@ -22,8 +23,10 @@ except:
     master = []
     logger.info("没有设置master")
 
-DATA = {} # 语料数据
-FILTER = []
+def init_data_dict():
+    return defaultdict(list)
+
+
 
 gpath =os.path.dirname(__file__)
 path = gpath +'/data.json'
@@ -34,19 +37,23 @@ def union(gid, uid):
 try:
     with open(path) as f:
         DATA = json.load(f)
-    with open(gpath +'/filter.json') as f:
-         FILTER = json.load(f)['f']
+        DATA = defaultdict(init_data_dict, DATA)
 except:
-    logger.info("缺少filter.json 或 data.json")
+    DATA = defaultdict(init_data_dict)
+    logger.info("缺少data.json")
+
+try:
+    with open(gpath +'/filter.json') as f:
+        FILTER = json.load(f)['f']
+except:
+    FILTER = []
+    logger.info("缺少filter.json")
+
 
 def save_json(keys:str, values:str, id:str):
 		'''
 		写数据到json
 		'''
-		if id not in DATA:
-				DATA[id] = {}
-		if keys not in DATA[id]:
-				DATA[id].setdefault(keys,[])
 		if values not in DATA[id][keys]: 
 				DATA[id][keys].append(values)
 		with open(path, 'w+') as f :
@@ -84,7 +91,6 @@ set_respond = on_command('set',aliases={"setall"})
 @set_respond.handle()
 async def set_handle(bot: Bot, event: Event, state: T_State):
     '''
-
     setall 时全覆盖
     '''
     if "setall" in state["_prefix"]["command"]:
@@ -92,11 +98,10 @@ async def set_handle(bot: Bot, event: Event, state: T_State):
         state['uid'] = 1
         if event.user_id not in master: 
             await set_respond.finish(Message("[CQ:image,file=cab2ae806af6b0a7b61fdd8534b50093.image]"))
-            return
     else:
         state['gid'] = event.group_id
         state['uid'] = event.user_id
-    comman = str(event.get_message()).split()
+    comman = str(event.get_message()).split(' ',1)
     if comman:
         state["key"] = comman[0]
         if len(comman) >1:

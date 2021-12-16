@@ -131,7 +131,7 @@ async def del_handle(bot: Bot, event: Event):
 # 闹钟本体
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-@scheduler.scheduled_job('cron', minute='*/1', id='clock_')
+@scheduler.scheduled_job('cron', minute='*/1', second= '0', id='clock_')
 async def cheak_clock():
     for clock in clock_data:
         time_list = clock[4].split()
