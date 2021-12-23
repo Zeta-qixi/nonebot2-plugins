@@ -1,5 +1,9 @@
 # 基于nonebot2的插件库
-## 文件放到自己bot的插件目录即可，缺少的 data.json 或 data.db 请自行添加
+### 文件放到自己bot的插件目录即可，缺少的 data.json 或 data.db 请自行添加  
+### 部分插件需要在nonebot的env中配置MASTER (qq号)
+```
+MASTER = [123456]
+```
 
 # 已完成功能 
 
