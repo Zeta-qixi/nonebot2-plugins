@@ -27,14 +27,10 @@ def execute(sql:str):
     conn = sqlite3.connect(db)
     c = conn.cursor()
     res = c.execute(sql)
-    data = []
-    if res:
-        for i in res:
-            data.append(i)
-
+    res = list(res)
     conn.commit()
     conn.close()
-    return data
+    return res
 
 def add_clock_db(user:int, content:str, time:str, ones = 1, type='private'):
    sql = f'''INSERT INTO CLOCKS (type, user, content, c_time, ones) 
