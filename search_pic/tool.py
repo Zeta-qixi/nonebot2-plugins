@@ -9,7 +9,9 @@ params = {
     'api_key' : SAUCENAO_KEY,
     'output_type' : 2
 }
-
+def Pixiv_Msg(id, user_name, user_id):
+    return (f'PixivID: {id}\n[作者]{user_name}: {user_id}')
+ 
 def from_saucenao(url):
     params['url'] = url
     response = requests.get('https://saucenao.com/search.php', params=params)
@@ -23,7 +25,7 @@ def from_saucenao(url):
             title = res['data']['title']
             user_name  = res['data']['member_name']
             user_id = res['data']['member_id'] 
-            res_.append((title, id, user_name, user_id))
+            res_.append(Pixiv_Msg(id, user_name, user_id))
     return res_
 
 def from_ascii2d(url):
@@ -44,7 +46,12 @@ def from_ascii2d(url):
             if ('pixiv' in artworks_id):
                 artworks_id = artworks_id.split('/')[-1]
                 users_id = users_id.split('/')[-1]
-                res_.append((artworks,artworks_id,users,users_id))
+                res_.append(Pixiv_Msg(artworks_id,users,users_id))
+
+            if ('twitter' in artworks_id):
+                res_.append(f'twitter: {artworks_id}')
+
+
     return res_
 
 @timeout(TIMELIMIT_IMAGE)
@@ -62,8 +69,7 @@ async def get_image_data(image_url: str, api_key: str=SAUCENAO_KEY):
             putline += await get_view(sc, image_url)
         except :
             pass
-    for (title, id, user_name, user_id) in list(set(putline)):
-        msg = f'PixivID: {id}\n[作者]{user_name}: {user_id}'
+    for msg in list(set(putline)):
         if repass:
             repass = repass + '\n----------\n' + msg
         else:
