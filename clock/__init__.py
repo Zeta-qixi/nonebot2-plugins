@@ -22,7 +22,7 @@ class Clock:
         self.ones = args[5]
     
     def get_info(self):
-        ones=['days', 'ones']
+        ones=['重复', '一次']
         time_ = ' '.join([i for i in self.time.split() if i !='null'])
         return f'[{self.id}] ⏰{time_} ({ones[(self.ones)]})\n备注: {self.content}'
 
@@ -43,7 +43,9 @@ def add_clock(uid, content, time, ones, type):
     """添加闹钟"""
     try:
         add_clock_db(uid, content, time, ones, type)
-        clock_list.append(Clock(new_id() ,type, uid, content, time, ones))
+        
+        clock_list.append(Clock((new_id() ,type, uid, content, time, ones)))
+        
         return True
     except:
         return False
