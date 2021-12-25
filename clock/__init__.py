@@ -9,7 +9,9 @@ from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event, GroupMessageEvent,MessageEvent
 from nonebot.adapters.cqhttp.message import Message
 from nonebot.typing import T_State
-from nonebot import require
+from nonebot import require, logger
+
+scheduler = require('nonebot_plugin_apscheduler').scheduler
 
 class Clock:
     def __init__(self, *args):
@@ -20,17 +22,19 @@ class Clock:
         self.content = args[3]
         self.time = args[4]
         self.ones = args[5]
+
+        self.get_time()
     
     def get_info(self):
         ones=['重复', '一次']
         time_ = ' '.join([i for i in self.time.split() if i !='null'])
         return f'[{self.id}] ⏰{time_} ({ones[(self.ones)]})\n备注: {self.content}'
 
-#加载插件时 获取所有闹钟
-# (id, type, user_id, content, c_time, ones) 
-clock_list =  [] #元组list
-for i in select_all():
-    clock_list.append(Clock(i))
+    def get_time(self):
+        time = self.time.split()[-1].split(':')
+        self.hour = int(time[0])
+        self.minute = int(time[1])
+
 
 try:
     master = get_driver().config.master
@@ -39,28 +43,42 @@ except:
 
 
 
+def create_clock_scheduler(clock: Clock):
+    '''
+    创建闹钟任务
+    '''
+    logger.info(f"add clock id:{clock.id}")
+
+    async def add_clock():
+
+        await get_bot().send_msg(message_type=clock.type, user_id=clock.user_id, group_id=clock.user_id, message=clock.content)          
+        if clock.ones == 1:
+            del_clock_db(clock.id)
+            scheduler.remove_job(f"clock_{clock.id}")
+            logger.info(f"remove clock id:{clock.id}")
+
+    scheduler.add_job(add_clock, "cron", hour=clock.hour, minute=clock.minute, id=f"clock_{clock.id}")
+
+
+
+
 def add_clock(uid, content, time, ones, type):
     """添加闹钟"""
-    try:
-        add_clock_db(uid, content, time, ones, type)
-        
-        clock_list.append(Clock((new_id() ,type, uid, content, time, ones)))
-        
-        return True
-    except:
-        return False
+
+    add_clock_db(uid, content, time, ones, type)
+    create_clock_scheduler(Clock((new_id() ,type, uid, content, time, ones)))
 
 def del_clock(id):
     """删除闹钟"""
+
     del_clock_db(id)
-    for clock in clock_list:
-        if clock.id == id:
-            clock_list.remove(clock)
-            return True
+    scheduler.remove_job(f"clock_{id}")
 
 def create_time(t):
     """之后加入日 月 星期等条件"""
     return (f"null null null null null {t}")
+
+
 
 # 创建闹钟
 add = on_command('添加闹钟', aliases={'设置闹钟', '添加提醒事项', 'addclock'})
@@ -115,57 +133,46 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
         else:
             add_clock(gid, content, create_time(time_), ones, 'group')
             await bot.send(event, message="添加成功～")
-            
-# 查看闹钟
-check = on_command('查看闹钟',  aliases={'提醒事项', '闹钟','⏰'})
-@check.handle()
-async def add_handle(bot: Bot, event: Event):
-    try:
-        id = event.group_id
-    except:
-        id = event.user_id
+
+
+# # 查看闹钟
+# check = on_command('查看闹钟',  aliases={'提醒事项', '闹钟','⏰'})
+# @check.handle()
+# async def add_handle(bot: Bot, event: Event):
+#     try:
+#         id = event.group_id
+#     except:
+#         id = event.user_id
     
-    clock_msg = ''
-    ones=['days', 'ones']
-    for clock in clock_list:
-        if clock.user_id == id:
+#     clock_msg = ''
+#     ones=['days', 'ones']
+#     for clock in clock_list:
+#         if clock.user_id == id:
 
-            if clock_msg:
-                clock_msg = clock_msg + f'\n\n{clock.get_info()}'
-            else:
-                clock_msg = clock_msg + f'{clock.get_info()}'
-    if clock_msg:
-        await bot.send(event, message= Message(clock_msg))
-    else:
-        await bot.send(event, message='目前没有闹钟')
+#             if clock_msg:
+#                 clock_msg = clock_msg + f'\n\n{clock.get_info()}'
+#             else:
+#                 clock_msg = clock_msg + f'{clock.get_info()}'
+#     if clock_msg:
+#         await bot.send(event, message= Message(clock_msg))
+#     else:
+#         await bot.send(event, message='目前没有闹钟')
     
 
 
-# 删除闹钟
-del_ = on_command('删除闹钟')
-@del_.handle()
-async def del_handle(bot: Bot, event: Event):
-    id = str(event.get_message())
-    if id.isdigit():
-        if del_clock(int(id)):
-            await bot.send(event, message='删除成功')
-            return
-    await bot.send(event, message='失败了')
+# # 删除闹钟
+# del_ = on_command('删除闹钟')
+# @del_.handle()
+# async def del_handle(bot: Bot, event: Event):
+#     id = str(event.get_message())
+#     if id.isdigit():
+#         if del_clock(int(id)):
+#             await bot.send(event, message='删除成功')
+#             return
+#     await bot.send(event, message='失败了')
 
-# 闹钟本体
 
-scheduler = require('nonebot_plugin_apscheduler').scheduler
-@scheduler.scheduled_job('cron', minute='*/1', second= '1', id='clock_')
-async def cheak_clock():
-    for clock in clock_list:
-        time_list = clock.time.split()
-        if strftime("%H:%M", localtime()) == time_list[-1]:
+for i in select_all():
+    create_clock_scheduler(Clock(i))
 
-            await get_bot().send_msg(message_type=clock.type, user_id=clock.user_id, group_id=clock.user_id, message=clock.content)
-
-            # 删除闹钟            
-            if clock.ones == 1:
-                del_clock_db(clock.id)
-                clock_list.remove(clock)
-                #scheduler.remove
 
