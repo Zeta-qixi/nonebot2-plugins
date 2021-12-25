@@ -1,6 +1,6 @@
 import random
 import os
-from nonebot import on_message, on_notice, get_bots
+from nonebot import on_message, on_notice, get_bot
 from nonebot.rule import to_me
 
 
@@ -31,5 +31,4 @@ async def rua_me_to_say_handle(bot: Bot, event: PokeNotifyEvent):
 # scheduler = require('nonebot_plugin_apscheduler').scheduler
 # @scheduler.scheduled_job('cron', hour='*/12', id='dynamic_sched_')
 # async def say_():
-#     for bot in get_bots().values():
-#         await bot.send_group_msg(group_id = ["gid"], message= MessageSegment.record(f'file://{get_voice()}'))
+#         await get_bot().send_group_msg(group_id = ["gid"], message= MessageSegment.record(f'file://{get_voice()}'))

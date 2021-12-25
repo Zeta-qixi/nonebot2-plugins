@@ -2,12 +2,12 @@ import sqlite3
 import os
 import time
 path =os.path.dirname(__file__)
-db = path + '/data.db'
+DB = path + '/data.db'
 
 TABLE = 'bilibili'
 
 def execute(sql:str):
-    conn = sqlite3.connect(db)
+    conn = sqlite3.connect(DB)
     c = conn.cursor()
     res = c.execute(sql)
     data = []
@@ -38,8 +38,12 @@ BASE_SELECT_SQL = f"SELECT * FROM {TABLE}"
 def select_all():
     return execute(BASE_SELECT_SQL)
 
-def select_by_field(gid, mid, field = 'mid'):
-    return (execute(BASE_SELECT_SQL + f' where {field} = {mid} and gid = {gid}'))[0]
+def select_by_field(gid, key, field = 'mid'):
+    res = (execute(BASE_SELECT_SQL + f' where {field} = "{key}" and gid = {gid}'))
+    if res:
+        return res[0] if len(res) == 1 else res
+
+    return None
 
 
 

@@ -8,7 +8,7 @@ import random
 
 from nonebot.log import logger
 
-from nonebot import get_bots, on_command, get_driver
+from nonebot import get_bot, on_command, get_driver
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
@@ -44,12 +44,12 @@ async def push_dynamic():
                 if dy.type != 1:
                     try:
                         res_list = await get_dynamic_screenshot(url, item['filter'])
-                        for bot in get_bots().values():  
-                            msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
-                            await bot.send_group_msg(group_id = item["gid"], message=f'{dy.name}发布了动态: {dy.url}' + msg_pic)
-                            if 'pic' in res_list:
-                                msg_pic = MessageSegment.image(res_list['pic'])
-                                await bot.send_group_msg(group_id = item["gid"], message= msg_pic)
+                    
+                        msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
+                        await bot.send_group_msg(group_id = item["gid"], message=f'{dy.name}发布了动态: {dy.url}' + msg_pic)
+                        if 'pic' in res_list:
+                            msg_pic = MessageSegment.image(res_list['pic'])
+                            await get_bot().send_group_msg(group_id = item["gid"], message= msg_pic)
                         # 更新时间
                         
                     except Exception as e:

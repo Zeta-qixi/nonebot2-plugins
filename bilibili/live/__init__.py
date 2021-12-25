@@ -5,11 +5,12 @@ import time
 from datetime import datetime
 import requests
 from ..db import *
-from nonebot import get_bots, get_driver, on_command,require
+from nonebot import get_bot, get_driver, on_command,require
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event
 from nonebot.typing import T_State
 from nonebot import logger
+
 try:
     master = get_driver().config.master
 except:
@@ -44,29 +45,28 @@ def get_info(mid:int):
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 @scheduler.scheduled_job('cron', minute='*/1', id='live_sched')
 async def living():
-    for bot in list(get_bots().values()):
     
-        for item in LIVE.values():
-            await asyncio.sleep(3)
-            info = get_info(item["mid"])
-            liveroom = info['live_room']
-            status = liveroom['liveStatus']
-            try:      
-                if status == 1 and item['status'] == 0:
-                
-                    item['status'] = 1
-                    update(item["gid"], item["mid"], "is_live", 1)
-                    msg = f'你关注的{info["name"]}正在直播！\n#{liveroom["title"]}\n{liveroom["url"]}[CQ:image,file={liveroom["cover"]}]'
+    for item in LIVE.values():
+        await asyncio.sleep(3)
+        info = get_info(item["mid"])
+        liveroom = info['live_room']
+        status = liveroom['liveStatus']
+        try:      
+            if status == 1 and item['status'] == 0:
+            
+                item['status'] = 1
+                update(item["gid"], item["mid"], "is_live", 1)
+                msg = f'你关注的{info["name"]}正在直播！\n#{liveroom["title"]}\n{liveroom["url"]}[CQ:image,file={liveroom["cover"]}]'
 
-                    await bot.send_group_msg(group_id = item["gid"], message=msg) 
+                await get_bot().send_group_msg(group_id = item["gid"], message=msg) 
 
-                elif status == 0 and item['status'] == 1:
-                    item['status'] = 0
-                    update(item["gid"], item["mid"], "is_live", 0)
-                    msg = f'{info["name"]}下播了。。'
-                    await bot.send_group_msg(group_id = item["gid"], message=msg)
-            finally:
-                pass
+            elif status == 0 and item['status'] == 1:
+                item['status'] = 0
+                update(item["gid"], item["mid"], "is_live", 0)
+                msg = f'{info["name"]}下播了。。'
+                await get_bot().send_group_msg(group_id = item["gid"], message=msg)
+        finally:
+            pass
 
 
 
@@ -119,9 +119,10 @@ async def add(bot: Bot, event):
     try:
         key = str(event.get_message())
         if key.isdigit():
-            res = select_by_field(gid, int(key))
+            res = select_by_field(gid, key)
         else:
             res = select_by_field(gid, key, 'name')
+            print(res)
         
         mid = res[2]
 

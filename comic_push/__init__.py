@@ -1,7 +1,7 @@
 import os
 import json
 from .pusher import *
-from nonebot import get_bots, on_command
+from nonebot import get_bot, on_command
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import MessageEvent
 from nonebot import require
@@ -46,9 +46,8 @@ async def push_comic():
                 data[uid][cid] = latest
                 update()
 
-                for bot in get_bots().values():
-                    msg = f"漫画{title}更新了\n{latest}:{url_}"
-                    await bot.send_msg(message_type='private', user_id=int(uid), message=msg)
+                msg = f"漫画{title}更新了\n{latest}:{url_}"
+                await get_bot().send_msg(message_type='private', user_id=int(uid), message=msg)
 
 
 
