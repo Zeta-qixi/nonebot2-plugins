@@ -41,7 +41,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
             block.stop_propagation(block)
         
 
-set_block = on_regex(r'(关闭|开启|查看|不再回答)(.*)?', priority=-2)
+set_block = on_regex(r'(关闭|开启|不再回答)(.*)?', priority=-2)
 @set_block.handle()
 async def _set_block(bot: Bot, event: GroupMessageEvent, state: T_State):
     action, command = state['_matched_groups']
