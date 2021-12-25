@@ -1,7 +1,6 @@
 import json
 import os
 from collections import defaultdict
-
 from nonebot import on_message, on_regex, get_driver
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import GroupMessageEvent
@@ -37,7 +36,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
     block.block =  False
     group_id = str(event.group_id)
     for command in block_dict[group_id]:
-        if command in raw_message:
+        if(raw_message.startswith(command)):
             block.stop_propagation(block)
         
 
