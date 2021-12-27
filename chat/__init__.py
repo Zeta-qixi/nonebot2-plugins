@@ -23,10 +23,6 @@ except:
     master = []
     logger.info("没有设置master")
 
-def init_data_dict():
-    return defaultdict(list)
-
-
 
 gpath =os.path.dirname(__file__)
 path = gpath +'/data.json'
@@ -37,9 +33,9 @@ def union(gid, uid):
 try:
     with open(path) as f:
         DATA = json.load(f)
-        DATA = defaultdict(init_data_dict, DATA)
+        DATA = defaultdict(dict, DATA)
 except:
-    DATA = defaultdict(init_data_dict)
+    DATA = defaultdict(dict)
     logger.info("缺少data.json")
 
 try:
@@ -51,14 +47,14 @@ except:
 
 
 def save_json(keys:str, values:str, id:str):
-		'''
-		写数据到json
-		'''
-		if values not in DATA[id][keys]: 
-				DATA[id][keys].append(values)
-		with open(path, 'w+') as f :
-				tojson = json.dumps(DATA,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
-				f.write(tojson)
+
+    DATA[id].setdefault(keys, [])
+
+    if values not in DATA[id][keys]: 
+            DATA[id][keys].append(values)
+    with open(path, 'w+') as f :
+            tojson = json.dumps(DATA,sort_keys=True, ensure_ascii=False, indent=4,separators=(',',': '))
+            f.write(tojson)
 
 
 chat = on_message(priority=99)
@@ -102,7 +98,8 @@ async def set_handle(bot: Bot, event: Event, state: T_State):
         state['gid'] = event.group_id
         state['uid'] = event.user_id
     comman = str(event.get_message()).split(' ',1)
-    if comman:
+
+    if comman[0] :
         state["key"] = comman[0]
         if len(comman) >1:
             state["value"] = comman[1]
@@ -122,8 +119,8 @@ async def set_got2(bot: Bot, event: Event, state: T_State):
         if  filter(state["key"]):
             await set_respond.finish(Message("[CQ:image,file=cab2ae806af6b0a7b61fdd8534b50093.image]"))
         else:
-            try:
+           
                 save_json(state["key"], state["value"], union(state['gid'] , 1))
                 await set_respond.finish(message='ok~')
-            except BaseException as e:
-                logger.error(repr(e))
+            # except BaseException as e:
+            #     logger.error(repr(e))
