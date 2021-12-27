@@ -11,6 +11,8 @@ from nonebot.adapters.cqhttp.event import Event
 
 # 今天是几号星期
 WEEK = ['一', '二', '三', '四', '五', '六', '日']
+
+
 def get_weekday(date: str):
     if date[:2] == '今天':
         index = datetime.date.today().weekday()
@@ -23,10 +25,15 @@ def get_weekday(date: str):
         res = list(reversed(res))
         res.extend([None]*(3-len(res)))
         day, month, year = res
-        if not year:
-            year = datetime.date.today().year
+        this_date = datetime.date.today()
+
         if not month:
-            month = datetime.date.today().month
+            month = this_date.month
+        if not year:
+            year = this_date.year
+            if int(month) < this_date.month:
+                year += 1
+
         index = datetime.date(int(year),int(month),int(day)).weekday()
     return WEEK[index]
 
