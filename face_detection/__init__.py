@@ -15,10 +15,16 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
     for msg in event.get_message():
         if msg.type == 'image':
             url = msg.data['url']
+
+        if msg.type == 'text':
+             qq = msg.data['text']
+             url = f'http://q1.qlogo.cn/g?b=qq&nk={qq}&s=160'
+             print(url)
             
-            if(get_detection_res(url)):
-                logger.info("检测完成")
-                msg_pic = MessageSegment.image(f"file://{IMAGE_PATH}")
-                await face_.finish(message=msg_pic)
-            else:
-                logger.info("检测不到东西噢")
+
+        if(get_detection_res(url = url)):
+            logger.info("检测完成")
+            msg_pic = MessageSegment.image(f"file://{IMAGE_PATH}")
+            await face_.finish(message=msg_pic)
+        else:
+            logger.info("检测不到东西噢")

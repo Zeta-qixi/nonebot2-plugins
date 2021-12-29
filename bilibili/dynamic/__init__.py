@@ -46,7 +46,7 @@ async def push_dynamic():
                         res_list = await get_dynamic_screenshot(url, item['filter'])
                     
                         msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
-                        await bot.send_group_msg(group_id = item["gid"], message=f'{dy.name}发布了动态: {dy.url}' + msg_pic)
+                        await get_bot().send_group_msg(group_id = item["gid"], message=f'{dy.name}发布了动态: {dy.url}' + msg_pic)
                         if 'pic' in res_list:
                             msg_pic = MessageSegment.image(res_list['pic'])
                             await get_bot().send_group_msg(group_id = item["gid"], message= msg_pic)

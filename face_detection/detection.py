@@ -15,13 +15,14 @@ mp_drawing = mediapipe.solutions.drawing_utils
 
 
 
-def get_detection_res(url):
+def get_detection_res(**kargs):
+    url = kargs.get('url', None)
     res = requests.get(url)
     img = Image.open(BytesIO(res.content))
     img.save(IMAGE_INPUT)
 
     with mp_face_detection.FaceDetection(
-        model_selection=1, min_detection_confidence=0.5) as face_detection:
+        model_selection=1, min_detection_confidence=0.4) as face_detection:
     
         image = cv2.imread(IMAGE_INPUT)
         # Convert the BGR image to RGB and process it with MediaPipe Face Detection.

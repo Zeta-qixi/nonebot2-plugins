@@ -179,12 +179,11 @@ for index, info in enumerate(setubot.rank_mode_list):
 
 @change_rank_mode.got('mode_index', prompt=mode_info)
 async def set_got(bot: Bot, event: Event, state: T_State):
-    try:
-        if (mode := str(state['mode_index'])) in setubot.rank_mode_list:
-            index = setubot.rank_mode_list.index(mode)
-        else:
-            index = int(state['mode_index'])
-        setubot.user_rank_mode[state['uid']] = index
-        await change_rank_mode.finish(event, message = "设置成功")
-    except:
-        await change_rank_mode.finish(message = "设置失败了")
+
+    if (mode := str(state['mode_index'])) in setubot.rank_mode_list:
+        index = setubot.rank_mode_list.index(mode)
+    else:
+        index = int(state['mode_index'])
+        
+    setubot.user_rank_mode[state['uid']] = index
+    await change_rank_mode.finish(message = "设置成功")
