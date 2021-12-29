@@ -60,16 +60,20 @@ def save_json(keys:str, values:str, id:str):
 chat = on_message(priority=99)
 @chat.handle()
 async def chat_handle(bot: Bot, event: GroupMessageEvent):
-  message = str(event.raw_message)
+  message = str(event.get_message())
+  print(message)
+
+
   group_id = event.group_id
   user_id = event.user_id
   
   if random.random() < P:
     for id in [1, group_id]:
         union_id = union(id, 1)
-        if message in DATA[union_id]:
-            await bot.send(event,message=Message(random.choice((DATA[union_id][message]))))
-            return            
+        for keyword in DATA[union_id]:
+          if (keyword == message) or (keyword in message and len(keyword) >= 3) :
+              await chat.finish(message=Message(random.choice((DATA[union_id][keyword]))))
+   
 
 '''
 设置问答
@@ -108,19 +112,15 @@ async def set_handle(bot: Bot, event: Event, state: T_State):
 async def set_got(bot: Bot, event: Event, state: T_State):
 
     if ",url=" in state["key"] :
-        state["key"] = state["key"].split(",url=")[0]+']'
+        state["key"] = state["key"].split(",url=")[0]
         
 
 @set_respond.got('value', prompt="要答什么呢～")
 async def set_got2(bot: Bot, event: Event, state: T_State):
 
-        if ",url=" in state["value"] :
-            state["value"] = state["value"].split(",url=")[0]+']'
-        if  filter(state["key"]):
-            await set_respond.finish(Message("[CQ:image,file=cab2ae806af6b0a7b61fdd8534b50093.image]"))
-        else:
-           
-                save_json(state["key"], state["value"], union(state['gid'] , 1))
-                await set_respond.finish(message='ok~')
-            # except BaseException as e:
-            #     logger.error(repr(e))
+
+
+    save_json(state["key"], state["value"], union(state['gid'] , 1))
+    await set_respond.finish(message='ok~')
+    # except BaseException as e:
+    #     logger.error(repr(e))
