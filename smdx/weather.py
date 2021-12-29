@@ -10,6 +10,14 @@ from nonebot.typing import T_State
 PATH = os.path.dirname(__file__)
 
 import requests
+tq = {
+    
+    '晴': '☀️', 
+    '阴':'☁️',
+    '云':'☁️',
+    '雪':'❄️',
+    '雨':'🌧️', 
+    }
 
 class weather_data:
     def __init__(self, **params):
@@ -18,9 +26,14 @@ class weather_data:
         self.feelsLike = params['feelsLike'] # 体感温度
         self.text = params['text'] # 气象
         self.obsTime = params['obsTime'] # 数据观测时间
+        self.icon = '☁️'
+        for i in tq:
+            if i in self.text:
+                self.icon = tq[i]
+                break
 
     def __str__(self):
-        return (f'{self.location}当前温度: {self.temp}˚C\n体感温度: {self.feelsLike}˚C\n天气「{self.text}」☁️')
+        return (f'{self.location}当前温度: {self.temp}˚C\n体感温度: {self.feelsLike}˚C\n天气「{self.text}」{self.icon}')
         
 
 class heweather:
