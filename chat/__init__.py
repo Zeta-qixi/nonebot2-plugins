@@ -71,7 +71,7 @@ async def chat_handle(bot: Bot, event: GroupMessageEvent):
     for id in [1, group_id]:
         union_id = union(id, 1)
         for keyword in DATA[union_id]:
-          if (keyword == message) or (keyword in message and len(keyword) >= 3) :
+          if (keyword == message) or (keyword in message and len(keyword) > 3) :
               await chat.finish(message=Message(random.choice((DATA[union_id][keyword]))))
    
 

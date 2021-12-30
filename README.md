@@ -5,6 +5,7 @@
 MASTER = [123456]
 ```
 
+
 # 已完成功能 
 
 ## [bilibili](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/bilibili)
@@ -16,9 +17,6 @@ b站up直播提醒，动态转发
 ## [maimaidx](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/maimaidx)
 舞萌随歌
 
-## [nickname](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/nickname)
-自定义昵称 （没什么用）
-
 ## [rua](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/rua)
 戳一戳群友rua头像，或者rua图片。 （还有其他头像合成表情）
 
@@ -28,8 +26,6 @@ b站up直播提醒，动态转发
 ## [setu](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/setu) 
 基于[pixivpy_async](https://github.com/Mikubill/pixivpy-async)的setu插件
 
-## [sleep_clock](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/sleep_clock) 
-提醒睡觉小助手 （一天睡觉23小时）
 
 ## [⏰ clock](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/clock) 
 闹钟、提示事项
@@ -55,10 +51,9 @@ bot添加好友 群管理 等等等等
 ## jrrp.py 
 发个随机数
 
-# 未完成 
-
-## account 
-账号记录、代肝记录 （应该是这样）
 
 
-
+# 📝
+- 一些仓库有的 但这里没写的为未完成插件  
+- 部分插件没写readme （懒，如需要提一下）  
+- 项目算是刚学python弄的（2018），所以不同插件的代码风格可能很大，如果觉得代码有些地方存在不合理的地方请提出来！
