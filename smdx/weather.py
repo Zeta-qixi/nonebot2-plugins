@@ -48,11 +48,18 @@ class heweather:
     def load_file(self):
         with open(f'{PATH}/asset/location.json', 'r') as f:
             self.location_id_dict = json.load(fp=f)
-        with open(f'{PATH}/asset/data.txt', 'r') as f:
-            key = f.readline().split()[0]
-            self.params['key'] = key
+        with open(f'{PATH}/asset/data.json', 'r') as f:
+            data = json.load(fp=f)
+            self.params['key'] = data['key']
+            self.city = data['city']
 
-    def save_(self):
+    def save_city_info(self):
+        with open(f'{PATH}/asset/data.json', 'w') as f:
+            data = {'key': self.params['key']}
+            data['city'] = self.city
+            json.dump(data, f)
+    
+    def save_location_id(self):
         with open(f'{PATH}/asset/location.json', 'w') as f:
             json.dump(self.location_id_dict, f)
 
@@ -79,14 +86,31 @@ class heweather:
         
         for i in data:
             self.location_id_dict[i['name']] = i['id']
+        self.save_location_id()
 
-        self.save_()
+
+
+
+
 
 wbot = heweather()
-weather = on_regex('(.*)天气|气温|多少度|几度', block=False)
+setcity = on_command('设置天气城市', priority=10)
+weather = on_regex('^(.*)天气|气温|多少度|几度', block=False, priority=11)
+
+
 @weather.handle()
 async def weather_handle(bot: Bot, event: Event, state: T_State):
     city = state['_matched_groups'][0]
-    msg = wbot.get_weather(city)
-    await bot.send(event, message = str(msg))
+    if city in ['', '今天', '今日']:
+        city = wbot.city.get(str(event.user_id))
 
+    msg = wbot.get_weather(city)
+    await weather.finish(message = str(msg))
+
+
+@setcity.handle()
+async def weather_handle(bot: Bot, event: Event, state: T_State):
+    city = str(event.get_message())
+    wbot.city[str(event.user_id)] = city
+    wbot.save_city_info()
+    await setcity.finish(message=f"已设置当前城市为{city}")
