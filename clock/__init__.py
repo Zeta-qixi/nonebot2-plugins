@@ -4,6 +4,7 @@ from  time import strftime, localtime
 from datetime import datetime, timedelta
 import pandas as pd
 import re
+from .Clock import Clock
 from nonebot import on_command, on_message, get_bot, get_driver
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event, GroupMessageEvent,MessageEvent
@@ -12,28 +13,6 @@ from nonebot.typing import T_State
 from nonebot import require, logger
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-
-class Clock:
-    def __init__(self, *args):
-        args = args[0]
-        self.id = args[0]
-        self.type = args[1]
-        self.user_id = args[2]
-        self.content = args[3]
-        self.time = args[4]
-        self.ones = args[5]
-
-        self.get_time()
-    
-    def get_info(self):
-        ones=['重复', '一次']
-        time_ = ' '.join([i for i in self.time.split() if i !='null'])
-        return f'[{self.id}] ⏰{time_} ({ones[(self.ones)]})\n备注: {self.content}'
-
-    def get_time(self):
-        time = self.time.split()[-1].split(':')
-        self.hour = int(time[0])
-        self.minute = int(time[1])
 
 
 try:
@@ -48,7 +27,6 @@ def create_clock_scheduler(clock: Clock):
     创建闹钟任务
     '''
     logger.info(f"add clock id:{clock.id}")
-
     async def add_clock():
 
         await get_bot().send_msg(message_type=clock.type, user_id=clock.user_id, group_id=clock.user_id, message=clock.content)          
@@ -59,7 +37,8 @@ def create_clock_scheduler(clock: Clock):
 
     scheduler.add_job(add_clock, "cron", hour=clock.hour, minute=clock.minute, id=f"clock_{clock.id}")
 
-
+for i in select_all():
+    create_clock_scheduler(Clock(i))
 
 
 def add_clock(uid, content, time, ones, type):
@@ -172,7 +151,6 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
 #     await bot.send(event, message='失败了')
 
 
-for i in select_all():
-    create_clock_scheduler(Clock(i))
+
 
 
