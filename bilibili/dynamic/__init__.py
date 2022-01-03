@@ -29,7 +29,7 @@ def get_data_from_db():
     return data
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-@scheduler.scheduled_job('cron', minute='*/10', id='dynamic_sched_')
+@scheduler.scheduled_job('cron', minute='*/5', id='dynamic_sched_')
 async def push_dynamic():
 
     for item in get_data_from_db():
@@ -39,19 +39,19 @@ async def push_dynamic():
             dy = Dynamic(dy)
             url = dy.url
             # 判断是否最新的
-            if item["lastest"] < dy.time and dy.time > datetime.now().timestamp() - timedelta(minutes=30).seconds:
+            if item["lastest"] < dy.time:
                 update(item["gid"], item["mid"], 'latest_dynamic', dy.time)
                 if dy.type != 1:
                     try:
                         res_list = await get_dynamic_screenshot(url, item['filter'])
                     
                         msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
-                        await get_bot().send_group_msg(group_id = item["gid"], message=f'{dy.name}发布了动态: {dy.url}' + msg_pic)
-                        if 'pic' in res_list:
-                            msg_pic = MessageSegment.image(res_list['pic'])
+                        await get_bot().send_group_msg(group_id = item["gid"], message=f'发布了新的动态:\n{dy.url}' + msg_pic)
+
+                        for img in res_list.get('img_url', []):
+                            msg_pic = MessageSegment.image(file=img)
                             await get_bot().send_group_msg(group_id = item["gid"], message= msg_pic)
-                        # 更新时间
-                        
+                    
                     except Exception as e:
                         logger.error(repr(e))
 

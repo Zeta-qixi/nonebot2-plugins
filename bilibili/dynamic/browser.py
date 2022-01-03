@@ -8,6 +8,7 @@ from typing import Optional
 import asyncio
 from PIL import Image
 from io import BytesIO
+from lxml import etree
 from playwright.async_api import Browser, async_playwright
 import re
 from nonebot import logger
@@ -42,10 +43,14 @@ async def get_dynamic_screenshot(url, filter=None):
         text_content = await page.query_selector(".post-content")
         text = await text_content.text_content()
         try:
-            img_content_ = await text_content.query_selector(".card-1")
-            img_inner_html = await (img_content_.inner_html())
-            img_url = "https:" + (re.search(r"//.*jpg",img_inner_html)).group()
-            res['pic'] = img_url
+            img_content_ = await page.query_selector(".imagesbox")
+            img_inner_html = await img_content_.inner_html()
+            tree = etree.HTML(img_inner_html)
+            url_list = []
+            for i in tree.xpath('//div[@class="img-content"]'):
+                img_url = "https:" + (re.search(r"//.*jpg",str(i.xpath('@style')))).group()
+                url_list.append(img_url)
+            res['img_url'] = url_list
         except Exception as e:
             logger.error(repr(e))
 
