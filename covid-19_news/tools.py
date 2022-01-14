@@ -1,6 +1,5 @@
 import requests
 from typing import Dict, List
-import aiohttp
 import json
 
 
@@ -94,5 +93,6 @@ class NewsData:
                     self.data.add(Area(data))
 
             get_Data(data['areaTree'][0])
+            return True
 
 
