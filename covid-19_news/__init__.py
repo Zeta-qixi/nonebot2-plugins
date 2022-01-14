@@ -12,7 +12,8 @@ NewsBot = NewsData()
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 @scheduler.scheduled_job('cron', hour='*/3', minute='0', second='0', misfire_grace_time=60) # = UTC+8 1445
 async def update():
-    NewsBot.update_data()
+    if NewsBot.update_data():
+        logger.info(f"[疫情数据更新]{NewsBot.time}")
 
 city_news = on_regex('(.*)(疫情.*)', block=True)
 # city_policy = on_regex('(.*)(疫情政策)', block=True)
