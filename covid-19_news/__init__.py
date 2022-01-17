@@ -23,8 +23,8 @@ city_news = on_regex(r'^(.{0,6})(疫情.{0,4})', block=True, priority=10)
 @add_focus.handle()
 async def _(bot: Bot, event: MessageEvent, state: T_State):
     city = str(event.get_message())
-    gid = event.group_id
-    if NewsBot.data.get(city):
+    gid = str(event.group_id)
+    if NewsBot.data.get(city) and city not in FOCUS[gid]:
         FOCUS[gid].append(city)
         DL.save()
         await add_focus.finish(message=f"已添加{city}疫情推送")
@@ -61,7 +61,7 @@ async def task():
         for city in FOCUS.get(gid):
             city_ = NewsBot.data.get(city)
             if city_.today['isUpdated']:
-                await bot.send_group_msg(group_id = gid, message= '定时推送\n' + city_.main_info)
+                await bot.send_group_msg(group_id = int(gid), message= '定时推送\n' + city_.main_info)
 
 for i, times in enumerate(TIMES):
     hour, minute = times.split(':')
