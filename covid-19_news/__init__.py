@@ -1,14 +1,19 @@
+from .data_load import DataLoader
 from nonebot import on_regex, on_command, get_bot
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import  MessageEvent
 from nonebot.typing import T_State
 from nonebot import require, logger
 from collections import  defaultdict
-
 from .tools import NewsData
+
+DL = DataLoader('data.json')
+TIMES = [('9:00'), ('20:00')]
+FOCUS = DL.data
+
+
 NewsBot = NewsData()
-FOCUS = defaultdict(list)
-TIMES = [('9:00'), ('12:00'), ('21:00')]
+
 
 
 add_focus = on_command("关注疫情", priority=5)
@@ -21,6 +26,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
     gid = event.group_id
     if NewsBot.data.get(city):
         FOCUS[gid].append(city)
+        DL.save()
         await add_focus.finish(message=f"已添加{city}疫情推送")
     else:
         await add_focus.finish(message=f"添加失败")
