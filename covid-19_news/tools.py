@@ -25,14 +25,6 @@ def get_policy(id):
     res_ = resp.json()
     assert res_['message'] == 'success'
     data = res_['result']['data'][0]
-
-    # data['leave_policy_date']
-    # data['leave_policy']
-    
-    # data['back_policy_date']
-    # data['back_policy']
-
-    # data['poi_list']  # 风险区域
     
     msg = f"出行({data['leave_policy_date']})\n{data['leave_policy']}\n\
 ------\n\
