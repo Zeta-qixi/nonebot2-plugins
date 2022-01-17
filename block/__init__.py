@@ -40,7 +40,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
             block.stop_propagation(block)
         
 
-set_block = on_regex(r'(关闭|开启|不再回答)(.*)?', priority=-2)
+set_block = on_regex(r'(关闭命令|开启命令|不再回答)(.*)?', priority=-2)
 @set_block.handle()
 async def _set_block(bot: Bot, event: GroupMessageEvent, state: T_State):
     action, command = state['_matched_groups']
@@ -50,13 +50,14 @@ async def _set_block(bot: Bot, event: GroupMessageEvent, state: T_State):
     if user_id not in master:
         await set_block.finish(message="?")
 
-    if action == '关闭' and command:
+    if action in ['关闭命令','不再回答'] and command:
         block_dict[group_id].append(command)
-        await set_block.send(message=f"已关闭「{command}」")
+        await set_block.send(message=f"{action}「{command}」")
 
-    elif action == '开启' and command:
-        block_dict[group_id].remove(command)
-        await set_block.send(message=f"已开启「{command}」")
+    elif action == '开启命令' and command:
+        if command in block_dict[group_id]:
+            block_dict[group_id].remove(command)
+            await set_block.send(message=f"{action}「{command}」")
     else: 
         print(block_dict)
 

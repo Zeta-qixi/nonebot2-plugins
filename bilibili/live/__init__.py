@@ -71,7 +71,7 @@ async def living():
 
 
 
-add_up = on_command('添加关注', aliases={"关注"})
+add_up = on_command('添加关注')
 @add_up.handle()
 async def add(bot: Bot, event: Event, state: T_State):
     '''
