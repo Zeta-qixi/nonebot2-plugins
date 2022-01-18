@@ -5,55 +5,29 @@
 MASTER = [123456]
 ```
 
-
-# 已完成功能 
-
-## [bilibili](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/bilibili)
-b站up直播提醒，动态转发
-
-## [chat](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/chat)
-对话插件，支持 一问对多答，随机答，可以调整回复概率 
-
-## [maimaidx](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/maimaidx)
-舞萌随歌
-
-## [rua](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/rua)
-戳一戳群友rua头像，或者rua图片。 （还有其他头像合成表情）
-
-## [search_pic](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/search_pic)
-搜图 参考 [hoshino项目](https://github.com/pcrbot/Hoshino-plugin-transplant/tree/master/image)
-
-## [setu](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/setu) 
-基于[pixivpy_async](https://github.com/Mikubill/pixivpy-async)的setu插件
-
-
-## [⏰ clock](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/clock) 
-闹钟、提示事项
-
-## [漫画更新提醒](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/comic_push) 
-属于是爬虫了
-
-## [涩图评分](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/setu_score) 
-调用百度智能云的图片瑟琴风控api
-
-## [日常实用功能](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/smdx)  
-目前有天气查询 星期几查询（来点实用的东西了..）
-
-## [申请管理、群管理等](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/atirbot)
-bot添加好友 群管理 等等等等 
-
-## [插件管理](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/block)
-修改block实现的关键字触发阻断, 从而实现类似插件管理的功能
-
-## [词语生成](https://github.com/Zeta-qixi/nonebot2-plugins/tree/master/word_cloud)
-根据聊天记录生成词语, 无需log
-
-## jrrp.py 
-发个随机数
-
-
-
 # 📝
 - 一些仓库有的 但这里没写的为未完成插件  
 - 部分插件没写readme （懒，如需要提一下）  
 - 项目算是刚学python弄的（2018），所以不同插件的代码风格可能很大，如果觉得代码有些地方存在不合理的地方请提出来！ 
+
+
+# 插件 
+
+|     插件        |     简介       |
+|:---------------:|:------------:|
+|  [国内疫情查询](./covid-19_news) | 在疫情区酒店隔离弄的东西 |
+|  [bilibili](./bilibili) | b站up直播提醒，动态转发 |
+|  [maimaidx随歌](./maimaidx) | 舞萌街机随歌器 |
+|  [简单对话](./chat) | 对话插件，支持 一问对多答，随机答，调整回复概率  |
+|  [rua](./rua) | 戳一戳群友rua头像，或者rua图片 |
+|  [搜图](./search_pic) | 搜图 参考 [hoshino项目](https://github.com/pcrbot/Hoshino-plugin-transplant/tree/master/image) |
+|  [setu](./setu) | 基于[pixivpy_async](https://github.com/Mikubill/pixivpy-async)的setu插件 |
+|  [clock](./clock) | 闹钟、提示事项 |
+|  [漫画更新提醒](./comic_push) | 还要找点目标网站爬 |
+|  [涩图评分](./setu_score) | 度娘为你的色图打分～ |
+|  [日常实用功能](./smdx) | 目前有天气查询 星期几查询 .. |
+|  [群管理](./atirbot) | bot添加好友 群管理 等等 |
+|  [插件管理](./block) | 修改block实现的关键字触发阻断, 从而实现类似插件管理的功能 |
+|  [词语生成](./word_cloud) | 根据聊天记录生成词语, 无需log |
+|  [简单的群内小游戏1](./games) | 俄罗斯转盘 开枪！ ｜
+|  [简单的群内小游戏2](./games) | jrrp决斗版 ｜
