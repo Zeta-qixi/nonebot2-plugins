@@ -10,7 +10,7 @@ def set_pid():
     res = resp.json()
 
     for province in res['result']:
-        if citys:=province.get('list'):
+        if citys := province.get('list'):
             for city in citys:
                 id = city['id']
                 name = city['name']
@@ -48,6 +48,7 @@ class Area():
     @property
     def main_info(self):
         return (f"{self.name}({self.grade})\n今日新增: {self.today['confirm']}\n目前确诊: {self.total['nowConfirm']}")
+
 
 class AreaList(Dict):
     def add(self, data):
