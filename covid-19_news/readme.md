@@ -1,6 +1,8 @@
 # nonebot-plugin-covid19-news
 国内新冠消息查询
-「人在天津 单位在湘 家在广州 😭😭😭 」
+
+使用腾讯api: 
+https://view.inews.qq.com/g2/getOnsInfo?name=disease_h5
 
 ## 安装使用
 ### 方法一 使用nb-cli
