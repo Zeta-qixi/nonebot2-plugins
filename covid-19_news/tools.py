@@ -16,8 +16,10 @@ def set_pid():
                 name = city['name']
                 POLICY_ID[name] = id
 
-set_pid()
-
+try:
+    set_pid()
+except:
+    pass
 
 def get_policy(id):
     url_get_policy = f"https://r.inews.qq.com/api/trackmap/citypolicy?&city_id={id}"
