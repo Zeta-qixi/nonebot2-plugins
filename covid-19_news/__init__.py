@@ -1,8 +1,10 @@
 from .data_load import DataLoader
 from nonebot import on_regex, on_command, get_bot
-from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import  MessageEvent
+from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot.adapters.onebot.v11.message import Message
+from nonebot.adapters.onebot.v11.event import  MessageEvent
 from nonebot.typing import T_State
+from nonebot.params import State, CommandArg
 from nonebot import require, logger
 from .tools import NewsData
 
@@ -16,10 +18,10 @@ NewsBot = NewsData()
  #add_focus   #city_news
 
 '''
-add_focus = on_command("关注疫情", priority=5)
+add_focus = on_command("关注疫情", priority=5, block=True)
 @add_focus.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
-    city = str(event.get_message())
+async def _(bot: Bot, event: MessageEvent, state: T_State = State(), city: Message=CommandArg()):
+    city = city.extract_plain_text()
     gid = str(event.group_id)
     if NewsBot.data.get(city) and city not in FOCUS[gid]:
         FOCUS[gid].append(city)
@@ -32,7 +34,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
 city_news = on_regex(r'^(.{0,6})(疫情.{0,4})', block=True, priority=10)
 
 @city_news.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
+async def _(bot: Bot, event: MessageEvent, state: T_State = State()):
     city_name, kw = state['_matched_groups']
 
     if city:= NewsBot.data.get(city_name):

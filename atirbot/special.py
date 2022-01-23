@@ -1,15 +1,16 @@
-from nonebot import on_command
-from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import GroupMessageEvent
+from nonebot import on_command, logger
+from nonebot.params import CommandArg
+from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot.adapters.onebot.v11.event import GroupMessageEvent, Message
 
 
 change = on_command('更改头衔',aliases={'申请头衔'})
 @change.handle()
-async def special_title(bot: Bot, event: GroupMessageEvent):
+async def special_title(bot: Bot, event: GroupMessageEvent, title: Message=CommandArg()):
     '''
     群头衔
     '''
-    title = str(event.get_message())
+    title = str(title)
     user_id = event.user_id
     group_id = event.group_id
     await bot.set_group_special_title(group_id=group_id, user_id=user_id, special_title=title,self_id=bot.self_id)

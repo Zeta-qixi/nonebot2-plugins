@@ -1,6 +1,6 @@
 from nonebot import on_notice
-from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import GroupBanNoticeEvent
+from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot.adapters.onebot.v11.event import GroupBanNoticeEvent
 
 ban_req = on_notice()
 @ban_req.handle()

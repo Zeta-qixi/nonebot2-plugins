@@ -4,10 +4,12 @@ http://ovooa.com
 '''
 import re
 from nonebot import on_command, get_driver, on_regex
-from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import MessageEvent
-from nonebot.adapters.cqhttp.message import Message, MessageSegment
+from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot.adapters.onebot.v11.event import MessageEvent
+from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 from nonebot.typing import T_State
+from nonebot.params import State
+
 
 try:
     master = get_driver().config.master
@@ -26,7 +28,7 @@ for k in api_dict:
         keywords = keywords + '|' + k
 pa = on_regex(f"({keywords})?(.*)", block=False)
 @pa.handle()
-async def pa_handle(bot:Bot, event: MessageEvent, state: T_State):
+async def pa_handle(bot:Bot, event: MessageEvent, state: T_State = State()):
     regex = (state['_matched_groups'])
     comm = regex[0]
 

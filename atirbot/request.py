@@ -1,7 +1,7 @@
 from nonebot import on_request, get_driver
-from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import  GroupRequestEvent, FriendRequestEvent
-from nonebot.adapters.cqhttp.message import Message
+from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot.adapters.onebot.v11.event import  GroupRequestEvent, FriendRequestEvent
+from nonebot.adapters.onebot.v11.message import Message
 
 try:
     master = get_driver().config.master

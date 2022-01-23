@@ -2,10 +2,11 @@
 import nonebot
 import random
 from nonebot import on_command, require
-from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import GroupMessageEvent
-from nonebot.adapters.cqhttp.message import MessageSegment, Message
-from nonebot.typing import T_State
+from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot.adapters.onebot.v11.event import GroupMessageEvent
+from nonebot.adapters.onebot.v11.message import MessageSegment, Message
+from nonebot.params import CommandArg
+
 import time
 from .jrrp import JrrpGame
 
@@ -32,11 +33,11 @@ async def jrrp_(bot: Bot, event: GroupMessageEvent):
             await bot.send(event, message=MessageSegment.at(user_id) + f'今日的人品值是:{rp}')
 
 @duel.handle()
-async def duel_(bot: Bot, event: GroupMessageEvent):
+async def duel_(bot: Bot, event: GroupMessageEvent, msg: Message = CommandArg()):
         user_id = event.user_id
 
         print(123456)
-        msg_seg = event.get_message()[0]
+        msg_seg = msg[0]
         
         if msg_seg.type == 'at':
             target = int(msg_seg.data['qq'])

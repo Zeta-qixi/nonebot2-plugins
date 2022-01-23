@@ -3,9 +3,10 @@ import json
 import requests
 from lxml import etree
 from nonebot import on_command, on_regex
-from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import Event
+from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot.adapters.onebot.v11.event import Event
 from nonebot.typing import T_State
+from nonebot.params import State
 
 PATH = os.path.dirname(__file__)
 
@@ -99,7 +100,7 @@ weather = on_regex('^(.*)天气|气温|多少度|几度', block=False, priority=
 
 
 @weather.handle()
-async def weather_handle(bot: Bot, event: Event, state: T_State):
+async def weather_handle(bot: Bot, event: Event, state: T_State = State()):
     city = state['_matched_groups'][0]
     if city in ['', '今天', '今日']:
         city = wbot.city.get(str(event.user_id))
@@ -109,7 +110,7 @@ async def weather_handle(bot: Bot, event: Event, state: T_State):
 
 
 @setcity.handle()
-async def weather_handle(bot: Bot, event: Event, state: T_State):
+async def weather_handle(bot: Bot, event: Event, state: T_State = State()):
     city = str(event.get_message())
     wbot.city[str(event.user_id)] = city
     wbot.save_city_info()

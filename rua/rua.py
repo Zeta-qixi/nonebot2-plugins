@@ -6,21 +6,17 @@ from os import path
 from time import sleep
 from PIL import Image
 import requests
-from nonebot import on_command, on_notice, get_driver
-from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import (Event, GroupMessageEvent,
-                                           MessageEvent, PokeNotifyEvent)
-from nonebot.adapters.cqhttp.message import Message, MessageSegment
+from nonebot import on_command, on_notice
+from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot.adapters.onebot.v11.event import Event, PokeNotifyEvent
+                                           
+from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 from nonebot.typing import T_State
+from nonebot.params import State, CommandArg, ArgPlainText
+
 
 from .data_source import generate_gif
 
-
-
-try:
-    master = get_driver().config.master
-except:
-    master = []
 
 
 data_dir = path.join(path.dirname(__file__), 'data/')
@@ -35,11 +31,8 @@ rua_me = on_notice(priority=60)
 @rua_me.handle()
 async def _t3(bot: Bot, event: PokeNotifyEvent):
 
-    if event.target_id in master:
-        creep_id = event.sender_id
-    elif event.target_id == int(bot.self_id):
-        pass
-    else: creep_id = event.target_id
+
+    creep_id = event.target_id
 
     url = f'http://q1.qlogo.cn/g?b=qq&nk={creep_id}&s=160'
     resp = requests.get(url)
@@ -53,19 +46,20 @@ async def _t3(bot: Bot, event: PokeNotifyEvent):
     
 rua = on_command('rua')
 @rua.handle()
-async def rua_handle(bot: Bot, event: Event, state: T_State):
-    msg = event.get_message()
-    for msg_seg in msg:
+async def rua_handle(bot: Bot, event: Event, state: T_State = State(), msg: Message = CommandArg()):
 
+    for msg_seg in msg:
         if msg_seg.type == 'image':
             state['url'] = msg_seg.data['url']
-        elif id:=str(msg_seg).isdigit():
-            state['url'] = f'http://q1.qlogo.cn/g?b=qq&nk={id}&s=160'
+        else :
+            state['url'] = f'http://q1.qlogo.cn/g?b=qq&nk={msg_seg.data["text"]}&s=160'
             
 
 @rua.got("url", prompt="要rua点什么～")
-async def rua_got(bot: Bot, event: Event, state: T_State):
+async def rua_got(bot: Bot, event: Event, state: T_State = State()):
     msg = str(state['url'])
+    print(msg)
+
     state['url'] = (msg.split('url=')[-1][:-2])
     resp = requests.get(state['url'])
     resp_cont = resp.content

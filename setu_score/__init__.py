@@ -5,11 +5,14 @@ import re
 import nonebot
 import requests
 from nonebot import on_command, require
-from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import MessageEvent, PokeNotifyEvent
-from nonebot.adapters.cqhttp.message import Message, MessageSegment
+from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot.adapters.onebot.v11.event import MessageEvent, PokeNotifyEvent
+from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 from nonebot.log import logger
 from nonebot.typing import T_State
+from nonebot.params import State, CommandArg
+
+
 
 master = nonebot.get_driver().config.master
 
@@ -47,13 +50,14 @@ def porn_pic(pic_url):
 
 setu_score = on_command('评分')
 @setu_score.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State):
+async def _(bot: Bot, event: MessageEvent, state: T_State = State(), msg: Message = CommandArg()):
     uid = event.user_id
     gid = event.group_id
     member_info = await bot.get_group_member_info(group_id=gid, user_id=uid)
-    
-    if str(event.message) != '':
-            state['ret'] = str(event.message)
+        
+    print(msg.extract_plain_text())
+    if str(msg) != '':
+            state['ret'] = str(msg)
     
     # if member_info['role'] == "owner" or uid in master:
     #     if str(event.message) != '':
@@ -65,8 +69,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
 
 
 @setu_score.got("ret", prompt="色图呢?")
-async def setu_got(bot: Bot, event: MessageEvent, state: T_State):
-
+async def setu_got(bot: Bot, event: MessageEvent, state: T_State = State()):
 
         if state['ret']:
 

@@ -5,18 +5,20 @@ from nonebot.rule import to_me
 
 
 from nonebot.typing import T_State
-from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import MessageEvent, PokeNotifyEvent
-from nonebot.adapters.cqhttp.message import MessageSegment
+from nonebot.params import State
+from nonebot.adapters.onebot.v11.bot import Bot
+from nonebot.adapters.onebot.v11.event import MessageEvent, PokeNotifyEvent
+from nonebot.adapters.onebot.v11.message import MessageSegment
 
-PATH =os.path.dirname(__file__)+'/data/resources/voice/'
+PATH =os.path.dirname(__file__)+'/resources/voice/'
+
 VOICE = [f'{PATH}{vf}' for vf in os.listdir((PATH))]
 def get_voice() -> str :
     return random.choice(VOICE)
 
 test_voice = on_message(rule=to_me(), priority=55)
 @test_voice.handle()
-async def voice_handle(bot: Bot, event: MessageEvent, state: T_State):
+async def voice_handle(bot: Bot, event: MessageEvent, state: T_State = State()):
     await bot.send(event,message= MessageSegment.record(f'file://{get_voice()}'))
 
 
