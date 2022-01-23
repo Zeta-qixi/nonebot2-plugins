@@ -10,7 +10,7 @@ from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import MessageEvent, PokeNotifyEvent
 from nonebot.adapters.onebot.v11.message import MessageSegment
 
-PATH =os.path.dirname(__file__)+'/resources/voice/'
+PATH =os.path.dirname(__file__)+'/data/resources/voice/'
 
 VOICE = [f'{PATH}{vf}' for vf in os.listdir((PATH))]
 def get_voice() -> str :
