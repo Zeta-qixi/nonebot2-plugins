@@ -20,32 +20,35 @@ try:
 except:
     master = []
 
+CLOCK_DATA = {}
 
 
-def create_clock_scheduler(clock: Clock):
+def create_clock_scheduler(id: int):
     '''
     创建闹钟任务
     '''
+    clock = CLOCK_DATA[id]
     logger.info(f"add clock id:{clock.id}")
     async def add_clock():
-
-        await get_bot().send_msg(message_type=clock.type, user_id=clock.user_id, group_id=clock.user_id, message=clock.content)          
-        if clock.ones == 1:
-            del_clock_db(clock.id)
-            scheduler.remove_job(f"clock_{clock.id}")
-            logger.info(f"remove clock id:{clock.id}")
+        if clock.verify_today():
+            await get_bot().send_msg(message_type=clock.type, user_id=clock.user_id, group_id=clock.user_id, message=clock.content)          
+            if clock.ones == 1:
+                del_clock_db(clock.id)
+                scheduler.remove_job(f"clock_{clock.id}")
 
     scheduler.add_job(add_clock, "cron", hour=clock.hour, minute=clock.minute, id=f"clock_{clock.id}")
 
 for i in select_all():
-    create_clock_scheduler(Clock(i))
+    c = Clock(i)
+    CLOCK_DATA[c.id] = Clock(i)
+    create_clock_scheduler(c)
 
 
-def add_clock(uid, content, time, ones, type):
+def add_clock(**kwargs):
     """添加闹钟"""
-
-    add_clock_db(uid, content, time, ones, type)
-    create_clock_scheduler(Clock((new_id() ,type, uid, content, time, ones)))
+    clock = Clock((kwargs))
+    add_clock_db(clock)
+    create_clock_scheduler(clock)
 
 def del_clock(id):
     """删除闹钟"""
@@ -58,16 +61,36 @@ def create_time(t):
     return (f"null null null null null {t}")
 
 
+def get_time(time_):
+    t = None
+    r = re.match(r'(\d+)[:|\-|：|.](\d+)',time_)
+    if time_.startswith('+'):
+        h = re.search(r"(\d+)[Hh时]",time_)
+        m = re.search(r"(\d+)[Mm分]",time_)
+        h=int(h.groups()[0]) if h else 0
+        m=int(m.groups()[0]) if m else 0
+        t = (datetime.now() + timedelta(hours=h, minutes=m)).strftime("%H:%M")
+
+    elif r:
+        h, m = r.groups()
+        if int(h) < 24 or int(m) < 60:
+            h = f'0{h}' if len(h)==1 else h
+            m = f'0{m}' if len(m)==1 else m
+            t = f'{h}:{m}'
+
+    return t
+        
 
 # 创建闹钟
 add = on_command('添加闹钟', aliases={'设置闹钟', '添加提醒事项', 'addclock'})
 @add.handle()
 async def add_handle(bot: Bot, event: Event, state: T_State):
+
     uid = event.user_id
     type = event.get_event_name()
     messages = str(event.get_message()).split(' ')
     ones = 1
-    content = ''
+    content = '⏰'
     try:
         time_ = messages[0]
         content = messages[1]
@@ -76,42 +99,31 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
     except:
         pass
 
-    content = content if content else '⏰'
-    '''
-    对time_做验证
-    '''
-    r = re.match(r'(\d+)[:|\-|：|.](\d+)',time_)
+    time_ = get_time(time_)
+    if not time_:
+        await add.finish(message="时间格式错误")
 
-    if time_.startswith('+'):
-        h = re.search(r"(\d+)[Hh时]",time_)
-        m = re.search(r"(\d+)[Mm分]",time_)
-        h=int(h.groups()[0]) if h else 0
-        m=int(m.groups()[0]) if m else 0
-        time_ = (datetime.now() + timedelta(hours=h, minutes=m)).strftime("%H:%M")
-    elif r:
-        h, m = r.groups()
-        if int(h)>= 24 or int(m) >= 60:
-            await bot.send(event, message="时间格式错误～")
-            return
-        h = f'0{h}' if len(h)==1 else h
-        m = f'0{m}' if len(m)==1 else m
-        time_ = f'{h}:{m}'
-    else:
-        await bot.send(event, message="时间格式错误～")
-        return
 
-    if 'private' in type:
-        add_clock(uid, content, create_time(time_), ones, 'private')
-        await bot.send(event, message="添加成功～")
-    
-    elif 'group' in type:
+    data = {
+        'user' : uid,
+        'content' : content,
+        'time' : time_,
+        'ones' : ones,
+        'type' : 'private'
+    }
+       
+    if 'group' in type:
         gid = event.group_id
         info = await bot.get_group_member_info(group_id=gid, user_id=uid)
         if info['role'] == "member" and uid not in master:
-            await bot.send(event, message="你没有该权限哦～")
-        else:
-            add_clock(gid, content, create_time(time_), ones, 'group')
-            await bot.send(event, message="添加成功～")
+            await add.finish(message="你没有该权限哦～")
+
+        data['type'] = 'group'
+        data['user'] = gid
+
+
+    add_clock(data)
+    await bot.finsh(message="添加成功～")
 
 
 # # 查看闹钟
