@@ -16,21 +16,32 @@ NewsBot = NewsData()
  #add_focus   #city_news
 
 '''
-add_focus = on_command("关注疫情", priority=5)
-@add_focus.handle()
+follow = on_command("关注疫情", priority=5)
+@follow.handle()
 async def _(bot: Bot, event: MessageEvent, state: T_State):
     city = str(event.get_message())
     gid = str(event.group_id)
     if NewsBot.data.get(city) and city not in FOCUS[gid]:
         FOCUS[gid].append(city)
         DL.save()
-        await add_focus.finish(message=f"已添加{city}疫情推送")
+        await follow.finish(message=f"已添加{city}疫情推送")
     else:
-        await add_focus.finish(message=f"添加失败")
+        await follow.finish(message=f"添加失败")
 
+
+unfollow = on_command("取消疫情", priority=5)
+@unfollow.handle()
+async def _(bot: Bot, event: MessageEvent, state: T_State):
+    city = str(event.get_message())
+    gid = str(event.group_id)
+    if NewsBot.data.get(city) and city in FOCUS[gid]:
+        FOCUS[gid].remove(city)
+        DL.save()
+        await unfollow.finish(message=f"已取消{city}疫情推送")
+    else:
+        await unfollow.finish(message=f"取消失败")
 
 city_news = on_regex(r'^(.{0,6})(疫情.{0,4})', block=True, priority=10)
-
 @city_news.handle()
 async def _(bot: Bot, event: MessageEvent, state: T_State):
     city_name, kw = state['_matched_groups']
