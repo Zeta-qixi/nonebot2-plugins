@@ -13,8 +13,10 @@ NewsBot = NewsData()
 '''
 
  指令:
- #add_focus   #city_news
-
+ # follow
+ # unfollow
+ # city_news
+ # city_poi_list
 '''
 follow = on_command("关注疫情", priority=5)
 @follow.handle()
@@ -41,19 +43,29 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
     else:
         await unfollow.finish(message=f"取消失败")
 
+
+
 city_news = on_regex(r'^(.{0,6})(疫情.{0,4})', block=True, priority=10)
 @city_news.handle()
 async def _(bot: Bot, event: MessageEvent, state: T_State):
     city_name, kw = state['_matched_groups']
 
-    if city:= NewsBot.data.get(city_name):
-        if kw == '疫情政策':
-            await city_news.finish(message=city.policy)
-        elif kw == '疫情':
-            await city_news.finish(message=f"{NewsBot.time}\n{city.main_info}")
-    else:
-        await city_news.finish(message="查询的城市不存在或存在别名")
+    if kw in ['疫情政策', '疫情']:
+        if city:= NewsBot.data.get(city_name):
+            if kw == '疫情政策':
+                await city_news.finish(message=city.policy)
+            else:
+                await city_news.finish(message=f"{NewsBot.time}\n{city.main_info}")
+        else:
+            await city_news.finish(message="查询的城市不存在或存在别名")
 
+city_poi_list = on_regex(r'^(.{0,6})(风险地区)', block=True, priority=10)
+@city_poi_list.handle()
+async def _(bot: Bot, event: MessageEvent, state: T_State):
+    city_name, _ = state['_matched_groups']
+    if city:= NewsBot.data.get(city_name):
+        await city_news.finish(message=city.poi_list)
+    
 
 
 '''
