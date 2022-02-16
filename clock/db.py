@@ -5,7 +5,7 @@ from clock import Clock
 path =os.path.dirname(__file__)
 db = path + '/data.db'
 
-
+TABLE = "CLOCKS_"
 
 def execute(sql:str):
     conn = sqlite3.connect(db)
@@ -17,27 +17,27 @@ def execute(sql:str):
     return res
 
 def add_clock_db(clock: Clock):
-    sql = f'''INSERT INTO CLOCKS_ (type, user, content, mouth, day, week, c_time, ones)
+    sql = f'''INSERT INTO {TABLE} (type, user, content, mouth, day, week, c_time, ones)
     values ("{clock.type}", {clock.user}, "{clock.content}","{clock.mouth}","{clock.day}","{clock.week}","{clock.time}",{clock.ones});'''
     execute(sql)
 
 def del_clock_db(id):
-    execute(f"DELETE from clocks where id = {id}")
+    execute(f"DELETE from {TABLE} where id = {id}")
 
 def select_all():
     '''
     (id, type, user, content, c_time, ones) 
     '''
     #DataFrame(data = data, columns=['id', 'type', 'uid', 'note', 'time', 'omes'])
-    return execute("SELECT * FROM clocks;")
+    return execute(f"SELECT * FROM {TABLE};")
 
     
 def new_id():
-    res = execute("SELECT max(id) FROM clocks;")
-    return res[0][0]
+    res = execute(f"SELECT max(id) FROM {TABLE};")
+    return res[0][0] + 1 if res[0][0] else 0
 
 try:
-    execute('''CREATE TABLE clocks_(  
+    execute(f'''CREATE TABLE {TABLE}(  
         id INTEGER NOT NULL primary key autoincrement,
         type CHAR(10),
         user INTEGER NOT NULL,

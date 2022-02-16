@@ -1,30 +1,32 @@
 import datetime
 class Clock:
     def __init__(self, data):
+ 
         self.id = data['id']
-        type = data.get('type', 'private')
-        user = data.get('user')
-        content = data.get('content', '')
-        mouth = data.get('mouth', 0)
-        day = data.get('day', 0)
-        week = data.get('week', '')
-        ones = data.get('ones', 1)
-        time = data.get('time', 1)
+        self.type = data.get('type', 'private')
+        self.user = data.get('user')
+        self.content = data.get('content', '')
+        self.month = data.get('month', 0)
+        self.day = data.get('day', 0)
+        self.week = data.get('week', '')
+        self.ones = data.get('ones', 1)
+        self.time = data.get('time', 1)
         self.get_time()
 
     @classmethod
-    def init_from_db(self, *args):
+    def init_from_db(cls, *args):
         args = args[0]
-        self.id = args[0]
-        self.type = args[1]
-        self.user_id = args[2]
-        self.content = args[3]
-        self.month = args[4]
-        self.day = args[5]
-        self.week = args[6]
-        self.time = args[7]
-        self.ones = args[8]
-        self.get_time()
+        data = {}
+        data['id'] = args[0]
+        data['type'] = args[1]
+        data['user'] = args[2]
+        data['content'] = args[3]
+        data['month'] = args[4]
+        data['day'] = args[5]
+        data['week'] = args[6]
+        data['time'] = args[7]
+        data['ones'] = args[8]
+        return cls(data)
     
     def get_info(self):
         ones=['重复', '一次']

@@ -23,15 +23,16 @@ except:
 CLOCK_DATA = {}
 
 
-def create_clock_scheduler(id: int):
+def create_clock_scheduler(clock):
     '''
     创建闹钟任务
     '''
-    clock = CLOCK_DATA[id]
+    CLOCK_DATA[clock.id] = clock
     logger.info(f"add clock id:{clock.id}")
     async def add_clock():
         if clock.verify_today():
-            await get_bot().send_msg(message_type=clock.type, user_id=clock.user_id, group_id=clock.user_id, message=clock.content)          
+            logger.info(f"send to ({clock.type}){clock.user}")
+            await get_bot().send_msg(message_type=clock.type, user_id=clock.user, group_id=clock.user, message=clock.content)          
             if clock.ones == 1:
                 del_clock_db(clock.id)
                 scheduler.remove_job(f"clock_{clock.id}")
@@ -39,13 +40,14 @@ def create_clock_scheduler(id: int):
     scheduler.add_job(add_clock, "cron", hour=clock.hour, minute=clock.minute, id=f"clock_{clock.id}")
 
 for i in select_all():
-    c = Clock(i)
-    CLOCK_DATA[c.id] = Clock(i)
+    
+    c = Clock.init_from_db(i)
     create_clock_scheduler(c)
 
 
 def add_clock(**kwargs):
     """添加闹钟"""
+    kwargs['id'] = new_id()
     clock = Clock((kwargs))
     add_clock_db(clock)
     create_clock_scheduler(clock)
@@ -56,9 +58,6 @@ def del_clock(id):
     del_clock_db(id)
     scheduler.remove_job(f"clock_{id}")
 
-def create_time(t):
-    """之后加入日 月 星期等条件"""
-    return (f"null null null null null {t}")
 
 
 def get_time(time_):
@@ -122,8 +121,8 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
         data['user'] = gid
 
 
-    add_clock(data)
-    await bot.finsh(message="添加成功～")
+    add_clock(**data)
+    await add.finish(message="添加成功～")
 
 
 # # 查看闹钟
@@ -138,7 +137,7 @@ async def add_handle(bot: Bot, event: Event, state: T_State):
 #     clock_msg = ''
 #     ones=['days', 'ones']
 #     for clock in clock_list:
-#         if clock.user_id == id:
+#         if clock.user == id:
 
 #             if clock_msg:
 #                 clock_msg = clock_msg + f'\n\n{clock.get_info()}'
