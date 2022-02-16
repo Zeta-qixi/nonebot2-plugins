@@ -1,4 +1,5 @@
 import datetime
+from nonebot import logger
 class Clock:
     def __init__(self, data):
  
@@ -41,7 +42,7 @@ class Clock:
 
     def verify_today(self):
 
-        if self.week and str(datetime.date.today().weekday()) not in self.week:
+        if self.week and str(datetime.date.today().weekday()+1) not in self.week:
             return False
 
         if self.month > 0 and self.month != datetime.date.today().month:

@@ -31,7 +31,6 @@ def create_clock_scheduler(clock):
     logger.info(f"add clock id:{clock.id}")
     async def add_clock():
         if clock.verify_today():
-            logger.info(f"send to ({clock.type}){clock.user}")
             await get_bot().send_msg(message_type=clock.type, user_id=clock.user, group_id=clock.user, message=clock.content)          
             if clock.ones == 1:
                 del_clock_db(clock.id)
