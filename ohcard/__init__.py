@@ -51,8 +51,6 @@ async def add_got(bot: Bot, event: GroupMessageEvent, state: T_State):
                 await add_.finish(message="登记成功")
 
 
-
-logger.info('okok')
 is_mai = on_message(priority=0, block=False)
 @is_mai.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
