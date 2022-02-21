@@ -5,7 +5,7 @@ from clock import Clock
 path =os.path.dirname(__file__)
 db = path + '/data.db'
 
-TABLE = "CLOCKS_"
+TABLE = "CLOCKS"
 
 def execute(sql:str):
     conn = sqlite3.connect(db)
@@ -17,8 +17,8 @@ def execute(sql:str):
     return res
 
 def add_clock_db(clock: Clock):
-    sql = f'''INSERT INTO {TABLE} (type, user, content, mouth, day, week, c_time, ones)
-    values ("{clock.type}", {clock.user}, "{clock.content}","{clock.mouth}","{clock.day}","{clock.week}","{clock.time}",{clock.ones});'''
+    sql = f'''INSERT INTO {TABLE} (type, user, content, month, day, week, c_time, ones)
+    values ("{clock.type}", {clock.user}, "{clock.content}","{clock.month}","{clock.day}","{clock.week}","{clock.time}",{clock.ones});'''
     execute(sql)
 
 def del_clock_db(id):
@@ -42,7 +42,7 @@ try:
         type CHAR(10),
         user INTEGER NOT NULL,
         content VARCHAR(20),
-        mouth INTEGER,
+        month INTEGER,
         day INTEGER,
         week VARCHAR(7),
         c_time TIME,
