@@ -28,7 +28,7 @@ class Pixiv(AppPixivAPI):
         super(Pixiv, self).__init__(**requests_kwargs)
 
         self.date = ''
-        self.mode = 'day_male'
+        self.mode = 'day'
         self.reset_storage()
      
     def reset_storage(self):

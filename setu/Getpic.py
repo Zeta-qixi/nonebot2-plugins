@@ -1,4 +1,4 @@
-from pixiv_api import Pixiv, TOKEN
+from .pixiv_api import Pixiv, TOKEN
 import random
 from PIL import Image
 from io import BytesIO

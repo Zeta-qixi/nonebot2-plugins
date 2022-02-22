@@ -15,10 +15,11 @@ from nonebot.log import logger
 from nonebot.typing import T_State
 from PIL import Image
 
+# sys.path.append(os.path.join(os.path.dirname(__file__)))
+from .Getpic import SetuBot
 from .utils import set_random_seed
 
-sys.path.append(os.path.join(os.path.dirname(__file__)))
-from Getpic import SetuBot
+
 
 try:
     master = get_driver().config.master
@@ -74,6 +75,7 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
         else:
             res, res_data = await setubot.get_setu_artist(ret.group(2), num, token_sign)
     else:
+        logger.info(keyword)
         res, res_data = await setubot.get_setu_base(keyword, num, token_sign)
 
     state['token_sign'] = token_sign
@@ -101,7 +103,7 @@ async def setu_receive(bot: Bot, event: Event, state: T_State):
 
 
 
-recall_setu = on_regex('撤回|太[涩色瑟]了', block=False)
+recall_setu = on_regex('^撤回|太[涩色瑟]了', block=False)
 @recall_setu.handle()
 async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
 
@@ -124,10 +126,10 @@ my_follow = on_regex('来(.?)份[涩色瑟]图', block=False)
 async def my_follow_(bot: Bot, event: Event, state: T_State):
     
     num = str(state['_matched_groups'][0])
-    num = TRAN.get(num)
-    if not num:
-        num = int(num) if num.isdigit() else 1
-
+    if num:
+        num = int(num) if num.isdigit() else  TRAN.get(num)
+    else:
+        num = 1
     uid = event.user_id
     res, res_data = await setubot.get_follow_setu(num, uid)
     if res == 400:
@@ -185,5 +187,5 @@ async def set_got(bot: Bot, event: Event, state: T_State):
     else:
         index = int(state['mode_index'])
         
-    setubot.user_rank_mode[state['uid']] = index
+    setubot.user_rank_mode[int(state['uid'])] = index
     await change_rank_mode.finish(message = "设置成功")
