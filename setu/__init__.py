@@ -2,7 +2,6 @@ import asyncio
 import os
 import random
 import re
-import sys
 import time
 from collections import defaultdict
 
@@ -10,16 +9,13 @@ import requests
 from nonebot import get_driver, on_command, on_regex
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event
-from nonebot.adapters.cqhttp.message import Message, MessageSegment
+from nonebot.adapters.cqhttp.message import MessageSegment
 from nonebot.log import logger
 from nonebot.typing import T_State
 from PIL import Image
 
-# sys.path.append(os.path.join(os.path.dirname(__file__)))
 from .Getpic import SetuBot
 from .utils import set_random_seed
-
-
 
 try:
     master = get_driver().config.master
@@ -41,12 +37,18 @@ class setubot(SetuBot):
         self.group_token = {}
 
     def push_pic_id(self, uid, pid_list):
-        self.picID_by_user[uid] = pid_list
+        self.picID_by_user[int(uid)] = pid_list
 setubot = setubot()
 
+send_setu             = on_command('setu',aliases={'Setu', 'SETU', '色图'}, priority=30)
+my_follow        = on_regex('来(.?)份[涩色瑟]图', block=False)
+recall_setu      = on_regex('^撤回|太[涩色瑟]了', block=False)
+r18_switch   = on_regex("(不可以|强制)色色", block=False)
+change_rank_mode = on_command("setumode", priority=10)
 
-setu = on_command('setu',aliases={'Setu', 'SETU', '色图'}, priority=30)
-@setu.handle()
+
+
+@send_setu.handle()
 async def setu_handle(bot: Bot, event: Event, state: T_State):
 
     uid = event.user_id
@@ -75,7 +77,6 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
         else:
             res, res_data = await setubot.get_setu_artist(ret.group(2), num, token_sign)
     else:
-        logger.info(keyword)
         res, res_data = await setubot.get_setu_base(keyword, num, token_sign)
 
     state['token_sign'] = token_sign
@@ -88,40 +89,38 @@ async def setu_handle(bot: Bot, event: Event, state: T_State):
             msg_list.append(msg['message_id'])
         setubot.push_pic_id(uid, msg_list)
     else:
-        await setu.finish(message = '你🐛的太快啦')
+        await send_setu.finish(message = '你🐛的太快啦')
 
-@setu.receive()
+@send_setu.receive()
 async def setu_receive(bot: Bot, event: Event, state: T_State):
     if str(event.message) == '不够色':
         res, res_data = await setubot.get_setu_base(state['keyword'], 1, state['token_sign'])
         msg_list = []
         for info, pic_path in (res_data):
-            msg = await setu.finish(message = info + MessageSegment.image(f'file://{pic_path}'))
+            msg = await send_setu.finish(message = info + MessageSegment.image(f'file://{pic_path}'))
             msg_list.append(msg['message_id'])
         setubot.push_pic_id(event.user_id, msg_list)
 
 
 
 
-recall_setu = on_regex('^撤回|太[涩色瑟]了', block=False)
 @recall_setu.handle()
-async def recall_setu_handle(bot: Bot, event: Event, state: T_State):
-
+async def _(bot: Bot, event: Event, state: T_State):
     id = event.user_id
-        
     for pid in setubot.picID_by_user[id]:
-        await asyncio.sleep(3)
+        time.sleep(2)
         await bot.delete_msg(message_id=pid)
-        setubot.pic_message[id].remove(pid)
+    setubot.picID_by_user[id] = []
 
     dir = path + '/nosese'
     img_src = dir + '/' + random.choice(os.listdir(dir))
-    await bot.send(event, message = MessageSegment.image(f'file://{img_src}'))
+    logger.info(img_src)
+    await recall_setu.finish(message = MessageSegment.image(f'file://{img_src}'))
 
 
 
 
-my_follow = on_regex('来(.?)份[涩色瑟]图', block=False)
+
 @my_follow.handle()
 async def my_follow_(bot: Bot, event: Event, state: T_State):
     
@@ -145,8 +144,7 @@ async def my_follow_(bot: Bot, event: Event, state: T_State):
 
 
 
-no_r18_command = on_regex("(不可以|强制)色色", block=False)
-@no_r18_command.handle()
+@r18_switch.handle()
 async def no_r18_handle(bot: Bot, event: Event, state: T_State):
     gid = event.group_id
     uid = event.user_id
@@ -160,15 +158,14 @@ async def no_r18_handle(bot: Bot, event: Event, state: T_State):
         else:
             setubot.group_token[gid] = None
             img_src = path+'/ss.png'
-        await bot.send(event, message = MessageSegment.image(f'file://{img_src}'))
+        await r18_switch.finish(message = MessageSegment.image(f'file://{img_src}'))
 
     else:
-        await bot.send(event, message = MessageSegment.image(f'你没有发动权限'))
+        await r18_switch.finish(message = MessageSegment.image(f'你没有发动权限'))
 
 
 
 
-change_rank_mode = on_command("setumode", priority=10)
 @change_rank_mode.handle()
 async def change_rank_mode_handle(bot: Bot, event: Event, state: T_State):
     if (mode:= str(event.message)) != '':

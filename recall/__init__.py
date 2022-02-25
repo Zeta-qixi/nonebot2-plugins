@@ -1,5 +1,3 @@
-
-
 from nonebot import on_notice
 from nonebot.adapters.cqhttp.bot import Bot
 from nonebot.adapters.cqhttp.event import Event, GroupRecallNoticeEvent

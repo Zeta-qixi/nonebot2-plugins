@@ -7,9 +7,8 @@ from collections import defaultdict
 
 from nonebot import get_driver, on_command, on_message
 from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import (Event, GroupMessageEvent,
-                                           MessageEvent, PokeNotifyEvent)
-from nonebot.adapters.cqhttp.message import Message
+from nonebot.adapters.cqhttp.event import GroupMessageEvent, PokeNotifyEvent
+from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot.log import logger
 from nonebot.typing import T_State
 
@@ -29,6 +28,7 @@ path = gpath +'/data.json'
 
 def union(gid, uid):
     return str((gid << 32) | uid)
+    
 # 读取数据文件
 try:
     with open(path) as f:
@@ -72,7 +72,8 @@ async def chat_handle(bot: Bot, event: GroupMessageEvent):
         union_id = union(id, 1)
         for keyword in DATA[union_id]:
           if (keyword == message) or (keyword in message and len(keyword) > 3) :
-              await chat.finish(message=Message(random.choice((DATA[union_id][keyword]))))
+              msg = Message(random.choice((DATA[union_id][keyword])))
+              await chat.finish(message=msg)
    
 
 '''
@@ -89,9 +90,9 @@ def  filter(word):
 
 set_respond = on_command('set',aliases={"setall"})
 @set_respond.handle()
-async def set_handle(bot: Bot, event: Event, state: T_State):
+async def set_handle(bot: Bot, event: GroupMessageEvent, state: T_State):
     '''
-    setall 时全覆盖
+    setall 回答全覆盖
     '''
     if "setall" in state["_prefix"]["command"]:
         state['gid'] = 1
@@ -111,14 +112,13 @@ async def set_handle(bot: Bot, event: Event, state: T_State):
 @set_respond.got('key', prompt="设置什么～")
 async def set_got(bot: Bot, event: Event, state: T_State):
 
+    # 提取 cq码中的url
     if ",url=" in state["key"] :
         state["key"] = state["key"].split(",url=")[0]
         
 
 @set_respond.got('value', prompt="要答什么呢～")
 async def set_got2(bot: Bot, event: Event, state: T_State):
-
-
 
     save_json(state["key"], state["value"], union(state['gid'] , 1))
     await set_respond.finish(message='ok~')

@@ -3,7 +3,7 @@ import random
 from PIL import Image
 from io import BytesIO
 import os, sys
-
+from nonebot import logger
 
 PATH = os.path.dirname(__file__)
 class SetuBot(Pixiv):
@@ -14,6 +14,8 @@ class SetuBot(Pixiv):
 
     if not token:
         token = random.choice(list(TOKEN.values())[:-1])
+    
+    logger.info(f"use token {token}")
     return (await super().login(refresh_token=token))
 
 

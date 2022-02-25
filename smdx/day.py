@@ -3,7 +3,7 @@ import time
 import random
 import datetime
 import re
-from nonebot import on_command, on_regex
+from nonebot import on_regex
 
 from nonebot.typing import T_State
 from nonebot.adapters.cqhttp.bot import Bot

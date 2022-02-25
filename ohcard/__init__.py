@@ -21,7 +21,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         if DATA[uid]['used'] == 0:
             msg += MessageSegment.at(int(uid))
     if msg:
-        await ask.finish(message=msg)
+        await ask.finish(message=f"【麦卡】{msg}")
     else:
         await ask.finish(message="现在没可用的麦卡捏、不如你开一张吧")
 
@@ -71,8 +71,13 @@ async def _(bot: Bot, event: GroupMessageEvent):
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 @scheduler.scheduled_job('cron', hour='0', minute='0', second='0', misfire_grace_time=60) # = UTC+8 1445
 async def update():
+    del_list = []
     for id in DATA:
         DATA[id]["used"] = 0 
         if DATA[id]["deadline"] == str(datetime.date.today()):
-            del(DATA[id])
+            del_list.append(id)
+    
+    for id in del_list:
+        del(DATA[id])
+
     DL.save()
