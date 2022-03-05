@@ -110,7 +110,7 @@ async def set_handle(bot: Bot, event: GroupMessageEvent, state: T_State):
             state["value"] = comman[1]
 
 @set_respond.got('key', prompt="设置什么～")
-async def set_got(bot: Bot, event: Event, state: T_State):
+async def set_got(bot: Bot, event: GroupMessageEvent, state: T_State):
 
     # 提取 cq码中的url
     if ",url=" in state["key"] :
@@ -118,7 +118,7 @@ async def set_got(bot: Bot, event: Event, state: T_State):
         
 
 @set_respond.got('value', prompt="要答什么呢～")
-async def set_got2(bot: Bot, event: Event, state: T_State):
+async def set_got2(bot: Bot, event: GroupMessageEvent, state: T_State):
 
     save_json(state["key"], state["value"], union(state['gid'] , 1))
     await set_respond.finish(message='ok~')

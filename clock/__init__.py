@@ -28,7 +28,7 @@ def create_clock_scheduler(clock):
     创建闹钟任务
     '''
     CLOCK_DATA[clock.id] = clock
-    logger.info(f"add clock id:{clock.id}")
+
     async def add_clock():
         if clock.verify_today():
             await get_bot().send_msg(message_type=clock.type, user_id=clock.user, group_id=clock.user, message=clock.content)          

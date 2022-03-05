@@ -12,12 +12,13 @@ mc_server/
 python_cmd/
 setu/Getpic_former.py
 maimaidx2/
+maimaidx/
 Action.py
 clock_in/
 majsoul.py
 azurlane/
 account/
-
+mc_server/
 #数据
 data/
 !setu/data
