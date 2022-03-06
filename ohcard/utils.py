@@ -1,11 +1,23 @@
-import cv2
-from .data_load import PATH
-from PIL import Image
-import requests
 from io import BytesIO
 
-template =  cv2.imread(PATH + 'template.png')
-t_height, t_width = template.shape[:2]
+import cv2
+import requests
+from aip import AipOcr
+from nonebot import get_driver
+from PIL import Image
+
+from .data_load import PATH
+
+data = get_driver().config.oh_mai
+'''
+# .env.dev
+
+OH_MAI = {"appId":"", "apiKey":"","secretKey": ""}
+
+'''
+
+client = AipOcr(data['appId'], data['apiKey'], data['secretKey'])
+
 
 
 def save_pic(url :str, name: str):
@@ -14,13 +26,9 @@ def save_pic(url :str, name: str):
     img.save(PATH + name + ".png")
 
 def check_pic(url :str):
-    save_pic(url, 'target_image')
-    target = cv2.imread(PATH + 'target_image.png')
-    t_height, t_width = template.shape[:2]
-    result = cv2.matchTemplate(target, template, cv2.TM_SQDIFF_NORMED)
-    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
-	# 如果匹配度小于99%，就认为没有找到。
-    if min_val > 0.01:
-        return False
+    res = client.basicGeneralUrl(url_)
+    if {'words': 'OH麦卡OH麦卡月卡四件套25元起'} in res['words_result'] or {'words': 'OH麦卡四件套25元起'} in res['words_result']:
+        return('25')
 
-    return True
+    elif {'words': 'OH麦卡早餐3件套6折'} in res['words_result']:
+        return('breakfast')

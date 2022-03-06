@@ -2,6 +2,16 @@
 
 麦卡拥有者共享麦卡，能记录麦卡使用期限到期自动删数据；提供每日可用麦卡列表；自动识别麦当劳取餐码截图，发送分享者收款码
 
+### 设置
+注册  baiduAI ocr功能 (https://ai.baidu.com/tech/ocr/general)
+```
+
+# .env.dev
+
+OH_MAI = {"appId":"", "apiKey":"","secretKey": ""}
+
+
+```
 ## 指令/功能
 
 ### 麦卡登记指令

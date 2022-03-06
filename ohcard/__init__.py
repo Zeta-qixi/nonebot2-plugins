@@ -6,21 +6,25 @@ from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from .data_load import DataLoader, PATH
 from .utils import check_pic, save_pic
 import datetime
+import time
+
+TIME = 0
 
 DL = DataLoader()
 
 
 DATA = DL.data
-
 ask = on_command("有无麦卡")
 
 @ask.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     msg = ''
+    global TIME
     for uid in DATA:
         if DATA[uid]['used'] == 0:
             msg += MessageSegment.at(int(uid))
     if msg:
+        TIME = time.time()
         await ask.finish(message=f"【麦卡】{msg}")
     else:
         await ask.finish(message="现在没可用的麦卡捏、不如你开一张吧")
@@ -59,12 +63,16 @@ async def _(bot: Bot, event: GroupMessageEvent):
     if uid not in DATA:
         return
 
+    global TIME
     for msg in event.get_message():
-        if msg.type == 'image':
+        if msg.type == 'image' and time.time() - TIME <= 60*6:
             url = msg.data['url']
-            if check_pic(url):
+
+            res = check_pic(url)
+            if res :
+                if res == '25':
+                    TIME = 0
                 qr = MessageSegment.image(file=f"file://{PATH}{uid}.png")
-                DATA[uid]['used'] = 1
                 await is_mai.finish(message= "请以本人发的二维码为准捏"+qr)
                 
 
