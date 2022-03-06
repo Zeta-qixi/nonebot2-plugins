@@ -17,7 +17,6 @@ MASTER = [123456]
 |:---------------:|:------------:|
 |  [国内疫情查询](./covid-19_news) | 在疫情区酒店隔离弄的东西 |
 |  [bilibili](./bilibili) | b站up直播提醒，动态转发 |
-|  [maimaidx随歌](./maimaidx) | 舞萌街机随歌器 |
 |  [简单对话](./chat) | 对话插件，支持 一问对多答，随机答，调整回复概率  |
 |  [rua](./rua) | 戳一戳群友rua头像，或者rua图片 |
 |  [搜图](./search_pic) | 搜图 参考 [hoshino项目](https://github.com/pcrbot/Hoshino-plugin-transplant/tree/master/image) |
