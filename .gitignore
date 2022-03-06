@@ -6,7 +6,7 @@ LICENSE
 *.ipynb
 -
 _*
-#一些插件
+# 废置插件
 
 mc_server/
 python_cmd/
@@ -19,7 +19,8 @@ majsoul.py
 azurlane/
 account/
 mc_server/
-#数据
+
+# 数据
 data/
 !setu/data
 setu/data/image
