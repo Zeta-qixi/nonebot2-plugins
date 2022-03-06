@@ -5,7 +5,7 @@ test.*
 LICENSE
 *.ipynb
 -
-
+_*
 #一些插件
 
 mc_server/
