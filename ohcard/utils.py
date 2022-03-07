@@ -8,15 +8,9 @@ from PIL import Image
 
 from .data_load import PATH
 
-data = get_driver().config.oh_mai
-'''
-# .env.dev
 
-OH_MAI = {"appId":"", "apiKey":"","secretKey": ""}
-
-'''
-
-client = AipOcr(data['appId'], data['apiKey'], data['secretKey'])
+api_key = get_driver().config.ocr_key
+client = AipOcr(api_key['appId'], api_key['apiKey'], api_key['secretKey'])
 
 
 
@@ -26,7 +20,7 @@ def save_pic(url :str, name: str):
     img.save(PATH + name + ".png")
 
 def check_pic(url :str):
-    res = client.basicGeneralUrl(url_)
+    res = client.basicGeneralUrl(url)
     if {'words': 'OH麦卡OH麦卡月卡四件套25元起'} in res['words_result'] or {'words': 'OH麦卡四件套25元起'} in res['words_result']:
         return('25')
 

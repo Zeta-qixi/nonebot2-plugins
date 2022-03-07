@@ -7,7 +7,7 @@ from collections import defaultdict
 
 from nonebot import get_driver, on_command, on_message
 from nonebot.adapters.cqhttp.bot import Bot
-from nonebot.adapters.cqhttp.event import GroupMessageEvent, PokeNotifyEvent
+from nonebot.adapters.cqhttp.event import GroupMessageEvent
 from nonebot.adapters.cqhttp.message import Message, MessageSegment
 from nonebot.log import logger
 from nonebot.typing import T_State
