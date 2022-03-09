@@ -30,7 +30,7 @@ def time_field():
 async def _(bot: Bot, event: GroupMessageEvent):
     msg = []
     global TIME
-    
+    time_field()
     for uid in OH_MAI:
         if OH_MAI[uid][FIELD] == 0:
             msg.append(f'[CQ:at,qq={uid}]')
