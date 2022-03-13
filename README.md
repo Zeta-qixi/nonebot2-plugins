@@ -18,7 +18,7 @@ OCR_KEY = {"appId":"", "apiKey":"","secretKey": ""}
 
 | 迁移状态 |      插件       |     简介       |
 |:------:|:---------------:|:------------:|
-| - [x] |  [国内疫情查询](./covid-19_news) | 在疫情区酒店隔离弄的东西 |
+| - [x] |  [国内疫情查询](https://github.com/Zeta-qixi/nonebot-plugin-covid19-news) | nonebot-plugin-covid19-news |
 | - [x] |  [bilibili](./bilibili) | b站up直播提醒，动态转发 |
 | - [x] |  [群管理](./atirbot) | bot添加好友 群管理 等等 |
 | - [x] |  [简单对话](./chat) | 对话插件，支持 一问对多答，随机答，调整回复概率  |
