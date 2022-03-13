@@ -3,6 +3,9 @@
 ### 部分插件需要在nonebot的env中配置MASTER (qq号)
 ```
 MASTER = [123456]
+
+OCR_KEY = {"appId":"", "apiKey":"","secretKey": ""}
+
 ```
 
 # 📝
@@ -13,21 +16,21 @@ MASTER = [123456]
 
 # 插件 
 
-|     插件        |     简介       |
-|:---------------:|:------------:|
-|  [国内疫情查询](./covid-19_news) | 在疫情区酒店隔离弄的东西 |
-|  [bilibili](./bilibili) | b站up直播提醒，动态转发 |
-|  [maimaidx随歌](./maimaidx) | 舞萌街机随歌器 |
-|  [简单对话](./chat) | 对话插件，支持 一问对多答，随机答，调整回复概率  |
-|  [rua](./rua) | 戳一戳群友rua头像，或者rua图片 |
-|  [搜图](./search_pic) | 搜图 参考 [hoshino项目](https://github.com/pcrbot/Hoshino-plugin-transplant/tree/master/image) |
-|  [setu](./setu) | 基于[pixivpy_async](https://github.com/Mikubill/pixivpy-async)的setu插件 |
-|  [clock](./clock) | 闹钟、提示事项 |
-|  [漫画更新提醒](./comic_push) | 还要找点目标网站爬 |
-|  [涩图评分](./setu_score) | 度娘为你的色图打分～ |
-|  [日常实用功能](./smdx) | 目前有天气查询 星期几查询 .. |
-|  [群管理](./atirbot) | bot添加好友 群管理 等等 |
-|  [插件管理](./block) | 修改block实现的关键字触发阻断, 从而实现类似插件管理的功能 |
-|  [词语生成](./word_cloud) | 根据聊天记录生成词语, 无需log |
-|  [简单的群内小游戏1](./games) | 俄罗斯转盘 开枪！ ｜
-|  [简单的群内小游戏2](./games) | jrrp决斗版 ｜
+| 迁移状态 |      插件       |     简介       |
+|:------:|:---------------:|:------------:|
+| - [x] |  [国内疫情查询](./covid-19_news) | 在疫情区酒店隔离弄的东西 |
+| - [x] |  [bilibili](./bilibili) | b站up直播提醒，动态转发 |
+| - [x] |  [群管理](./atirbot) | bot添加好友 群管理 等等 |
+| - [x] |  [简单对话](./chat) | 对话插件，支持 一问对多答，随机答，调整回复概率  |
+| - [x] |  [rua](./rua) | 戳一戳群友rua头像，或者rua图片 |
+| - [x] |  [搜图](./search_pic) | 搜图 参考 [hoshino项目](https://github.com/pcrbot/Hoshino-plugin-transplant/tree/master/image) |
+| - [x] |  [setu](./setu) | 基于[pixivpy_async](https://github.com/Mikubill/pixivpy-async)的setu插件 |
+| - [x] |  [涩图评分](./setu_score) | 度娘为你的色图打分～ |
+| - [x] |  [日常实用功能](./smdx) | 目前有天气查询 星期几查询 .. |
+| - [x] |  [简单的群内小游戏1](./games) | 俄罗斯转盘 开枪！ ｜
+| - [x] |  [简单的群内小游戏2](./jrrp) | jrrp决斗版 ｜
+| - [] |  [clock](./clock) | 闹钟、提示事项 |
+| - [] |  [漫画更新提醒](./comic_push) | 还要找点目标网站爬 |
+| - [] |  [插件管理](./block) | 修改block实现的关键字触发阻断, 从而实现类似插件管理的功能 |
+| - [] |  [词语生成](./word_cloud) | 根据聊天记录生成词语, 无需log |
+| - [] |  [maimaidx随歌](./maimaidx) | 舞萌街机随歌器 |

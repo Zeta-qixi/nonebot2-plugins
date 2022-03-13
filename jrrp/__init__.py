@@ -5,7 +5,8 @@ from nonebot import on_command, require
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.adapters.onebot.v11.message import MessageSegment, Message
-from nonebot.params import CommandArg
+from nonebot.typing import T_State
+from nonebot.params import State, CommandArg
 
 import time
 from .jrrp import JrrpGame
@@ -33,17 +34,14 @@ async def jrrp_(bot: Bot, event: GroupMessageEvent):
             await bot.send(event, message=MessageSegment.at(user_id) + f'今日的人品值是:{rp}')
 
 @duel.handle()
-async def duel_(bot: Bot, event: GroupMessageEvent, msg: Message = CommandArg()):
+async def duel_(bot: Bot, event: GroupMessageEvent, msg_seg: Message = CommandArg()):
         user_id = event.user_id
 
-        print(123456)
-        msg_seg = msg[0]
-        
         if msg_seg.type == 'at':
             target = int(msg_seg.data['qq'])
             for msg in Game.duel(user_id, target):
                 await bot.send(event, message=Message(msg))
-                time.sleep(2)
+                time.sleep(1)
 
         else:
             await duel.finish(message="请通过at指定对象")
