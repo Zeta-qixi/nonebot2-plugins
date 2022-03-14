@@ -7,7 +7,6 @@ from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.adapters.onebot.v11.message import MessageSegment, Message
 from nonebot.typing import T_State
 from nonebot.params import State, CommandArg
-
 import time
 from .jrrp import JrrpGame
 
@@ -25,8 +24,8 @@ re_live = on_command('复活')
 @jrrp.handle()
 async def jrrp_(bot: Bot, event: GroupMessageEvent):
         user_id = event.user_id
-        if Game.get(user_id, None):
-            await bot.send(event, message= '你今天已经测过人品值了')
+        if (rp := Game.get(user_id, None)):
+            await bot.send(event, message=MessageSegment.at(user_id) + f'今日的人品值是:{rp}')
 
         else:
             rp = random.randint(0, 100)

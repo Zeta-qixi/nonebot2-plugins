@@ -1,8 +1,4 @@
 from random import choice, shuffle
-
-from nonebot.adapters.cqhttp.message import Message
-
-
 class RouletteGame:
     '''
     俄罗斯转盘
