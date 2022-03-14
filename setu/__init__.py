@@ -53,14 +53,14 @@ r18_switch       =      on_regex("(不可以|强制)色色", block=True)
 
 
 @base_setu.handle()
-async def setu_handle(bot: Bot, event: Event, state: T_State, msg: Message = CommandArg()):
+async def setu_handle(bot: Bot, event: Event, state: T_State, comman_: Message = CommandArg()):
 
     uid = event.user_id
     gid = event.group_id
     set_random_seed(uid)
     token_sign = setubot.group_token.get(gid, 'no_r18')
     keyword = setubot.rank_mode_list[setubot.user_rank_mode[uid]]
-    comman = str(msg).rsplit(' ', 1)
+    comman = str(comman_).rsplit(' ', 1)
     num = 1
 
     # 变量只有一个 判定是keyword还是num
@@ -69,8 +69,8 @@ async def setu_handle(bot: Bot, event: Event, state: T_State, msg: Message = Com
         if len(comman) == 2:
             keyword = comman[0]
     else:
-        if str(event.message) != '':
-            keyword = str(event.message)
+        if str(comman_) != '':
+            keyword = str(comman_)
     num = 3 if num > 3 else num
 
     if ret := re.search(r'(画师|作者|搜[索图]|推荐)\s?(.*)', keyword):
@@ -81,7 +81,7 @@ async def setu_handle(bot: Bot, event: Event, state: T_State, msg: Message = Com
         else:
             res, res_data = await setubot.get_setu_artist(ret.group(2), num, token_sign)
     else:
-        logger.info(f"{keyword}  {token_sign}")
+        logger.info(f"关键词: {keyword}, token:{token_sign}")
         res, res_data = await setubot.get_setu_base(keyword, num, token_sign)
 
     state['token_sign'] = token_sign
@@ -89,14 +89,12 @@ async def setu_handle(bot: Bot, event: Event, state: T_State, msg: Message = Com
 
     if res == 1000:
         msg_list = []
-        msg_data = Message()
         for info, pic_path in (res_data):
+            msg = await bot.send(event, message = info + MessageSegment.image(f'file://{pic_path}'))
             msg_list.append(msg['message_id'])
-            msg_data.extend(info + MessageSegment.image(f'file://{pic_path}'))
-        await base_setu.finish(message = msg_data)
         setubot.push_pic_id(uid, msg_list)
     else:
-        await base_setu.finish(message = '你🐛的太快啦')
+        await send_setu.finish(message = '你🐛的太快啦')
 
 @base_setu.receive()
 async def setu_receive(bot: Bot, event: Event, state: T_State):

@@ -1,4 +1,5 @@
 from .pixiv_api import Pixiv, TOKEN
+from nonebot import logger
 import random
 from PIL import Image
 from io import BytesIO
@@ -28,8 +29,10 @@ class SetuBot(Pixiv):
       return :
         setu绝对路径 List合集
     '''
+    assert len(works) > 0
     if num < len(works):
       works = random.choices(works, k = num)
+    
     picb64 = await self.get_pic_bytes(self.get_original_url(works))
 
     path_list = []
