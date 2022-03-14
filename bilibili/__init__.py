@@ -5,7 +5,7 @@ from nonebot.params import State, CommandArg
 
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from .dynamic import *
-# from .live import *
+from .live import *
 
 push_dynamic = on_command("更新推送", block=True)
 '''

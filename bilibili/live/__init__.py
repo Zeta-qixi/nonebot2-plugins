@@ -1,18 +1,16 @@
 import asyncio
+import aiohttp
 import json
 import random
 import time
 from datetime import datetime
-import requests
 from ..db import *
 from nonebot import get_bot, get_driver, on_command, require
-from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import MessageEvent
-from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11.message import Message
-
+from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.params import State, CommandArg
-
+from nonebot.typing import T_State
 from nonebot import logger
 
 try:
@@ -37,15 +35,15 @@ headers = {
 'Referer': 'https://www.bilibili.com/'
 }
 
-def get_info(mid:int):
-    try:
+async def get_info(mid:int):
+
         url = 'http://api.bilibili.com/x/space/acc/info'
         params = {'mid':mid}
-        r = requests.get(url ,headers = headers, params=params)
-        return r.json()['data']
-    except:
-        logger.error(f"{mid}---{r.json()}")
-
+        async with aiohttp.ClientSession() as client:
+            async with client.get(url ,headers = headers, params=params) as resp:
+                assert resp.status == 200
+                data = await resp.json()
+                return data['data']
 
 
 add_up = on_command('添加关注', block= True)
@@ -67,10 +65,13 @@ async def add(bot: Bot, event: MessageEvent, state: T_State, mid: Message = Comm
         if 'uid' in mid:
             mid = mid.split(':')[-1]
         mid = int(mid)
-        info = get_info(mid)
+        info = await get_info(mid)
         name = info['name']
+        
+        live_room = 1 if info['live_room'] else 0
+
         if not select_by_field(gid, mid):
-            add_focus(gid, mid, name, 1, 0)
+            add_focus(gid, mid, name, live_room, 0)
             await bot.send(event, message=f"添加关注 {name}")
         else:
             await bot.send(event, message=f"已经在关注 {name} 了哦")
@@ -120,12 +121,12 @@ async def living():
     
     for item in LIVE.values():
         await asyncio.sleep(3)
-        info = get_info(item["mid"])
+        info = await get_info(item["mid"])
         liveroom = info['live_room']
-        status = liveroom['liveStatus']
+        
         try:      
+            status = liveroom['liveStatus']
             if status == 1 and item['status'] == 0:
-            
                 item['status'] = 1
                 update(item["gid"], item["mid"], "is_live", 1)
                 msg = f'你关注的{info["name"]}正在直播！\n#{liveroom["title"]}\n{liveroom["url"]}[CQ:image,file={liveroom["cover"]}]'
@@ -137,5 +138,5 @@ async def living():
                 update(item["gid"], item["mid"], "is_live", 0)
                 msg = f'{info["name"]}下播了。。'
                 await get_bot().send_group_msg(group_id = item["gid"], message=msg)
-        finally:
-            pass
+        except BaseException as e:
+            logger.error(f"mid: {item['mid']},{e}, Line：,{e.__traceback__.tb_lineno},")
