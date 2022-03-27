@@ -1,7 +1,7 @@
 import os
 import re
 
-from nonebot import on_command, on_regex
+from nonebot import on_command
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.adapters.onebot.v11.message import Message, MessageSegment
@@ -18,11 +18,11 @@ def get_roulette_game(gid):
     roulette_group_list.setdefault(gid, RouletteGame())
     return roulette_group_list[gid]
 
-game = on_command('俄罗斯转盘')
-fill = on_command('装填', aliases={'填装'})
-duel = on_command('决斗', aliases={'⚔️'})
-shooting = on_command('开枪')
-gameover = on_command('结束')
+game = on_command('俄罗斯转盘', block=True)
+fill = on_command('装填', aliases={'填装'}, block=True)
+duel = on_command('决斗', aliases={'⚔️'}, block=True)
+shooting = on_command('开枪', block=True)
+gameover = on_command('结束', block=True)
 
 
 @game.handle()

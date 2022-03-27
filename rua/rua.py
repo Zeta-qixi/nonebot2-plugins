@@ -44,7 +44,7 @@ async def _t3(bot: Bot, event: PokeNotifyEvent):
 
 
     
-rua = on_command('rua')
+rua = on_command('rua', block=True)
 @rua.handle()
 async def rua_handle(bot: Bot, event: Event, state: T_State = State(), msg: Message = CommandArg()):
 

@@ -4,7 +4,7 @@ from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent, Message
 
 
-change = on_command('更改头衔',aliases={'申请头衔'})
+change = on_command('更改头衔',aliases={'申请头衔'}, block=True)
 @change.handle()
 async def special_title(bot: Bot, event: GroupMessageEvent, title: Message=CommandArg()):
     '''
@@ -17,7 +17,7 @@ async def special_title(bot: Bot, event: GroupMessageEvent, title: Message=Comma
 
 
 
-ban_to_sleep = on_command("精致睡眠")
+ban_to_sleep = on_command("精致睡眠", block=True)
 @ban_to_sleep.handle()
 async def ban_sleep(bot: Bot, event: GroupMessageEvent):
     id = event.user_id

@@ -5,8 +5,10 @@ from lxml import etree
 from nonebot import on_command, on_regex
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import Event
+from nonebot.adapters.onebot.v11.message import Message
+
 from nonebot.typing import T_State
-from nonebot.params import State
+from nonebot.params import State, CommandArg
 
 PATH = os.path.dirname(__file__)
 
@@ -95,7 +97,7 @@ class heweather:
 
 
 wbot = heweather()
-setcity = on_command('设置天气城市', priority=10)
+setcity = on_command('设置天气城市', priority=10, block=True)
 weather = on_regex('^(.*)天气|气温|多少度|几度', block=False, priority=11)
 
 
@@ -110,8 +112,8 @@ async def weather_handle(bot: Bot, event: Event, state: T_State = State()):
 
 
 @setcity.handle()
-async def weather_handle(bot: Bot, event: Event, state: T_State = State()):
-    city = str(event.get_message())
+async def weather_handle(bot: Bot, event: Event, state: T_State = State(), city:Message = CommandArg()):
+    city = str(city)
     wbot.city[str(event.user_id)] = city
     wbot.save_city_info()
     await setcity.finish(message=f"已设置当前城市为{city}")

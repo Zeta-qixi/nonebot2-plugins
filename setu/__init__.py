@@ -4,7 +4,6 @@ import random
 import re
 import time
 from collections import defaultdict
-
 import requests
 from nonebot import get_driver, on_command, on_regex
 from nonebot.adapters.onebot.v11.bot import Bot
@@ -44,10 +43,10 @@ class setubot(SetuBot):
 setubot = setubot()
 
 base_setu        =      on_command('setu',aliases={'Setu', 'SETU', '色图'}, priority=11, block=True)
-change_rank_mode =      on_command("setumode", block=True, priority=10)
-my_follow        =      on_regex('来(.?)份[涩色瑟]图', block=True)
-recall_setu      =      on_regex('^撤回|太[涩色瑟]了', block=True)
-r18_switch       =      on_regex("(不可以|强制)色色", block=True)
+change_rank_mode =      on_command("setumode", priority=10, block=True) # 优先setu
+my_follow        =      on_regex('来(.?)份[涩色瑟]图', block=False)
+recall_setu      =      on_regex('^撤回|太[涩色瑟]了', block=False)
+r18_switch       =      on_regex("(不可以|强制)色色", block=False)
 
 
 
@@ -172,22 +171,18 @@ async def no_r18_handle(bot: Bot, event: Event, state: T_State):
 
 
 @change_rank_mode.handle()
-async def change_rank_mode_handle(bot: Bot, event: Event, state: T_State):
-    if (mode:= str(event.message)) != '':
+async def change_rank_mode_handle(bot: Bot, event: Event, state: T_State, mode: Message = CommandArg()):
+    mode = str(mode)
+    if mode:
         state['mode_index'] = mode
     state['uid'] = event.user_id
 
-mode_info = '要选什么模式呢～'
-for index, info in enumerate(setubot.rank_mode_list):
-    mode_info += f'\n[{index}] {info}'
+
+mode_info = '要选什么模式呢～\n' + '\n'.join([f"[{index}] {info}" for index, info in enumerate(setubot.rank_mode_list)])
 
 @change_rank_mode.got('mode_index', prompt=mode_info)
 async def set_got(bot: Bot, event: Event, state: T_State):
 
-    if (mode := str(state['mode_index'])) in setubot.rank_mode_list:
-        index = setubot.rank_mode_list.index(mode)
-    else:
-        index = int(state['mode_index'])
-        
+    index = int(str(state['mode_index']))
     setubot.user_rank_mode[int(state['uid'])] = index
     await change_rank_mode.finish(message = "设置成功")

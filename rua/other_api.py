@@ -3,7 +3,7 @@
 http://ovooa.com
 '''
 import re
-from nonebot import on_command, get_driver, on_regex
+from nonebot import get_driver, on_regex
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import MessageEvent
 from nonebot.adapters.onebot.v11.message import Message, MessageSegment

@@ -57,11 +57,10 @@ def save_json(keys:str, values:str, id:str):
             f.write(tojson)
 
 
-chat = on_message(priority=99, block=True)
+chat = on_message(priority=99, block=False)
 @chat.handle()
 async def chat_handle(bot: Bot, event: GroupMessageEvent):
   message = str(event.get_message())
-
 
   group_id = event.group_id
   user_id = event.user_id
@@ -87,7 +86,7 @@ def  filter(word):
     return False
 
 
-set_respond = on_command('set',aliases={"setall"})
+set_respond = on_command('set',aliases={"setall"}, block=True)
 @set_respond.handle()
 async def set_handle(bot: Bot, event: GroupMessageEvent, state: T_State, msg: Message = CommandArg()):
     '''
@@ -112,14 +111,18 @@ async def set_handle(bot: Bot, event: GroupMessageEvent, state: T_State, msg: Me
 async def set_got(bot: Bot, event: GroupMessageEvent, state: T_State):
 
     # 提取 cq码中的url
-    if ",url=" in state["key"] :
-        state["key"] = state["key"].split(",url=")[0]
-        
+    state["key"] = Message(state["key"])
+    for msg in state["key"]:
+        if msg.type == 'image':
+            keys = msg.data['file']
+        if msg.type == 'text':
+            keys = msg.data['text']
+    state["key"] = keys
 
 @set_respond.got('value', prompt="要答什么呢～")
 async def set_got2(bot: Bot, event: GroupMessageEvent, state: T_State):
-
-    save_json(state["key"], state["value"], union(state['gid'] , 1))
+        
+    save_json(state["key"], str(state["value"]), union(state['gid'] , 1))
     await set_respond.finish(message='ok~')
     # except BaseException as e:
     #     logger.error(repr(e))

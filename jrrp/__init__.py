@@ -17,15 +17,15 @@ master = nonebot.get_driver().config.master
 
 Game = JrrpGame()
 
-jrrp = on_command('jrrp')
-duel = on_command('duel')
-re_live = on_command('复活')
+jrrp = on_command('jrrp',block=True)
+duel = on_command('duel', block=True)
+re_live = on_command('复活', block=True)
 
 @jrrp.handle()
 async def jrrp_(bot: Bot, event: GroupMessageEvent):
         user_id = event.user_id
-        if (rp := Game.get(user_id, None)):
-            await bot.send(event, message=MessageSegment.at(user_id) + f'今日的人品值是:{rp}')
+        if (player:=Game.get(user_id, None)):
+            await bot.send(event, message=MessageSegment.at(user_id) + f'的人品值是:{player.rp}')
 
         else:
             rp = random.randint(0, 100)
@@ -35,7 +35,7 @@ async def jrrp_(bot: Bot, event: GroupMessageEvent):
 @duel.handle()
 async def duel_(bot: Bot, event: GroupMessageEvent, msg_seg: Message = CommandArg()):
         user_id = event.user_id
-
+        msg_seg = msg_seg[0]
         if msg_seg.type == 'at':
             target = int(msg_seg.data['qq'])
             for msg in Game.duel(user_id, target):

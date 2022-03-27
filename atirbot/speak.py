@@ -16,7 +16,7 @@ VOICE = [f'{PATH}{vf}' for vf in os.listdir((PATH))]
 def get_voice() -> str :
     return random.choice(VOICE)
 
-test_voice = on_message(rule=to_me(), priority=55)
+test_voice = on_message(rule=to_me(), priority=99, block=False)
 @test_voice.handle()
 async def voice_handle(bot: Bot, event: MessageEvent, state: T_State = State()):
     await bot.send(event,message= MessageSegment.record(f'file://{get_voice()}'))
