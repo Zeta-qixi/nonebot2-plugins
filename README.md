@@ -27,8 +27,8 @@ OCR_KEY = {"appId":"", "apiKey":"","secretKey": ""}
 | ☑️ |  [setu](./setu) | 基于[pixivpy_async](https://github.com/Mikubill/pixivpy-async)的setu插件 |
 | ☑️ |  [涩图评分](./setu_score) | 度娘为你的色图打分～ |
 | ☑️ |  [日常实用功能](./smdx) | 目前有天气查询 星期几查询 .. |
-| ☑️ |  [简单的群内小游戏1](./games) | 俄罗斯转盘 开枪！ ｜
-| ☑️ |  [简单的群内小游戏2](./jrrp) | jrrp决斗版 ｜
+| ☑️ |  [简单的群内小游戏1](./games) | 俄罗斯转盘 开枪！ |
+| ☑️ |  [简单的群内小游戏2](./jrrp) | jrrp决斗版 |
 | ☑️ |  [clock](./clock) | 闹钟、提示事项 |
 |  |  [漫画更新提醒](./comic_push) | 还要找点目标网站爬 |
 |  |  [插件管理](./block) | 修改block实现的关键字触发阻断, 从而实现类似插件管理的功能 |
