@@ -1,22 +1,22 @@
 
-import re
 from io import BytesIO
-import os
 from os import path
-from time import sleep
 from PIL import Image
 import requests
-from nonebot import on_command, on_notice
+from nonebot import on_command, on_notice, get_driver
 from nonebot.adapters.onebot.v11.bot import Bot
-from nonebot.adapters.onebot.v11.event import Event, PokeNotifyEvent
-                                           
+from nonebot.adapters.onebot.v11.event import Event, PokeNotifyEvent                     
 from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 from nonebot.typing import T_State
-from nonebot.params import State, CommandArg, ArgPlainText
+from nonebot.params import State, CommandArg
+
+from .   import generate_gif
 
 
-from .data_source import generate_gif
-
+try:
+    master = get_driver().config.master
+except:
+    master = []
 
 
 data_dir = path.join(path.dirname(__file__), 'data/')
@@ -32,7 +32,7 @@ rua_me = on_notice(priority=60)
 async def _t3(bot: Bot, event: PokeNotifyEvent):
 
 
-    creep_id = event.target_id
+    creep_id = event.sender_id  if event.target_id in master else event.target_id
 
     url = f'http://q1.qlogo.cn/g?b=qq&nk={creep_id}&s=160'
     resp = requests.get(url)
