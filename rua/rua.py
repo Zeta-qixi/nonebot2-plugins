@@ -1,6 +1,6 @@
 
 from io import BytesIO
-from os import path
+import os
 from PIL import Image
 import requests
 from nonebot import on_command, on_notice, get_driver
@@ -19,8 +19,8 @@ except:
     master = []
 
 
-data_dir = path.join(path.dirname(__file__), 'data/')
-img_src = data_dir +  '/output.gif'
+data_dir = os.path.dirname(__file__) + '/data/'
+img_src = data_dir +  'output.gif'
 img = MessageSegment.image(f'file://{img_src}')
 
 
@@ -33,6 +33,8 @@ async def _t3(bot: Bot, event: PokeNotifyEvent):
 
 
     creep_id = event.sender_id  if event.target_id in master else event.target_id
+    if creep_id == int(bot.self_id):
+        return
 
     url = f'http://q1.qlogo.cn/g?b=qq&nk={creep_id}&s=160'
     resp = requests.get(url)
