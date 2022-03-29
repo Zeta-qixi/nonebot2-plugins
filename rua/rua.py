@@ -10,7 +10,7 @@ from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 from nonebot.typing import T_State
 from nonebot.params import State, CommandArg
 
-from .   import generate_gif
+from .data_source import generate_gif
 
 
 try:
