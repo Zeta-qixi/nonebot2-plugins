@@ -34,3 +34,4 @@ OCR_KEY = {"appId":"", "apiKey":"","secretKey": ""}
 |  |  [插件管理](./block) | 修改block实现的关键字触发阻断, 从而实现类似插件管理的功能 |
 |  |  [词云生成](./word_cloud) | 根据聊天记录生成词语, 无需log |
 |  |  [maimaidx随歌](./maimaidx) | 舞萌街机随歌器 |
+|  |  [消息撤回](./withdraw) | 通过回复消息的撤回（方便手机操作） |
