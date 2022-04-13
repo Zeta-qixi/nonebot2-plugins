@@ -111,15 +111,16 @@ async def setu_receive(bot: Bot, event: Event, state: T_State):
 @recall_setu.handle()
 async def _(bot: Bot, event: Event, state: T_State):
     id = event.user_id
-    for pid in setubot.picID_by_user[id]:
-        time.sleep(2)
-        await bot.delete_msg(message_id=pid)
-    setubot.picID_by_user[id] = []
+    if setubot.picID_by_user[id]:
+        for pid in setubot.picID_by_user[id]:
+            time.sleep(2)
+            await bot.delete_msg(message_id=pid)
+        setubot.picID_by_user[id] = []
 
-    dir = path + '/nosese'
-    img_src = dir + '/' + random.choice(os.listdir(dir))
-    logger.info(img_src)
-    await recall_setu.finish(message = MessageSegment.image(f'file://{img_src}'))
+        dir = path + '/nosese'
+        img_src = dir + '/' + random.choice(os.listdir(dir))
+        logger.info(img_src)
+        await recall_setu.finish(message = MessageSegment.image(f'file://{img_src}'))
 
 
 
