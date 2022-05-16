@@ -28,6 +28,7 @@ async def search_got(bot: Bot, event: Event, state: T_State = State()):
 
     for msg in state['ret']:
         if msg.type == 'image':
+            await bot.send(event, message='处理图片...')
             pic_url = msg.data['url']
             data = await tool.get_image_data(pic_url)
 

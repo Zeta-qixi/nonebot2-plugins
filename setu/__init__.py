@@ -7,7 +7,7 @@ from collections import defaultdict
 import requests
 from nonebot import get_driver, on_command, on_regex
 from nonebot.adapters.onebot.v11.bot import Bot
-from nonebot.adapters.onebot.v11.event import Event
+from nonebot.adapters.onebot.v11.event import Event, GroupMessageEvent
 from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 from nonebot.log import logger
 from nonebot.typing import T_State
@@ -87,11 +87,13 @@ async def setu_handle(bot: Bot, event: Event, state: T_State, comman_: Message =
     state['keyword'] = keyword
 
     if res == 1000:
-        msg_list = []
+        msgs = None
         for info, pic_path in (res_data):
-            msg = await bot.send(event, message = info + MessageSegment.image(f'file://{pic_path}'))
-            msg_list.append(msg['message_id'])
-        setubot.push_pic_id(uid, msg_list)
+            msgs += (MessageSegment.text(info) + MessageSegment.image(f'file://{pic_path}'))
+        
+        msg_id = await send_forward_msg_group(bot, event, "qqbot", msgs)
+        logger.info(msg_id)
+        setubot.push_pic_id(uid, [msg_id])
     else:
         await send_setu.finish(message = '你🐛的太快啦')
 
@@ -128,13 +130,13 @@ async def _(bot: Bot, event: Event, state: T_State):
 
 @my_follow.handle()
 async def my_follow_(bot: Bot, event: Event, state: T_State):
-    
     num = str(state['_matched_groups'][0])
     if num:
         num = int(num) if num.isdigit() else  TRAN.get(num)
     else:
         num = 1
     uid = event.user_id
+    logger.info('uid')
     res, res_data = await setubot.get_follow_setu(num, uid)
     if res == 400:
         await bot.send(event, message = "你的🆔没在列表内登记哦～")
@@ -187,3 +189,20 @@ async def set_got(bot: Bot, event: Event, state: T_State):
     index = int(str(state['mode_index']))
     setubot.user_rank_mode[int(state['uid'])] = index
     await change_rank_mode.finish(message = "设置成功")
+
+
+# 合并消息
+async def send_forward_msg_group(
+        bot: Bot,
+        event: GroupMessageEvent,
+        name: str,
+        msgs: [],
+):
+    def to_json(msg):
+        return {"type": "node", "data": {"name": name, "uin": bot.self_id, "content": msg}}
+
+    messages = [to_json(msg) for msg in msgs]
+    uid = await bot.call_api(
+        "send_group_forward_msg", group_id=event.group_id, messages=messages
+    )
+    return uid['message_id']

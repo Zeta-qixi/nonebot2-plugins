@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from pixivpy_async import AppPixivAPI, PixivAPI
 from nonebot.log import logger
-from typing import List
+from typing import List, Tuple
 import aiohttp
 import asyncio
 import random
@@ -64,25 +64,36 @@ class Pixiv(AppPixivAPI):
             return True
         return False
 
-    def get_original_url(self, works: List) -> List[str]:
+    def get_original_url(self, works: List) -> Tuple[List[str], List[str]]:
         """
-        input: 已重写的方法返回的result集合
-         或 父类方法的result['illusts']
+        input  -> 
+            已重写的方法返回的result集合
+            or 父类方法的result['illusts']
 
-        return: URL 集合
+        return  -> 
+            URL 集合
         """
         urls = []
+        msgs = []
         for work in works:
             try:
                 for w in work['meta_single_page'].values():
                     urls.append(w)
-                for w in work['meta_pages']:
+                    msgs.append({'id':work.id, 'artist':work.user.id})
+                for i, w in enumerate(work['meta_pages']):
                     urls.append(w['image_urls']['original'])
+                    msgs.append({'id':f"{work.id}_p{i}", 'artist':work.user.id})
+                    if i>3:
+                        break
             except:
-                pass
-        return urls
+                ...
+        return (urls, msgs)
 
-    async def get_pic_bytes(self, urls: List[str]) -> List[bytes]:
+
+    async def get_pic_bytes(self, works: List[dict]) -> Tuple[List[bytes], List[str]]:
+        urls, msgs = self.get_original_url(works)
+        
+        
         async def func(session, url):
             logger.info(f'downwork{url}')
             fin = bytes()
@@ -100,7 +111,7 @@ class Pixiv(AppPixivAPI):
             picb64_list = []
             for res_ in done:
                 picb64_list.append(res_.result())
-            return picb64_list
+            return (picb64_list, msgs)
         
     async def get_more_illust(self, func, nums = 50, **kwargs):
         '''

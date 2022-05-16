@@ -1,5 +1,4 @@
 from .pixiv_api import Pixiv, TOKEN
-from nonebot import logger
 import random
 from PIL import Image
 from io import BytesIO
@@ -33,14 +32,14 @@ class SetuBot(Pixiv):
     if num < len(works):
       works = random.choices(works, k = num)
     
-    picb64 = await self.get_pic_bytes(self.get_original_url(works))
+    res = await self.get_pic_bytes(works)
 
     path_list = []
-    for work, b64 in zip(works, picb64):
+    for b64, msg in zip(*res):
       img = Image.open(BytesIO(b64))
-      path = PATH + f'/data/image/{work.id}.png'
+      path = PATH + f'/data/image/{msg["id"]}.png'
       img.save(path)
-      msg = f'id:{work.id}\n画师:{work.user.id}\n'
+      msg = f'id:{msg["id"]}\n画师:{msg["artist"]}'
       path_list.append((msg, path))
     return path_list
 
