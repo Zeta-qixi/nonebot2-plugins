@@ -1,8 +1,7 @@
 
 from nonebot import on_command
 from nonebot.adapters.onebot.v11.bot import Bot
-from nonebot.params import State, CommandArg
-
+from nonebot.params import  CommandArg
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from .dynamic import *
 from .live import *
@@ -13,7 +12,7 @@ push_dynamic = on_command("更新推送", block=True)
 mid filter(动态|直播|过滤) value([0,1],[0,1],['过滤字段'])
 '''
 @push_dynamic.handle()
-async def push_dynamic_handle(bot: Bot, evnet: GroupMessageEvent, msg = CommandArg()):
+async def push_dynamic_handle(bot: Bot, event: GroupMessageEvent, msg = CommandArg()):
     uid = event.user_id
     gid = event.group_id
 

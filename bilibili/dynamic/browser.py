@@ -2,12 +2,7 @@
 > python -m playwright install
 '''
 import base64
-import shutil
-from pathlib import Path
 from typing import Optional
-import asyncio
-from PIL import Image
-from io import BytesIO
 from lxml import etree
 from playwright.async_api import Browser, async_playwright
 import re
@@ -51,8 +46,8 @@ async def get_dynamic_screenshot(url, filter=None):
                 img_url = "https:" + (re.search(r"//.*jpg",str(i.xpath('@style')))).group()
                 url_list.append(img_url)
             res['img_url'] = url_list
-        except Exception as e:
-            logger.error(repr(e))
+        except:
+            ...
 
         if filter:
             if filter not in text:
@@ -77,12 +72,12 @@ async def get_dynamic_screenshot(url, filter=None):
         raise
 
 
-
 def install():
     """自动安装、更新 Chromium"""
     import sys
     from playwright.__main__ import main
     sys.argv = ['', 'install', 'webkit']
     main()
+    
 #第一次
-#install()
+# install()

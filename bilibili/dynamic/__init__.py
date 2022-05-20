@@ -1,19 +1,12 @@
 from .browser import get_dynamic_screenshot
 from .GetData import *
 from ..db import *
-import asyncio
-import time
-from datetime import datetime, timedelta
-import random
 
 from nonebot.log import logger
-
 from nonebot import get_bot, on_command, get_driver
 from nonebot.adapters.onebot.v11.bot import Bot
-from nonebot.adapters.onebot.v11.event import Event
 from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 from nonebot import require
-
 try:
     master = get_driver().config.master
 except:
@@ -29,7 +22,7 @@ def get_data_from_db():
     return data
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-@scheduler.scheduled_job('cron', minute='*/10', id='dynamic_sched_')
+@scheduler.scheduled_job('cron', minute='*/1', id='dynamic_sched_')
 async def push_dynamic():
 
     for item in get_data_from_db():
@@ -42,12 +35,11 @@ async def push_dynamic():
             if item["lastest"] < dy.time:
                 update(item["gid"], item["mid"], 'latest_dynamic', dy.time)
                 if dy.type != 1:
+                    
                     try:
                         res_list = await get_dynamic_screenshot(url, item['filter'])
-                    
                         msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
                         await get_bot().send_group_msg(group_id = item["gid"], message=f'发布了新的动态:\n{dy.url}' + msg_pic)
-
                         for img in res_list.get('img_url', []):
                             msg_pic = MessageSegment.image(file=img)
                             await get_bot().send_group_msg(group_id = item["gid"], message= msg_pic)
@@ -60,24 +52,25 @@ async def push_dynamic():
 check_dynamic = on_command("最新动态")
 @check_dynamic.handle()
 async def check_dynamic_handle(bot: Bot, event):
-    for item in get_data_from_db().values():
+    for item in get_data_from_db():
         data = get_dynamic(item['mid'])
         dy = data['cards'][0]
         dy = Dynamic(dy)
         info = dy.get()   
         url = info[2]
-        comman = str(event.get_message())
-        if item['gid'] == event.group_id or comman == 'test':
-            try:
-                res_list = await get_dynamic_screenshot(url, item['filter']) 
-                msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
-                await bot.send(event, message=msg_pic)
-                if 'pic' in res_list:
-                    msg_pic = MessageSegment.image(res_list['pic'])
-                    await bot.send(event, message=msg_pic)
-            except BaseException as e:
+        
 
-                logger.error(repr(e))
+        try:
+            res_list = await get_dynamic_screenshot(url, item['filter']) 
+            msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
+            await bot.send(event, message=msg_pic)
+            
+            if 'pic' in res_list:
+                msg_pic = MessageSegment.image(res_list['pic'])
+                await bot.send(event, message=msg_pic)
+        except BaseException as e:
+            logger.info(url)
+            logger.error(url, repr(e))
 
 
 
