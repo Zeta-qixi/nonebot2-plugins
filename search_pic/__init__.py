@@ -1,8 +1,7 @@
 from . import tool
-import nonebot_plugin_petpet
 from nonebot import on_command, get_driver
 from nonebot.adapters.onebot.v11.bot import Bot
-from nonebot.adapters.onebot.v11.event import Event
+from nonebot.adapters.onebot.v11.event import Event, GroupMessageEvent
 from nonebot.adapters.onebot.v11.message import Message
 from nonebot.typing import T_State
 from nonebot.params import State, CommandArg
@@ -13,7 +12,7 @@ except:
     master = []
 
 
-search = on_command('.搜图')
+search = on_command('搜图')
 @search.handle()
 async def search_handle(bot: Bot, event: Event, state: T_State = State(), msg: Message = CommandArg()):
     
@@ -24,7 +23,7 @@ async def search_handle(bot: Bot, event: Event, state: T_State = State(), msg: M
         state['ret'] = msg
 
 @search.got('ret', prompt='图呢')
-async def search_got(bot: Bot, event: Event, state: T_State = State()):
+async def search_got(bot: Bot, event: GroupMessageEvent, state: T_State = State()):
 
     for msg in state['ret']:
         if msg.type == 'image':
@@ -32,9 +31,28 @@ async def search_got(bot: Bot, event: Event, state: T_State = State()):
             pic_url = msg.data['url']
             data = await tool.get_image_data(pic_url)
 
-            if data == '': 
+            if  len(data) == 0: 
                 await search.finish('搜不到呢～')
-            else: await search.finish(data)
+            
+            else: await send_forward_msg_group(bot, event, "搜图" ,data)
 
         else:
             await search.finish('不搜啦、')
+
+
+
+# 合并消息
+async def send_forward_msg_group(
+        bot: Bot,
+        event: GroupMessageEvent,
+        name: str,
+        msgs: [],
+):
+    def to_json(msg):
+        return {"type": "node", "data": {"name": name, "uin": bot.self_id, "content": msg}}
+
+    messages = [to_json(msg) for msg in msgs]
+    uid = await bot.call_api(
+        "send_group_forward_msg", group_id=event.group_id, messages=messages
+    )
+    return uid['message_id']
