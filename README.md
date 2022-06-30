@@ -1,9 +1,16 @@
 # 基于nonebot2的插件库
+
+## OSCS
+[![OSCS Status](https://www.oscs1024.com/platform/badge/Zeta-qixi/nonebot2-plugins.svg?size=large)](https://www.oscs1024.com/project/Zeta-qixi/nonebot2-plugins?ref=badge_large)  
+
+## 基础配置
 ### 文件放到自己bot的插件目录即可，缺少的 data.json 或 data.db 请自行添加  
 ### 部分插件需要在nonebot的env中配置MASTER (qq号)
 ```
+// 独立于nonebot SUPERUSERS, 需要额外设置
 MASTER = [123456]
 
+// orc相关插件配置
 OCR_KEY = {"appId":"", "apiKey":"","secretKey": ""}
 
 ```
