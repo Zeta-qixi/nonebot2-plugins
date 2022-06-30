@@ -86,7 +86,7 @@ def  filter(word):
     return False
 
 
-set_respond = on_command('set',aliases={"setall"}, block=True)
+set_respond = on_command('set',aliases={"setall"}, block=False)
 @set_respond.handle()
 async def set_handle(bot: Bot, event: GroupMessageEvent, state: T_State, msg: Message = CommandArg()):
     '''
@@ -121,8 +121,17 @@ async def set_got(bot: Bot, event: GroupMessageEvent, state: T_State):
 
 @set_respond.got('value', prompt="要答什么呢～")
 async def set_got2(bot: Bot, event: GroupMessageEvent, state: T_State):
+
+    msgs = ''
+    for i in (state["value"]):
+        logger.info(i.type)
+        if url:=i.data.get("url"):
+            msgs += str(MessageSegment(i.type, {"file":url}))
+        else:
+            msgs += str(i)
+
         
-    save_json(state["key"], str(state["value"]), union(state['gid'] , 1))
+    save_json(state["key"], msgs , union(state['gid'] , 1))
     await set_respond.finish(message='ok~')
     # except BaseException as e:
     #     logger.error(repr(e))
