@@ -1,27 +1,34 @@
-import requests
 import aiohttp
+import asyncio
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11.message import MessageSegment
 from nonebot import get_driver
 from lxml import etree
 from kth_timeoutdecorator import *
+
+from typing import  List
+
 SAUCENAO_KEY = get_driver().config.saucenao_key  # SauceNAO 的 API key
 TIMELIMIT_IMAGE = 7 # 识图功能的时间限制
+
 params = {
     'api_key' : SAUCENAO_KEY,
     'output_type' : 2
 }
-SIMILARITY = 60
+
+SIMILARITY = 50
 
 class Ascii2dInfo:
     def __init__(self, box):
-        self.image_url = "https://ascii2d.net/" + box.xpath('.//img/@src')[0]
+        self.image_url = "https://ascii2d.net" + box.xpath('.//img/@src')[0]
 
-        detail = box.xpath('.//div[@class="detail-box gray-link"]/h6')[0]
-        urls = detail.xpath(".//a/@href")
-        info = detail.xpath(".//a/text()")
-
-        self.info = f"title:{info[0]}\nartist:{info[1]}\n{urls[0]}"
+        self.info = ''
+        detail = box.xpath('.//div[@class="detail-box gray-link"]/h6')
+        if detail:
+            detail = detail[0]
+            urls = detail.xpath(".//a/@href")
+            info = detail.xpath(".//a/text()")
+            self.info = f"title:{info[0]}\nartist:{info[1]}\n{urls[0]}"
 
     @property
     def nonebotMsg(self):
@@ -57,7 +64,7 @@ class SaucenaoInfo:
         msg =  MessageSegment.image(self.thumbnail) + MessageSegment.text(self.info+'\n'.join(self.ext_urls))
         return (msg)
 
-class PicInfoList(list):
+class PicInfoList(List):
     def __init__(self, results):
         
         for i in results:
@@ -67,25 +74,24 @@ class PicInfoList(list):
                 ...
 
  
-async def from_saucenao(url):
+async def from_saucenao(session, url):
+    params['url'] = url
     try:
-        params['url'] = url
-        async with aiohttp.ClientSession() as session:
-            async with session.get('https://saucenao.com/search.php', params=params) as resp:
-                data = await resp.json()
+        async with session.get('https://saucenao.com/search.php', params=params) as resp:
+            data = await resp.json()
         res_ = PicInfoList(data['results'])
-        return ([i.nonebotMsg for i in res_])
+        return (['saucenao']+[i.nonebotMsg for i in res_])
 
     except Exception as e:
         logger.error(e)
-        return([])
+        return(['saucenao搜不到啦'])
 
 
-async def from_ascii2d(url):
+async def from_ascii2d(session, url):
     try: 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(f"https://ascii2d.net/search/url/{url}") as resp:
-                clolr_res = await resp.text()
+       
+        async with session.get(f"https://ascii2d.net/search/url/{url}") as resp:
+            clolr_res = await resp.text()
 
         html_index = etree.HTML(clolr_res)
         neet_div = html_index.xpath('//div[@class="detail-link pull-xs-right hidden-sm-down gray-link"]')
@@ -103,37 +109,23 @@ async def from_ascii2d(url):
             for box in boxes[1:3]:
                 res.append(Ascii2dInfo(box))
 
-        return ([i.nonebotMsg for i in res[:3]])  # 前三张
+        return (["ascii2d"] + [i.nonebotMsg for i in res[:3]])  # 前三张
 
     except Exception as e:
         logger.error(e)
-        return([])
+        return(['ascii2d搜不到啦'])
 
 
 
-@timeout(TIMELIMIT_IMAGE)
-async def get_view(sc, image_url: str) -> str:
-    return sc(image_url)
 
+async def get_image_data(url: str) -> List:
 
+    res_ = []
+    async with aiohttp.ClientSession() as s:
+        list = [from_saucenao, from_ascii2d]
+        tasks = [asyncio.create_task(func(s, url)) for func in list]
+        done, _ = await asyncio.wait(tasks)
+        for i in done:
+            res_.append(i.result())
 
-# async def get_image_data(image_url: str):
-
-#     putline = []
-#     repass = ''
-#     for sc in [from_saucenao, from_ascii2d]:
-#         try:
-#             putline += await get_view(sc, image_url)
-#         except :
-#             pass
-#     for msg in list(set(putline)):
-#         if repass:
-#             repass = repass + '\n----------\n' + msg
-#         else:
-#             repass += msg
-#     return repass
-
-async def get_image_data(image_url: str):
-    ascii2d = await from_ascii2d(image_url)
-    saucenao =  await from_saucenao(image_url)
-    return(saucenao+ascii2d)
+        return res_
