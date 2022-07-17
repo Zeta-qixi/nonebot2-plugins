@@ -3,7 +3,7 @@ import os
 import sqlite3
 from .Clock import Clock
 path =os.path.dirname(__file__)
-db = path + '/data.db'
+db = path + '/data.sqlite'
 
 TABLE = "CLOCKS"
 

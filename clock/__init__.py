@@ -10,7 +10,6 @@ from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import Event, GroupMessageEvent,MessageEvent
 from nonebot.adapters.onebot.v11.message import Message
 from nonebot.params import State, CommandArg
-
 from nonebot.typing import T_State
 from nonebot import require, logger
 
@@ -43,6 +42,7 @@ def create_clock_scheduler(clock):
 for i in select_all():
     
     c = Clock.init_from_db(i)
+    
     create_clock_scheduler(c)
 
 
@@ -53,11 +53,13 @@ def add_clock(**kwargs):
     add_clock_db(clock)
     create_clock_scheduler(clock)
 
-def del_clock(id):
+def del_clock(id: int):
     """删除闹钟"""
-
+    
     del_clock_db(id)
+    del(CLOCK_DATA[id])
     scheduler.remove_job(f"clock_{id}")
+    return True
 
 
 
@@ -85,7 +87,6 @@ def get_time(time_):
 add_clock_qq = on_command('添加闹钟', aliases={'设置闹钟', '添加提醒事项', 'addclock'})
 @add_clock_qq.handle()
 async def _(bot: Bot, event: Event, state: T_State, messages:Message = CommandArg()):
-
     uid = event.user_id
     type = event.get_event_name()
     messages = str(messages).split(' ')
@@ -127,40 +128,38 @@ async def _(bot: Bot, event: Event, state: T_State, messages:Message = CommandAr
 
 
 # # 查看闹钟
-# check = on_command('查看闹钟',  aliases={'提醒事项', '闹钟','⏰'})
-# @check.handle()
-# async def add_handle(bot: Bot, event: Event):
-#     try:
-#         id = event.group_id
-#     except:
-#         id = event.user_id
+check = on_command('查看闹钟',  aliases={'提醒事项', '闹钟','⏰'}, block=True)
+@check.handle()
+async def add_handle(bot: Bot, event: Event):
+    try:
+        uid = event.group_id
+    except:
+        uid = event.user_id
     
-#     clock_msg = ''
-#     ones=['days', 'ones']
-#     for clock in clock_list:
-#         if clock.user == id:
-
-#             if clock_msg:
-#                 clock_msg = clock_msg + f'\n\n{clock.get_info()}'
-#             else:
-#                 clock_msg = clock_msg + f'{clock.get_info()}'
-#     if clock_msg:
-#         await bot.send(event, message= Message(clock_msg))
-#     else:
-#         await bot.send(event, message='目前没有闹钟')
+    clock_msg = []
+    ones=['days', 'ones']
+    for id in CLOCK_DATA:
+        clock = CLOCK_DATA[id]
+        if clock.user == uid:
+            clock_msg.append(clock.get_info())
+    if clock_msg:
+        await bot.send(event, message= Message('\n'.join(clock_msg)))
+    else:
+        await bot.send(event, message='目前没有闹钟')
     
 
 
-# # 删除闹钟
-# del_ = on_command('删除闹钟')
-# @del_.handle()
-# async def del_handle(bot: Bot, event: Event):
-#     id = str(event.get_message())
-#     if id.isdigit():
-#         if del_clock(int(id)):
-#             await bot.send(event, message='删除成功')
-#             return
-#     await bot.send(event, message='失败了')
+# 删除闹钟
+del_ = on_command('删除闹钟', block=True)
+@del_.handle()
+async def del_handle(bot: Bot, event: Event, id = CommandArg()):
+    id = int(str(id))
+    if id in CLOCK_DATA:
+        del_clock(id)
+        await del_.finish(message='删除成功')
+    else:
+        await del_.finish(message='没有这个id')
+    await del_.finish(message='失败了')
 
 
 

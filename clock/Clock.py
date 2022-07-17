@@ -29,6 +29,7 @@ class Clock:
         data['ones'] = args[8]
         return cls(data)
     
+
     def get_info(self):
         ones=['重复', '一次']
         time_ = ' '.join([i for i in self.time.split() if i !='null'])
