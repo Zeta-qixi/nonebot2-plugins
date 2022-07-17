@@ -1,24 +1,25 @@
 from io import BytesIO
+import os
+import aiohttp
 
-import requests
-from aip import AipOcr
-from nonebot import get_driver
 from PIL import Image
-from nonebot import logger
 from .data_load import PATH
 
 
-api_key = get_driver().config.ocr_key
-client = AipOcr(api_key['appId'], api_key['apiKey'], api_key['secretKey'])
 
 
-def save_pic(url :str, name: str):
-    res = requests.get(url)
-    img = Image.open(BytesIO(res.content))
-    img.save(PATH + name + ".png")
-
-def check_pic(url :str):
-    res = client.basicGeneralUrl(url)
-    logger.info('识别完成')
-    if {'words': '配餐中'} in res['words_result'] and {'words': '待取餐'} in res['words_result']:
+def is_exists(id):
+    if os.path.exists(PATH + str(id) + ".png"):
         return True
+
+async def save_pic(url :str, name: str):
+    img = await aio_get_image(url)
+    img.save(PATH + name + ".png")
+    
+
+async def aio_get_image(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            bovw_res =  await resp.read()
+            img = (Image.open(BytesIO(bovw_res)))
+            return img

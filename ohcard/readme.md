@@ -26,3 +26,8 @@ OH_MAI = {"appId":"", "apiKey":"","secretKey": ""}
 ### 图片识别
 *识别登记列表中的用户的图片信息，进行识别，为麦当劳取餐截图时自动发送收款码*
 
+如果不使用OCR API 需要自行添加模版(裁剪 配餐中的汉堡图案)作为模版放到`data/templates`中  
+
+默认不使用OCR API, 如果使用自行修改`match_tool.py`
+
+
