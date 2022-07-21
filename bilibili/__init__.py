@@ -17,7 +17,7 @@ async def push_dynamic_handle(bot: Bot, event: GroupMessageEvent, msg = CommandA
     gid = event.group_id
 
     member_info = await bot.get_group_member_info(group_id=gid, user_id=uid)
-    if member_info['role'] == "owner" or member_info['role'] == "admin" or uid in master:
+    if member_info['role'] == "member" and uid not in master:
         await bot.send(event, message="你没有该权限哦～")
         return
 

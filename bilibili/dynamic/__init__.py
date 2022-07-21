@@ -71,7 +71,3 @@ async def check_dynamic_handle(bot: Bot, event):
         except BaseException as e:
             logger.info(url)
             logger.error(url, repr(e))
-
-
-
-
