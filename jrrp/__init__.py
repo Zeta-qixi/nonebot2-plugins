@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.adapters.onebot.v11.message import MessageSegment, Message
 from nonebot.typing import T_State
-from nonebot.params import State, CommandArg
+from nonebot.params import  CommandArg
 import time
 from .jrrp import JrrpGame
 

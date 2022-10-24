@@ -8,7 +8,7 @@ from nonebot.adapters.onebot.v11.event import Event
 from nonebot.adapters.onebot.v11.message import Message
 
 from nonebot.typing import T_State
-from nonebot.params import State, CommandArg
+from nonebot.params import CommandArg
 
 PATH = os.path.dirname(__file__)
 
@@ -102,7 +102,7 @@ weather = on_regex('^(.*)天气|气温|多少度|几度', block=False, priority=
 
 
 @weather.handle()
-async def weather_handle(bot: Bot, event: Event, state: T_State = State()):
+async def weather_handle(bot: Bot, event: Event, state: T_State):
     city = state['_matched_groups'][0]
     if city in ['', '今天', '今日']:
         city = wbot.city.get(str(event.user_id))
@@ -112,7 +112,7 @@ async def weather_handle(bot: Bot, event: Event, state: T_State = State()):
 
 
 @setcity.handle()
-async def weather_handle(bot: Bot, event: Event, state: T_State = State(), city:Message = CommandArg()):
+async def weather_handle(bot: Bot, event: Event, state: T_State, city:Message = CommandArg()):
     city = str(city)
     wbot.city[str(event.user_id)] = city
     wbot.save_city_info()

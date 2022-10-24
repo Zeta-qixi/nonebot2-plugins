@@ -8,7 +8,6 @@ from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import MessageEvent
 from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 from nonebot.typing import T_State
-from nonebot.params import State
 
 
 try:
@@ -28,7 +27,7 @@ for k in api_dict:
         keywords = keywords + '|' + k
 pa = on_regex(f"({keywords})?(.*)", block=False)
 @pa.handle()
-async def pa_handle(bot:Bot, event: MessageEvent, state: T_State = State()):
+async def pa_handle(bot:Bot, event: MessageEvent, state: T_State):
     regex = (state['_matched_groups'])
     comm = regex[0]
 

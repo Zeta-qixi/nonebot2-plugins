@@ -9,7 +9,7 @@ from nonebot import on_command, on_message, get_bot, get_driver
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import Event, GroupMessageEvent,MessageEvent
 from nonebot.adapters.onebot.v11.message import Message
-from nonebot.params import State, CommandArg
+from nonebot.params import CommandArg
 from nonebot.typing import T_State
 from nonebot import require, logger
 

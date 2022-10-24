@@ -11,7 +11,6 @@ class SetuBot(Pixiv):
     super(SetuBot, self).__init__()
 
   async def login(self, token):
-
     if not token:
         token = random.choice(list(TOKEN.values())[:-1])
     return (await super().login(refresh_token=token))
@@ -80,7 +79,15 @@ class SetuBot(Pixiv):
     if works:
       return(1000, await self.get_pic(works, num))
 
+  async def bookmark_add(self, uid, pid):
+    if str(uid) not in TOKEN.keys():
+      return (400, 0)
+
+    await self.login(TOKEN[str(uid)])
+    await self.illust_bookmark_add(illust_id = pid)
+
 # ---- 重构 ⬆️ ---- #
+
 
 # ---- 直接使用 ⬇️ ---- #
   async def get_setu_by_id(self,id , token=None):

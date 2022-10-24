@@ -4,7 +4,7 @@ from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import Event, GroupMessageEvent
 from nonebot.adapters.onebot.v11.message import Message
 from nonebot.typing import T_State
-from nonebot.params import State, CommandArg
+from nonebot.params import  CommandArg
 import re
 try:
     master = get_driver().config.master
@@ -14,7 +14,7 @@ except:
 
 search = on_command('搜图')
 @search.handle()
-async def search_handle(bot: Bot, event: Event, state: T_State = State(), msg: Message = CommandArg()):
+async def search_handle(bot: Bot, event: Event, state: T_State, msg: Message = CommandArg()):
     
     if event.reply:
         state['ret'] = event.reply.message["image"]
@@ -23,7 +23,7 @@ async def search_handle(bot: Bot, event: Event, state: T_State = State(), msg: M
         state['ret'] = msg
 
 @search.got('ret', prompt='图呢')
-async def search_got(bot: Bot, event: GroupMessageEvent, state: T_State = State()):
+async def search_got(bot: Bot, event: GroupMessageEvent, state: T_State):
 
     for msg in state['ret']:
 

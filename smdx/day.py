@@ -6,7 +6,6 @@ import re
 from nonebot import on_command, on_regex
 
 from nonebot.typing import T_State
-from nonebot.params import State
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import Event
 
@@ -42,7 +41,7 @@ def get_weekday(date: str):
 
 week_day = on_regex('(.*)是?(星期|周)几', block=False)
 @week_day.handle()
-async def week_day_handle(bot: Bot, event: Event, state: T_State = State()):
+async def week_day_handle(bot: Bot, event: Event, state: T_State):
     date, name_ = state['_matched_groups']
     try:
         msg = f"是{name_}{get_weekday(date)}{random.choice(['哦', '喔', ''])}~"
@@ -53,7 +52,7 @@ async def week_day_handle(bot: Bot, event: Event, state: T_State = State()):
 
 day = on_regex('(今天)是?几号', block=False)
 @day.handle()
-async def day_handle(bot: Bot, event: Event, state: T_State = State()):
+async def day_handle(bot: Bot, event: Event, state: T_State):
     date = datetime.date.today().__format__("%m.%d")
     msg = f"今天是{date}{random.choice(['哦', '喔', ''])}~"
     await bot.send(event, message = msg)

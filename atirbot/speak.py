@@ -5,7 +5,6 @@ from nonebot.rule import to_me
 
 
 from nonebot.typing import T_State
-from nonebot.params import State
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import MessageEvent, PokeNotifyEvent
 from nonebot.adapters.onebot.v11.message import MessageSegment
@@ -18,7 +17,7 @@ def get_voice() -> str :
 
 test_voice = on_message(rule=to_me(), priority=99, block=False)
 @test_voice.handle()
-async def voice_handle(bot: Bot, event: MessageEvent, state: T_State = State()):
+async def voice_handle(bot: Bot, event: MessageEvent, state: T_State):
     await bot.send(event,message= MessageSegment.record(f'file://{get_voice()}'))
 
 

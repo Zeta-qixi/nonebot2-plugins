@@ -5,7 +5,7 @@ from nonebot import on_command
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from nonebot.adapters.onebot.v11.message import Message, MessageSegment
-from nonebot.params import State, CommandArg
+from nonebot.params import  CommandArg
 
 from .tools import RouletteGame
 

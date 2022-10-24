@@ -11,8 +11,7 @@ from nonebot.adapters.onebot.v11.event import Event, GroupMessageEvent
 from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 from nonebot.log import logger
 from nonebot.typing import T_State
-from nonebot.params import State, CommandArg
-
+from nonebot.params import  CommandArg
 from PIL import Image
 
 from .Getpic import SetuBot
@@ -44,10 +43,12 @@ setubot = setubot()
 
 base_setu        =      on_command('setu',aliases={'Setu', 'SETU', '色图'}, priority=11, block=True)
 change_rank_mode =      on_command("setumode", priority=10, block=True) # 优先setu
+
 my_follow        =      on_regex('来(.?)份[涩色瑟]图', block=False)
 recall_setu      =      on_regex('^撤回|太[涩色瑟]了', block=False)
 r18_switch       =      on_regex("(不可以|强制)色色", block=False)
 
+add_bookmark     =      on_command("setu收藏", priority=10,  block=True)
 
 
 
@@ -91,8 +92,8 @@ async def setu_handle(bot: Bot, event: Event, state: T_State, comman_: Message =
         for info, pic_path in (res_data):
             msgs += (MessageSegment.text(info) + MessageSegment.image(f'file://{pic_path}'))
         
-        msg_id = await send_forward_msg_group(bot, event, "qqbot", msgs)
-        logger.info(msg_id)
+        msg_id = await send_forward_msg_group(bot, event, "setubot", msgs)
+        
         setubot.push_pic_id(uid, [msg_id])
     else:
         await send_setu.finish(message = '你🐛的太快啦')
@@ -136,20 +137,26 @@ async def my_follow_(bot: Bot, event: Event, state: T_State):
     else:
         num = 1
     uid = event.user_id
-    logger.info('uid')
     res, res_data = await setubot.get_follow_setu(num, uid)
     if res == 400:
         await bot.send(event, message = "你的🆔没在列表内登记哦～")
 
     if res == 1000:
-        msg_list = []
+        msgs = None
         for info, pic_path in (res_data):
-            msg = await bot.send(event, message = info + MessageSegment.image(f'file://{pic_path}'))
-            msg_list.append(msg['message_id'])
-        setubot.push_pic_id(uid, msg_list)
+            msgs += (MessageSegment.text(info) + MessageSegment.image(f'file://{pic_path}'))
 
+        msg_id = await send_forward_msg_group(bot, event, "setubot", msgs)
+        setubot.push_pic_id(uid, msg_id)
 
-
+@add_bookmark.handle()
+async def _(bot: Bot, event: Event, pid: Message = CommandArg()):
+    uid = event.user_id
+    res = await setubot.bookmark_add(uid, pid)
+    if res == 400:
+        await bot.send(event, message = "你的🆔没在列表内登记哦～")
+    else:
+        await bot.send(event, message = "收藏成功～")
 
 @r18_switch.handle()
 async def no_r18_handle(bot: Bot, event: Event, state: T_State):
@@ -168,9 +175,7 @@ async def no_r18_handle(bot: Bot, event: Event, state: T_State):
         await r18_switch.finish(message = MessageSegment.image(f'file://{img_src}'))
 
     else:
-        await r18_switch.finish(message = MessageSegment.image(f'你没有发动权限'))
-
-
+        await r18_switch.finish(message = f'你没有发动权限')
 
 
 @change_rank_mode.handle()
