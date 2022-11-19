@@ -25,6 +25,7 @@ scheduler = require('nonebot_plugin_apscheduler').scheduler
 @scheduler.scheduled_job('cron', minute='*/10', id='dynamic_sched_', )
 async def push_dynamic():
 
+    message = []
     for item in get_data_from_db():
         data = get_dynamic(item['mid'])
         for dy in data['cards'][3::-1]: # 前3条 倒序
@@ -39,13 +40,17 @@ async def push_dynamic():
                     try:
                         res_list = await get_dynamic_screenshot(url, item['filter'])
                         msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
-                        await send_forward_msg_group(get_bot(),group_id = item["gid"], message=f'发布了新的动态:\n{dy.url}' + msg_pic)
+                        message.append(f'发布了新的动态:\n{dy.url}' + msg_pic)
+                       
                         for img in res_list.get('img_url', []):
                             msg_pic = MessageSegment.image(file=img)
-                            await send_forward_msg_group(get_bot(),group_id = item["gid"], message= msg_pic)
-                    
+                            message.append(msg_pic)
+                            
                     except Exception as e:
                         logger.error(repr(e))
+
+    if message:                   
+        await send_forward_msg_group(get_bot(),group_id = item["gid"], message= message)
 
          
 # 测试用
