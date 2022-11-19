@@ -22,54 +22,52 @@ async def get_browser(**kwargs) -> Browser:
 
  
 async def get_dynamic_screenshot(url, filter=None):
+    
     browser = await get_browser()
     page = None
     res = {}
     try:
+        
         page = await browser.new_page()
         await page.goto(url, wait_until='networkidle', timeout=10000)
         await page.set_viewport_size({"width": 2560, "height": 1080})
-        card = await page.query_selector(".card")
-        assert card is not None
-        clip = await card.bounding_box()
-        assert clip is not None
 
-        # 获取动态文本
-        text_content = await page.query_selector(".post-content")
-        text = await text_content.text_content()
-        try:
-            img_content_ = await page.query_selector(".imagesbox")
-            img_inner_html = await img_content_.inner_html()
-            tree = etree.HTML(img_inner_html)
-            url_list = []
-            for i in tree.xpath('//div[@class="img-content"]'):
-                img_url = "https:" + (re.search(r"//.*jpg",str(i.xpath('@style')))).group()
-                url_list.append(img_url)
-            res['img_url'] = url_list
-        except:
-            ...
+        # 获取文本
+        text_content = await page.query_selector(".bili-rich-text__content")  #text所在的class , page 定位到此 
+        assert text_content is not None
+        text = await text_content.text_content()     
+        if filter and filter not in text:
+            raise UserWarning('过滤动态')
+        
+        # 图片版本
 
-        if filter:
-            if filter not in text:
-                raise UserWarning('过滤动态')
-            
-
-        bar = await page.query_selector(".text-bar")
-        assert bar is not None
+        bar = await page.query_selector('.bili-dyn-item__main')  #卡片所在的class , page 定位到此 
         bar_bound = await bar.bounding_box()
         assert bar_bound is not None
-        clip['height'] = bar_bound['y'] - clip['y']
-        image = await page.screenshot(clip=clip)
 
-        await page.close()
+        image = await page.screenshot(clip=bar_bound)
         pic_b64 = base64.b64encode(image).decode()
         res['dy'] = pic_b64
+        
+        # 获取动态图
+        img_content_ = await page.query_selector(".bili-dyn-content__orig__major") #image-box所在的class , page 定位到此 
+        
+        img_inner_html = await img_content_.inner_html()
+        tree = etree.HTML(img_inner_html)
+        url_list = []
+
+        for i in tree.xpath('//div[@class="bili-album__preview__picture__img bili-awesome-img"]'):  # image 的 class, 获取etree
+            img_url = "https:" + (re.search('url\("(.*)"\)',str(i.xpath('@style')))).groups()[0]
+            url_list.append(img_url)     
+        res['img_url'] = url_list
+
+        await page.close()
         return res
 
-    except Exception:
+    except Exception as e:
+        logger.error(repr(e))
         if page:
             await page.close()
-        raise
 
 
 def install():

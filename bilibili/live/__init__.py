@@ -9,7 +9,7 @@ from nonebot import get_bot, get_driver, on_command, require
 from nonebot.adapters.onebot.v11.event import MessageEvent
 from nonebot.adapters.onebot.v11.message import Message
 from nonebot.adapters.onebot.v11.bot import Bot
-from nonebot.params import State, CommandArg
+from nonebot.params import CommandArg
 from nonebot.typing import T_State
 from nonebot import logger
 
@@ -116,10 +116,11 @@ async def add(bot: Bot, event: MessageEvent, key: Message = CommandArg()):
 
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-@scheduler.scheduled_job('cron', minute='*/5', id='live_sched')
+@scheduler.scheduled_job('cron', minute='*/1', id='live_sched',  misfire_grace_time=60)
 async def living():
     
     for item in LIVE.values():
+        
         await asyncio.sleep(3)
         info = await get_info(item["mid"])
         liveroom = info['live_room']

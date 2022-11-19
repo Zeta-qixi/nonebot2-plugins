@@ -22,7 +22,7 @@ def get_data_from_db():
     return data
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-@scheduler.scheduled_job('cron', minute='*/1', id='dynamic_sched_')
+@scheduler.scheduled_job('cron', minute='*/10', id='dynamic_sched_', )
 async def push_dynamic():
 
     for item in get_data_from_db():
@@ -39,10 +39,10 @@ async def push_dynamic():
                     try:
                         res_list = await get_dynamic_screenshot(url, item['filter'])
                         msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
-                        await get_bot().send_group_msg(group_id = item["gid"], message=f'发布了新的动态:\n{dy.url}' + msg_pic)
+                        await send_forward_msg_group(get_bot(),group_id = item["gid"], message=f'发布了新的动态:\n{dy.url}' + msg_pic)
                         for img in res_list.get('img_url', []):
                             msg_pic = MessageSegment.image(file=img)
-                            await get_bot().send_group_msg(group_id = item["gid"], message= msg_pic)
+                            await send_forward_msg_group(get_bot(),group_id = item["gid"], message= msg_pic)
                     
                     except Exception as e:
                         logger.error(repr(e))
@@ -52,6 +52,7 @@ async def push_dynamic():
 check_dynamic = on_command("最新动态")
 @check_dynamic.handle()
 async def check_dynamic_handle(bot: Bot, event):
+    
     for item in get_data_from_db():
         data = get_dynamic(item['mid'])
         dy = data['cards'][0]
@@ -59,15 +60,31 @@ async def check_dynamic_handle(bot: Bot, event):
         info = dy.get()   
         url = info[2]
         
-
         try:
             res_list = await get_dynamic_screenshot(url, item['filter']) 
             msg_pic = MessageSegment.image(f"base64://{res_list['dy']}")
             await bot.send(event, message=msg_pic)
-            
-            if 'pic' in res_list:
-                msg_pic = MessageSegment.image(res_list['pic'])
-                await bot.send(event, message=msg_pic)
+
         except BaseException as e:
             logger.info(url)
-            logger.error(url, repr(e))
+            logger.error(repr(e))
+
+
+
+
+
+# 合并消息
+async def send_forward_msg_group(
+        bot: Bot,
+        group_id: int,
+        message,
+):
+
+    if isinstance(message, str):
+        message = [message]
+
+    def to_json(msg):
+        return {"type": "node", "data": {"name": "bilibili", "uin": bot.self_id, "content": msg}}
+    await bot.call_api(
+        "send_group_forward_msg", group_id=group_id, messages=[to_json(msg) for msg in message]
+    )
