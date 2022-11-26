@@ -5,6 +5,7 @@ from nonebot.params import  CommandArg
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
 from .dynamic import *
 from .live import *
+from .permission import BILIBILI_PERM
 
 push_dynamic = on_command("更新推送", block=True)
 '''
