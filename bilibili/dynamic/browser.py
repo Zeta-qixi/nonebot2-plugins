@@ -57,7 +57,7 @@ async def get_dynamic_screenshot(url, filter=None):
         url_list = []
 
         for i in tree.xpath('//div[@class="bili-album__preview__picture__img bili-awesome-img"]'):  # image 的 class, 获取etree
-            img_url = "https:" + (re.search('url\("(.*)"\)',str(i.xpath('@style')))).groups()[0]
+            img_url = "https:" + (re.search('url\("(.*)@',str(i.xpath('@style')))).groups()[0]
             url_list.append(img_url)     
         res['img_url'] = url_list
 
