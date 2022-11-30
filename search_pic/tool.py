@@ -11,6 +11,12 @@ from typing import  List
 SAUCENAO_KEY = get_driver().config.saucenao_key  # SauceNAO 的 API key
 TIMELIMIT_IMAGE = 7 # 识图功能的时间限制
 
+headers={
+    'User-Agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) \
+    AppleWebKit/605.1.15 (KHTML, like Gecko) \
+    Version/14.0.2 Safari/605.1.15',
+}
+
 params = {
     'api_key' : SAUCENAO_KEY,
     'output_type' : 2
@@ -77,7 +83,7 @@ class PicInfoList(List):
 async def from_saucenao(session, url):
     params['url'] = url
     try:
-        async with session.get('https://saucenao.com/search.php', params=params) as resp:
+        async with session.get('https://saucenao.com/search.php', params=params, headers = headers) as resp:
             data = await resp.json()
         res_ = PicInfoList(data['results'])
         return (['saucenao']+[i.nonebotMsg for i in res_])
@@ -90,7 +96,7 @@ async def from_saucenao(session, url):
 async def from_ascii2d(session, url):
     try: 
        
-        async with session.get(f"https://ascii2d.net/search/url/{url}") as resp:
+        async with session.get(f"https://ascii2d.net/search/url/{url}", headers = headers) as resp:
             clolr_res = await resp.text()
 
         html_index = etree.HTML(clolr_res)
@@ -98,7 +104,7 @@ async def from_ascii2d(session, url):
         url_bovw = "https://ascii2d.net" + neet_div[0].xpath('./span/a/@href')[1]
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(url_bovw) as resp:
+            async with session.get(url_bovw, headers = headers) as resp:
                 bovw_res = await resp.text()
 
         html_index2 = etree.HTML(bovw_res)
