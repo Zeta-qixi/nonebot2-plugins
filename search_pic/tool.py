@@ -1,5 +1,4 @@
 import aiohttp
-import asyncio
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11.message import MessageSegment
 from nonebot import get_driver
@@ -37,7 +36,7 @@ class Ascii2dInfo:
             self.info = f"title:{info[0]}\nartist:{info[1]}\n{urls[0]}"
 
     @property
-    def nonebotMsg(self):
+    def nonebot_msg(self):
         msg =  MessageSegment.image(self.image_url) + MessageSegment.text(self.info)
         return (msg)
 
@@ -49,24 +48,14 @@ class SaucenaoInfo:
         self.similarity = data['header']['similarity']
         assert float(self.similarity) >= SIMILARITY, f"置信度小于{SIMILARITY}"
         self.thumbnail = data['header']['thumbnail']
-
         self.ext_urls = data['data'].get('ext_urls',[])
-
-
         self.source = data['data'].get('source','')
         self.title = data['data'].get('title',self.source)
-
-        self.creator = data['data'].get('creator',None)
-        if self.creator is None:
-            self.creator = data['data'].get('member_name','')
-
-
-
+        self.creator = data['data'].get('creator',None) if 'creator' in data['data'] else data['data'].get('member_name','')
         self.info = f"similarity:{self.similarity}\ntitle:{self.title}\ncreator:{self.creator}\n"
 
-
     @property
-    def nonebotMsg(self):
+    def nonebot_msg(self):
         msg =  MessageSegment.image(self.thumbnail) + MessageSegment.text(self.info+'\n'.join(self.ext_urls))
         return (msg)
 
@@ -86,7 +75,7 @@ async def from_saucenao(session, url):
         async with session.get('https://saucenao.com/search.php', params=params, headers = headers) as resp:
             data = await resp.json()
         res_ = PicInfoList(data['results'])
-        return (['saucenao']+[i.nonebotMsg for i in res_])
+        return (['saucenao']+[i.nonebot_msg for i in res_])
 
     except Exception as e:
         logger.error(e)
@@ -114,8 +103,7 @@ async def from_ascii2d(session, url):
             boxes = html.xpath('//div[@class="row item-box"]')
             for box in boxes[1:3]:
                 res.append(Ascii2dInfo(box))
-
-        return (["ascii2d"] + [i.nonebotMsg for i in res[:3]])  # 前三张
+        return (["ascii2d"] + [i.nonebot_msg for i in res])
 
     except Exception as e:
         logger.error(e)
@@ -124,14 +112,3 @@ async def from_ascii2d(session, url):
 
 
 
-async def get_image_data(url: str) -> List:
-
-    res_ = []
-    async with aiohttp.ClientSession() as s:
-        list = [from_saucenao, from_ascii2d]
-        tasks = [asyncio.create_task(func(s, url)) for func in list]
-        done, _ = await asyncio.wait(tasks)
-        for i in done:
-            res_.append(i.result())
-
-        return res_

@@ -1,15 +1,14 @@
-from . import tool
-from nonebot import on_command, get_driver, logger
+import re
+import aiohttp
+import asyncio
+from nonebot import get_driver, logger, on_command
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import Event, GroupMessageEvent
 from nonebot.adapters.onebot.v11.message import Message
+from nonebot.params import CommandArg
 from nonebot.typing import T_State
-from nonebot.params import  CommandArg
-import re
-try:
-    master = get_driver().config.master
-except:
-    master = []
+
+from .tool import from_ascii2d, from_saucenao
 
 
 search = on_command('搜图')
@@ -18,7 +17,6 @@ async def search_handle(bot: Bot, event: Event, state: T_State, msg: Message = C
     
     if event.reply:
         state['ret'] = event.reply.message["image"]
-    
     elif msg:
         state['ret'] = msg
 
@@ -31,11 +29,14 @@ async def search_got(bot: Bot, event: GroupMessageEvent, state: T_State):
             await bot.send(event, message='处理图片...')
             pic_url = msg.data['url']
             logger.info(f'开始搜图{pic_url}')
-            res = await tool.get_image_data(pic_url)
-
-            for data in res:
-                if len(data) > 0:
-                    await send_forward_msg_group(bot, event, "搜图" ,data)
+            
+            async with aiohttp.ClientSession() as s:
+                tasks = [asyncio.create_task(func(s, pic_url)) for func in [from_saucenao, from_ascii2d]]
+                done, _ = await asyncio.wait(tasks)
+                for i in done:
+                    data = i.result()
+                    if data:
+                        await send_forward_msg_group(bot, event, "搜图" ,data)
 
         else:
             await search.finish('不搜啦、')
