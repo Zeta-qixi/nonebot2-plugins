@@ -1,5 +1,4 @@
 from os import path
-
 from PIL import Image, ImageDraw
 
 def get_circle_avatar(avatar, size):
@@ -35,3 +34,6 @@ def generate_gif(frame_dir: str, avatar: Image.Image) -> Image.Image:
     imgs[0].save(fp=out_path, save_all=True, append_images=imgs,
                  duration=25, loop=0, quality=80, transparency=255, disposal=3)
     
+
+def resize(img, size):
+    return img.resize(size, Image.ANTIALIAS)

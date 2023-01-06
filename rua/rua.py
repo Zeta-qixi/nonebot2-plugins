@@ -8,7 +8,7 @@ from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.event import Event, PokeNotifyEvent                     
 from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 from nonebot.typing import T_State
-from nonebot.params import State, CommandArg
+from nonebot.params import  CommandArg
 
 from .data_source import generate_gif
 
@@ -19,8 +19,8 @@ except:
     master = []
 
 
-data_dir = os.path.dirname(__file__) + '/data/'
-img_src = data_dir +  'output.gif'
+data_dir = os.path.join(os.path.dirname(__file__), 'data') 
+img_src = os.path.join(data_dir, 'output.gif')  
 img = MessageSegment.image(f'file://{img_src}')
 
 
@@ -40,7 +40,6 @@ async def _t3(bot: Bot, event: PokeNotifyEvent):
     resp = requests.get(url)
     resp_cont = resp.content
     avatar = Image.open(BytesIO(resp_cont))
-    #<class 'PIL.JpegImagePlugin.JpegImageFile'>
     generate_gif(data_dir, avatar)
     await bot.send(event, message=img)
 
@@ -48,7 +47,7 @@ async def _t3(bot: Bot, event: PokeNotifyEvent):
     
 rua = on_command('rua', block=True)
 @rua.handle()
-async def rua_handle(bot: Bot, event: Event, state: T_State = State(), msg: Message = CommandArg()):
+async def rua_handle(bot: Bot, event: Event, state: T_State, msg: Message = CommandArg()):
 
     for msg_seg in msg:
         if msg_seg.type == 'image':
@@ -58,7 +57,7 @@ async def rua_handle(bot: Bot, event: Event, state: T_State = State(), msg: Mess
             
 
 @rua.got("url", prompt="要rua点什么～")
-async def rua_got(bot: Bot, event: Event, state: T_State = State()):
+async def rua_got(bot: Bot, event: Event, state: T_State):
     msg = str(state['url'])
     print(msg)
 
