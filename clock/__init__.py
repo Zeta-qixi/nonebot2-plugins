@@ -1,8 +1,7 @@
-from .db import *
+from .database import db
 import os
 from  time import strftime, localtime
 from datetime import datetime, timedelta
-import pandas as pd
 import re
 from .Clock import Clock
 from nonebot import on_command, on_message, get_bot, get_driver
@@ -34,29 +33,26 @@ def create_clock_scheduler(clock):
         if clock.verify_today():
             await get_bot().send_msg(message_type=clock.type, user_id=clock.user, group_id=clock.user, message=clock.content)          
             if clock.ones == 1:
-                del_clock_db(clock.id)
+                db.del_clock(clock.id)
                 scheduler.remove_job(f"clock_{clock.id}")
 
     scheduler.add_job(add_clock, "cron", hour=clock.hour, minute=clock.minute, id=f"clock_{clock.id}")
 
-for i in select_all():
+for i in db.select_all():
     
-    c = Clock.init_from_db(i)
-    
-    create_clock_scheduler(c)
+    create_clock_scheduler(Clock.init_from_db(i))
 
 
 def add_clock(**kwargs):
     """添加闹钟"""
-    kwargs['id'] = new_id()
+    kwargs['id'] = db.new_id()
     clock = Clock((kwargs))
-    add_clock_db(clock)
+    db.add_clock(clock)
     create_clock_scheduler(clock)
 
 def del_clock(id: int):
     """删除闹钟"""
-    
-    del_clock_db(id)
+    db.del_clock(id)
     del(CLOCK_DATA[id])
     scheduler.remove_job(f"clock_{id}")
     return True
@@ -87,44 +83,57 @@ def get_time(time_):
 add_clock_qq = on_command('添加闹钟', aliases={'设置闹钟', '添加提醒事项', 'addclock'})
 @add_clock_qq.handle()
 async def _(bot: Bot, event: Event, state: T_State, messages:Message = CommandArg()):
-    uid = event.user_id
-    type = event.get_event_name()
-    messages = str(messages).split(' ')
+
+    messages = str(messages).split(' ', 1)
     ones = 1
     content = '⏰'
-    try:
-        time_ = messages[0]
-        content = messages[1]
-        if messages[2]:
-            ones = 0
-    except:
-        pass
 
-    time_ = get_time(time_)
+    if len(messages) < 2:
+        await add_clock_qq.finish(message="添加格式为: “添加闹钟 时间 内容”")
+
+    time_ = get_time(messages[0])
     if not time_:
         await add_clock_qq.finish(message="时间格式错误")
 
+    content = messages[1]
+    
+    state['content'] = content
+    state['time'] = time_
+
+
+@add_clock_qq.got('ones', prompt="⏰不重复, 设置为每日输入[Y/y], 设置自定 如周一周三输入[13]")
+async def _(bot: Bot, event: Event, state: T_State):
+
+    state['ones'] = str(state['ones'])
+    ones = 0 if state['ones'] in ['Y', 'y'] else 1
+    week = ''
+
+    if state['ones'].isdigit():
+        week = state['ones']
+        ones = 0
 
     data = {
-        'user' : uid,
-        'content' : content,
-        'time' : time_,
+        'user' : event.user_id,
+        'content' : state['content'],
+        'time' : state['time'],
+        'type' : 'private',
         'ones' : ones,
-        'type' : 'private'
+        'week' : week
     }
        
-    if 'group' in type:
-        gid = event.group_id
-        info = await bot.get_group_member_info(group_id=gid, user_id=uid)
-        if info['role'] == "member" and uid not in master:
+    if 'group' in event.get_event_name():
+
+        info = await bot.get_group_member_info(group_id = event.group_id, user_id=event.user_id)
+        if info['role'] == "member" and event.user_id not in master:
             await add_clock_qq.finish(message="你没有该权限哦～")
 
         data['type'] = 'group'
-        data['user'] = gid
+        data['user'] = event.group_id
 
 
     add_clock(**data)
-    await add_clock_qq.finish(message="添加成功～")
+    ones_ = {1:'不重复', 0:'重复'}
+    await add_clock_qq.finish(message=f"[{ones_[ones]}⏰]添加成功～")
 
 
 # # 查看闹钟

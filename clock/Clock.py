@@ -1,5 +1,6 @@
 import datetime
 from nonebot import logger
+
 class Clock:
     def __init__(self, data):
  
@@ -31,9 +32,9 @@ class Clock:
     
 
     def get_info(self):
-        ones=['重复', '一次']
+        ones=['重复', '不重复']
         time_ = ' '.join([i for i in self.time.split() if i !='null'])
-        return f'[{self.id}] ⏰{time_} ({ones[(self.ones)]})\n备注: {self.content}'
+        return f'[{self.id}] ⏰{time_} ({self.week}{ones[(self.ones)]})\n备注: {self.content}'
 
     def get_time(self):
         time = self.time.split()[-1].split(':')
