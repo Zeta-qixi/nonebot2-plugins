@@ -14,7 +14,9 @@ from nonebot import require, logger
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 
+"""
 
+"""
 try:
     master = get_driver().config.master
 except:
@@ -101,16 +103,20 @@ async def _(bot: Bot, event: Event, state: T_State, messages:Message = CommandAr
     state['time'] = time_
 
 
-@add_clock_qq.got('ones', prompt="⏰不重复, 设置为每日输入[Y/y], 设置自定 如周一周三输入[13]")
+@add_clock_qq.got('ones', prompt="⏰不重复, 设置为每日输入[Y/y]\n设置周几 如周一周三输入[13]\n设置某天，如圣诞输入 [12.25]")
 async def _(bot: Bot, event: Event, state: T_State):
 
     state['ones'] = str(state['ones'])
     ones = 0 if state['ones'] in ['Y', 'y'] else 1
+    month, day = 0, 0
     week = ''
 
     if state['ones'].isdigit():
         week = state['ones']
         ones = 0
+
+    if ret:=re.match('([0-9]{0,2}).([0-9]{1,2})', state['ones']):
+        month, day = ret.groups()
 
     data = {
         'user' : event.user_id,
@@ -118,7 +124,9 @@ async def _(bot: Bot, event: Event, state: T_State):
         'time' : state['time'],
         'type' : 'private',
         'ones' : ones,
-        'week' : week
+        'week' : week,
+        'day' : day,
+        'month' : month
     }
        
     if 'group' in event.get_event_name():
@@ -133,7 +141,7 @@ async def _(bot: Bot, event: Event, state: T_State):
 
     add_clock(**data)
     ones_ = {1:'不重复', 0:'重复'}
-    await add_clock_qq.finish(message=f"[{ones_[ones]}⏰]添加成功～")
+    await add_clock_qq.finish(message=f"[{ones_[ones]}]添加成功～")
 
 
 # # 查看闹钟

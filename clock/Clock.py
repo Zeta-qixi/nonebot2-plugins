@@ -8,10 +8,12 @@ class Clock:
         self.type = data.get('type', 'private')
         self.user = data.get('user')
         self.content = data.get('content', '')
-        self.month = data.get('month', 0)
-        self.day = data.get('day', 0)
-        self.week = data.get('week', '')
-        self.ones = data.get('ones', 1)
+        
+        self.ones = int(data.get('ones', 1))
+        self.month = int(data.get('month', 0))
+        self.day = int(data.get('day', 0))
+        self.week = str(data.get('week', ''))
+        
         self.time = data.get('time', 1)
         self.get_time()
 
