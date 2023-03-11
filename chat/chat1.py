@@ -1,6 +1,5 @@
 
 from .data import DATA
-
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot import get_driver, on_command, on_message
@@ -20,7 +19,7 @@ regular_chat = on_message(priority=99, block=False)
 @regular_chat.handle()
 async def chat_handle(bot: Bot, event: GroupMessageEvent):
     message = str(event.get_message())
-    for id in [(0,0), (event.group_id,1), (event.user_id, 2)]:
+    for id in [(event.user_id, 2), (event.group_id,1), (0,0)]:
         uid = union(*id)
         for pattern in DATA.get_pattern(uid):
             if (res := re.match(pattern=pattern, string=message)):
