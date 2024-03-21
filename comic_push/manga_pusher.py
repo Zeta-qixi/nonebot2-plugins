@@ -1,6 +1,9 @@
 import requests
 import aiohttp
+from .data_loader import DataLoader
 from lxml import etree
+
+helper = DataLoader('data/manga.json')
 
 headers={
     'User-Agent' : 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) \
@@ -25,7 +28,7 @@ def crawler(id):
 
 
 
-async def aio_crawler(id):
+async def aio_spider(id):
     async with aiohttp.ClientSession(headers=headers) as session:
         async with session.get(host_url + id) as resp:
             res = await resp.read()
@@ -42,3 +45,19 @@ async def aio_crawler(id):
             
             return (len(target_list), title, latest, url_)
 
+
+
+async def get_response( bot ):
+    for uid in helper.data:
+        for cid in helper.data[uid]:
+
+            try:
+                total, title, _, url = await aio_spider(cid)
+                if total > int(helper.data[uid][cid]):
+                    helper.data[uid][cid] = total
+                    msg = f"漫画{title}更新了\n:{url}"
+                    await bot.send_msg(message_type='private', user_id=int(uid), message=msg)
+                    helper.save()
+            finally:
+                ...
+    

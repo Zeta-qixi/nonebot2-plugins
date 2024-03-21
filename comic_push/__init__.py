@@ -1,37 +1,33 @@
 import os
 import json
-from .pusher import *
+from nonebot.params import  CommandArg
+from nonebot.adapters.onebot.v11.bot import Bot, Message
 from nonebot import get_bot
-from nonebot import require
+from nonebot import require, on_command
+from nonebot.typing import T_State
 
+from nonebot.adapters.onebot.v11.event import Event
 
-try:
-    path = os.path.dirname(__file__) + "/data.json"
-    with open(path) as f: 
-        data = json.load(f)  
-except:
-    data = {}
-
-def update():
-    with open(path, 'w+') as f :
-        tojson = json.dumps(data,sort_keys=True, ensure_ascii=False, indent=6,separators=(',',': '))
-        f.write(tojson)
-
+from .manga_pusher import get_response as manga_get_response
+from .copy_pusher import get_response as copy_get_response, copy_add
 
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
-@scheduler.scheduled_job('cron', hour='*/1', minute="0", id='comic_pusher')
+@scheduler.scheduled_job('cron', hour='*/4', minute="0", id='comic_pusher')
 async def push_comic():
-    for uid in data:
-        for cid in data[uid]:
-            total, title, _, url = await aio_crawler(cid)
-            if total > int(data[uid][cid]):
-                data[uid][cid] = total
-                update()
-
-                msg = f"漫画{title}更新了\n:{url}"
-                await get_bot().send_msg(message_type='private', user_id=int(uid), message=msg)
+    bot = get_bot()
+    await copy_get_response(bot)
 
 
+manga = on_command('/漫画')
+@manga.handle()
+async def _(bot: Bot):
+    await copy_get_response(bot)
 
 
+add = on_command('添加漫画')
+@add.handle()
+async def _(bot: Bot, event: Event, state: T_State,  name: Message = CommandArg()):
+    
+    copy_add(str(event.user_id), str(name))
+    await add.finish('ok')
