@@ -7,7 +7,7 @@ LICENSE
 -
 
 #一些插件
-
+_*/
 mc_server/
 bilibili/
 python_cmd/
@@ -19,9 +19,8 @@ majsoul.py
 azurlane/
 account/
 atribot/
-_*/
 arknight/
-
+nonebot_plugin_fortune/
 #数据
 data/
 !setu/data
