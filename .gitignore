@@ -9,6 +9,7 @@ LICENSE
 #一些插件
 
 mc_server/
+bilibili/
 python_cmd/
 setu/Getpic_former.py
 maimaidx2/
@@ -17,7 +18,9 @@ clock_in/
 majsoul.py
 azurlane/
 account/
+atribot/
 _*/
+arknight/
 
 #数据
 data/
