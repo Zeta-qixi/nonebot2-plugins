@@ -32,13 +32,6 @@ roleAlias = {
   "彦卿": ['言情', '彦情', '彦青', '言卿', '燕青']
 }
 
-def get_role_from_file(name):
-
-    for n, a in roleAlias.items():
-        if n == name or name in a:
-            return data_path + n + '.png'
-            
-    return None
 
 
 async def fetch_post(session, id):
