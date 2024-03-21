@@ -36,7 +36,7 @@ OCR_KEY = {"appId":"", "apiKey":"","secretKey": ""}
 | ☑️ |  [日常实用功能](./smdx) | 目前有天气查询 星期几查询 .. |
 | ☑️ |  [简单的群内小游戏1](./games) | 俄罗斯转盘 开枪！ |
 | ☑️ |  [简单的群内小游戏2](./jrrp) | jrrp决斗版 |
-| ☑️ |  [clock](./clock) | 闹钟、提示事项 |
+| ☑️ |  [clock](https://github.com/Zeta-qixi/nonebot-plugin-clock) | 闹钟、提示事项；已加入到nb插件商店 |
 | ☑️ |  [漫画更新提醒](./comic_push) | 还要找点目标网站爬 |
 |  |  [插件管理](./block) | 修改block实现的关键字触发阻断, 从而实现类似插件管理的功能 |
 |  |  [词云生成](./word_cloud) | 根据聊天记录生成词语, 无需log |
