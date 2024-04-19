@@ -4,7 +4,6 @@ from nonebot.adapters.onebot.v11.message import MessageSegment
 from nonebot import get_driver
 from lxml import etree
 from kth_timeoutdecorator import *
-
 from typing import  List
 
 SAUCENAO_KEY = get_driver().config.saucenao_key  # SauceNAO 的 API key

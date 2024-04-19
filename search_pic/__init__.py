@@ -7,7 +7,6 @@ from nonebot.adapters.onebot.v11.event import Event, GroupMessageEvent
 from nonebot.adapters.onebot.v11.message import Message
 from nonebot.params import CommandArg
 from nonebot.typing import T_State
-
 from .tool import from_ascii2d, from_saucenao
 
 
@@ -26,7 +25,7 @@ async def search_got(bot: Bot, event: GroupMessageEvent, state: T_State):
     for msg in state['ret']:
 
         if msg.type == 'image':
-            await bot.send(event, message='处理图片...')
+            await bot.send(event, message='搜索中...')
             pic_url = msg.data['url']
             logger.info(f'开始搜图{pic_url}')
             
