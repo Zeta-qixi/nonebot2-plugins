@@ -39,26 +39,28 @@ r18_switch       =      on_regex("(不可以|强制)色色", block=False)
 
 
 
-@base_setu.handle()
-async def setu_handle(bot: Bot, event: GroupMessageEvent, state: T_State, keyword: Message = CommandArg()):
 
-    num = 1
-    keyword = str(keyword)
+@base_setu.handle()
+async def setu_handle(bot: Bot, event: GroupMessageEvent, state: T_State, context: Message = CommandArg()):
+
+    def parse_context(context):
+        match = re.match(r'^(画师|作者|搜图)\s*(\d+)$', context)
+        if match: return (match.group(1), int(match.group(2)))
+        else: return ('base', context)
+
+    
     await setubot.set_token(uid=event.get_user_id(), gid = str(event.group_id))
-    if ret := re.search(r'(画师|作者|搜[索图])\s?(.*)', keyword):
-        keyword = ret.group(2).strip()
-        if ret.group(1) == '推荐':
-            res_data = await setubot.get_setu_recommend(int(keyword), num)
-        elif ret.group(1) in ['搜索', '搜图']:
-            res_data = await setubot.get_setu_by_id(int(keyword))
-        else:
-            res_data = await setubot.get_setu_artist(keyword, num)
+    _type, keyword = parse_context(str(context))
+
+    if _type == '推荐':
+        res_data = await setubot.get_setu_recommend(keyword)
+    elif _type  == '作者':
+        res_data = await setubot.get_setu_artist(keyword)
+    elif _type == '搜图':
+        res_data = await setubot.get_setu_by_id(keyword)
     else:
-        if setubot.is_private:
-            res_data = await setubot.get_follow_setu(num)
-        else:
-            res_data = await setubot.get_setu_base(keyword, num)
-    logger.info(keyword)
+        res_data = await setubot.get_setu_base(keyword)
+    
     if res_data:
         msgs = []
         for info, pic_path in (res_data):

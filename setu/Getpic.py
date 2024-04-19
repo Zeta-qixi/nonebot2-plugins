@@ -50,20 +50,17 @@ class SetuBot(Pixiv):
   async def set_token(self, uid: str, gid: str) -> None:
 
     self._private = False
-    if str(uid) in self.token:
-      self._token = self.token[str(uid)]
+    if uid in self.token:
+      self._token = self.token[uid]
       self._private = True
-    elif str(gid) in self.token:
-     self. _token = self.token[str(gid)]
+    elif gid in self.token:
+     self. _token = self.token[gid]
     else:
       self._token = random.choice(list(self.token.values()))
     
     await self.login()
     
     
-
-
-  
   async def get_follow_setu(self, num=1):
 
     works = await self.illust_follow()
@@ -75,7 +72,9 @@ class SetuBot(Pixiv):
     """
      return -> 状态码, (id, path_list)
     """
-    
+    if self.is_private:
+      return await self.get_follow_setu()
+
     if keyword in self.rank_storage.keys() or not keyword:
       keyword = keyword or self.mode
       works = await self.illust_ranking(mode = keyword)

@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List, Tuple
 from nonebot.log import logger
 import random
@@ -13,14 +14,13 @@ PROXY = ""
 TOKEN = ""
 VIP = False
 
-try:
-    PATH = os.path.dirname(__file__) + "/data.json"
-    with open(PATH) as f:
-        data = json.load(f)
-        PROXY = data['PROXY']
-        TOKEN = data['TOKEN']
-except:
-    pass
+
+PATH = Path("data/setu/data.json")
+with open(PATH) as f:
+    data = json.load(f)
+    PROXY = data['PROXY']
+    TOKEN = data['TOKEN']
+
 
 
 def set_random_seed(id):
