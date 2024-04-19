@@ -20,12 +20,8 @@ azurlane/
 account/
 atribot/
 arknight/
-nonebot_plugin_fortune/
-#数据
-data/
-!setu/data
-setu/data/image
 
+#数据
 *.db
 data.*
 .gitignore
