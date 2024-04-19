@@ -1,5 +1,6 @@
 import os
 import json
+from pathlib import Path
 import requests
 from lxml import etree
 from nonebot import on_command, on_regex
@@ -10,7 +11,7 @@ from nonebot.adapters.onebot.v11.message import Message
 from nonebot.typing import T_State
 from nonebot.params import CommandArg
 
-PATH = os.path.dirname(__file__)
+PATH = Path("data/weather")
 
 import requests
 tq = {
@@ -49,21 +50,21 @@ class heweather:
         self.load_file()
 
     def load_file(self):
-        with open(f'{PATH}/asset/location.json', 'r') as f:
+        with open(f'{PATH}/weather/location.json', 'r') as f:
             self.location_id_dict = json.load(fp=f)
-        with open(f'{PATH}/asset/data.json', 'r') as f:
+        with open(f'{PATH}/weather/data.json', 'r') as f:
             data = json.load(fp=f)
             self.params['key'] = data['key']
             self.city = data['city']
 
     def save_city_info(self):
-        with open(f'{PATH}/asset/data.json', 'w') as f:
+        with open(f'{PATH}/weather/data.json', 'w') as f:
             data = {'key': self.params['key']}
             data['city'] = self.city
             json.dump(data, f)
     
     def save_location_id(self):
-        with open(f'{PATH}/asset/location.json', 'w') as f:
+        with open(f'{PATH}/weather/location.json', 'w') as f:
             json.dump(self.location_id_dict, f)
 
 
