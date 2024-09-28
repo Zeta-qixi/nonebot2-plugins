@@ -110,6 +110,8 @@ async def _(
     if len(user_theme) < 1:
         await matcher.finish("输入参数错误")
 
+    if user_theme == '今日':
+        await specific_divine.finish()
     for theme in FortuneThemesDict:
         if user_theme in FortuneThemesDict[theme]:
             if not FortuneManager.theme_enable_check(theme):

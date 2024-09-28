@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from .config import fortune_config, themes_flag_config
 
-
+from .llamachat import get_adv
 def get_copywriting() -> Tuple[str, str]:
     """
     Read the copywriting.json, choice a luck with a random content
@@ -20,7 +20,12 @@ def get_copywriting() -> Tuple[str, str]:
         title: str = luck.get("good-luck")
         text: str = random.choice(luck.get("content"))
 
-        return title, text
+    try:# 引入ai
+        text = get_adv(title) 
+    except Exception as e:
+        print(repr(e))
+
+    return title, text
 
 
 def random_basemap(theme: str, spec_path: Optional[str] = None) -> Path:

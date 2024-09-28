@@ -29,7 +29,7 @@ FortuneThemesDict: Dict[str, List[str]] = {
     "onmyoji": ["阴阳师", "yys", "Yys", "痒痒鼠"],
     "pcr": ["PCR", "公主链接", "公主连结", "Pcr", "pcr"],
     "pretty_derby": ["赛马娘", "马", "马娘", "赛马"],
-    "punishing": ["战双", "战双帕弥什"],
+    "punishing": ["战双"],
     "sakura": ["樱色之云绯色之恋", "樱云之恋", "樱云绯恋", "樱云"],
     "summer_pockets": ["夏日口袋", "夏兜", "sp", "SP"],
     "sweet_illusion": ["灵感满溢的甜蜜创想", "甜蜜一家人", "富婆妹"],
