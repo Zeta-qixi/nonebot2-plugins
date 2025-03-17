@@ -4,29 +4,10 @@ test.*
 .vscode/
 LICENSE
 *.ipynb
--
 
-#一些插件
-_*/
-mc_server/
-bilibili/
-python_cmd/
-setu/Getpic_former.py
-maimaidx2/
-Action.py
-clock_in/
-majsoul.py
-azurlane/
-account/
-atribot/
-arknight/
 
 #数据
 *.db
 data.*
 .gitignore
-
-chat/filter.json
-.gitignore
-chat/data_.json
 
