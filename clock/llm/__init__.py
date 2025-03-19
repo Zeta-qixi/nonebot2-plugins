@@ -34,8 +34,8 @@ async def decorate_content( content: str) -> Optional[str]:
             prompt = f"当前时间：{llm_system_time()}\n 任务：{content}"
         )
         return response
-    except:
-        logger.warning("OpenAI API返回无效响应")
+    except Exception as e:
+        logger.error("OpenAI API返回无效响应", repr(e))
         return content
 
 

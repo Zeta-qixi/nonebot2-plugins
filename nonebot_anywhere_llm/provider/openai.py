@@ -19,7 +19,6 @@ class OpenAIProvider(BaseLLMProvider):
 
     async def generate(self, messages: List[Tuple[str, str]], params: LLMParams) -> str:
         
-
         try:
             response = await self.client.chat.completions.create(
                 messages=messages,

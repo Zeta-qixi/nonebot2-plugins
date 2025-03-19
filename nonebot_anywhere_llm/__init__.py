@@ -10,3 +10,4 @@ __plugin_meta__ = PluginMetadata(
 from .llm_service import LLMService
 from .provider import OpenAIProvider
 from .models import LLMParams
+from .test import *

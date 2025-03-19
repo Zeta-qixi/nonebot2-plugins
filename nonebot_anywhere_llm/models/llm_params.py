@@ -22,4 +22,3 @@ class LLMParams:
     def get_system_prompt(self) -> List[Any]:
         if self.system_prompt:
             return [{"role": "system", "content": self.system_prompt}]
-        return []
