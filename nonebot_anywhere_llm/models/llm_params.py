@@ -3,7 +3,7 @@ class LLMParams:
     """模型基础参数配置"""
     def __init__(
         self,
-        model: str = "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+        model: str = "Qwen/Qwen2.5-7B-Instruct",
         temperature: float = 0.7,
         max_tokens: int = 2000,
         top_p: float = 1.0,

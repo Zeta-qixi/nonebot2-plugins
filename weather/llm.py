@@ -62,6 +62,7 @@ prompt = """- Role: 角色扮演问候程序
 """
 
 my_params = LLMParams(
+    model='deepseek-ai/DeepSeek-R1-Distill-Qwen-32B',
     system_prompt=prompt,
     temperature=0.5
 )
