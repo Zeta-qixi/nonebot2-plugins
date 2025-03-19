@@ -22,7 +22,7 @@ class Myhandle(JobHandle):
         if clock.type == 'private':
             await get_bot().send_msg(message_type=clock.type, user_id=clock.user_id, message=message)
         elif clock.type == 'group':
-            message = MessageSegment.at(clock.user_id) + message
+            # message = MessageSegment.at(clock.user_id) + message
             await get_bot().send_msg(message_type=clock.type, group_id=clock.group_id, message=message)
         if clock.is_one_time:
             del_clock(myhandle, clock)
