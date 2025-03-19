@@ -1,27 +1,36 @@
+from .interface import BaseLLMProvider
+from ..models import LLMParams
 from openai import APIError, APITimeoutError, AsyncOpenAI, AuthenticationError
-from nonebot import get_driver, logger
+from nonebot import  logger
+from nonebot import get_driver
 from typing import Any, Dict, List, Tuple
 
-class OpenAIProvider:
-    def __init__(self):
+
+
+class OpenAIProvider(BaseLLMProvider):
+    def __init__(self, api_key: str = None, base_url: str = None):
         config = get_driver().config
         self.client = AsyncOpenAI(
-            api_key=getattr(config, "openai_api_key", ""),
-            base_url=getattr(config, "openai_base_url", "https://api.openai.com/v1")
+            api_key = api_key or getattr(config, "openai_api_key"), 
+            base_url = base_url or getattr(config, "openai_base_url")
         )
-        self.model = getattr(config, "openai_model", "gpt-3.5-turbo")
+      
 
-    async def generate(self, messages: List[Tuple[str, str]], **kwargs: Any) -> str:
+
+    async def generate(self, messages: List[Tuple[str, str]], params: LLMParams) -> str:
         
 
-        kwargs['model'] =kwargs.get('model', self.model)
-        print(messages)
         try:
             response = await self.client.chat.completions.create(
                 messages=messages,
-                **kwargs,
+                model=params.model,
+                max_tokens=params.max_tokens,
+                frequency_penalty=params.frequency_penalty,
+                presence_penalty=params.presence_penalty,
+                stream=False
             )
             return response.choices[0].message.content
+        
         except APITimeoutError as e:
             logger.error(f"API 请求超时: {e}")
             return "⚠️请求超时，请重试"

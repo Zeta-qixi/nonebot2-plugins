@@ -7,10 +7,10 @@ import random
 from .model import Clock
 from .database.database import db
 
-from .handle.job import add_clock, del_clock, get_clock_by_owner, JobHandle
+from .handle.job import add_clock, del_clock, get_clock_by_owner, JobHandle, enabled_clock, disable_clock
 from .uilts import (get_event_info, simple_time_to_cron, 
                     message_to_db, db_to_message, 
-                    parse_natural_language, cron_to_natural)
+                    parse_natural_language)
 
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
@@ -35,8 +35,8 @@ natural_language_add_clock = on_message(block=False)
 check = on_regex("^(查看闹钟|提醒事项|闹钟|⏰)$" ,block=True)
 del_clock_qq = on_command('删除闹钟', block=True)
 add_clock_qq = on_command('添加闹钟', aliases={'设置闹钟',}, block=True)
-open_clock_qq = on_command('打开闹钟', aliases={'开启闹钟',}, block=True)
-close_clock_qq = on_command('关闭闹钟', block=True)
+enabled_clock_qq = on_command('打开闹钟', aliases={'开启闹钟',}, block=True)
+disabled_clock_qq = on_command('关闭闹钟', block=True)
 
 # 创建闹钟
 @natural_language_add_clock.handle()
@@ -97,8 +97,8 @@ async def _(matcher: Matcher, event: MessageEvent):
     _, gid, uid = get_event_info(event)
     clock_msg = []
     for i, clock in enumerate(get_clock_by_owner(myhandle, uid=uid, gid=gid)):
-        conent = await db_to_message(clock.content, only_show=True)
-        clock_msg.append(f"{i+1}. [{cron_to_natural(clock.cron_expression)}] {conent}")
+        conent = await clock.get_info()
+        clock_msg.append(f"{i+1}. {conent}")
     if clock_msg:
         await matcher.finish(message= Message('\n'.join(clock_msg)))
     else:
@@ -110,37 +110,42 @@ async def _(matcher: Matcher, event: MessageEvent):
 @del_clock_qq.handle()
 async def _(matcher: Matcher, event: GroupMessageEvent, ids = CommandArg()):
 
-    _, gid, uid = get_event_info(event)
+    
     try:
+        _, gid, uid = get_event_info(event)
         clock = get_clock_by_owner(myhandle, uid=uid, gid=gid)[int(str(ids))-1]
         del_clock(myhandle, clock)
+        await matcher.finish(message=f'操作完成')
     except Exception as e:
         logger.error(repr(e))
         await matcher.finish(message=f'出现了问题...')
-    await matcher.finish(message=f'操作完成')
+    
 
 
-# @open_clock_qq.handle()
-# async def _(matcher: Matcher, event: GroupMessageEvent, ids = CommandArg()):
+@enabled_clock_qq.handle()
+async def _(matcher: Matcher, event: GroupMessageEvent, ids = CommandArg()):
 
-#     _, gid, uid = get_event_info(event)
-#     succeed, fail = [], []
-#     for id in str(ids).split():
-#         if open_clock(int(id), gid, uid):
-#             succeed.append(id) # succeed
-#         else:
-#             fail.append(id) # fail
-#     await matcher.finish(message=f'操作成功: {len(succeed)}'+ (f'\n失败id: {fail}' if fail else ''))
+   
+    try:
+        _, gid, uid = get_event_info(event)
+        clock = get_clock_by_owner(myhandle, uid=uid, gid=gid)[int(str(ids))-1]
+        if enabled_clock(myhandle, clock):
+            await matcher.finish(message=f'操作完成')
+    except Exception as e:
+        logger.error(repr(e))
+        await matcher.finish(message=f'出现了问题...')
+    
 
 
-# @close_clock_qq.handle()
-# async def _(matcher: Matcher, event: GroupMessageEvent, ids = CommandArg()):
+@disabled_clock_qq.handle()
+async def _(matcher: Matcher, event: GroupMessageEvent, ids = CommandArg()):
 
-#     _, gid, uid = get_event_info(event)
-#     succeed, fail = [], []
-#     for id in str(ids).split():
-#         if close_clock(int(id), gid, uid):
-#             succeed.append(id) # succeed
-#         else:
-#             fail.append(id) # fail
-#     await matcher.finish(message=f'操作成功 🆔: {succeed}'+ (f'\n操作失败 🆔: {fail}' if fail else ''))
+    
+    try:
+        _, gid, uid = get_event_info(event)
+        clock = get_clock_by_owner(myhandle, uid=uid, gid=gid)[int(str(ids))-1]
+        if disabled_clock(myhandle, clock):
+            await matcher.finish(message=f'操作完成')
+    except Exception as e:
+        logger.error(repr(e))
+        await matcher.finish(message=f'出现了问题...')

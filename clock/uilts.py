@@ -6,7 +6,7 @@ import requests
 from datetime import datetime, timedelta
 from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, Message, MessageSegment, PrivateMessageEvent
 from nonebot.adapters.qq import GuildMessageEvent, DirectMessageCreateEvent
-from .handle.llm import decorate_content
+from .llm import decorate_content
 import uuid
 import re
 from datetime import datetime
@@ -104,7 +104,9 @@ from typing import List
 
 
 def cron_to_natural(cron_expr: str) -> str:
-    
+    """
+    Cron表达式转为自然语言, 目前不支持 / - 等表示
+    """
     fields = cron_expr.split()
     if len(fields) != 5:
         # "无效的 cron 表达式"

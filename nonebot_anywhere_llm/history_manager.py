@@ -1,41 +1,96 @@
-# history_manager.py
-from nonebot_plugin_orm import Model, get_session
-from sqlalchemy import Column, Integer, String, DateTime, Text, Index
-from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime
-from typing import List, Tuple
+import aiosqlite
+import sqlite3
+from typing import List, Dict
+from abc import ABC, abstractmethod
+from collections import defaultdict
+from typing import List, Dict, Optional
 
-class ChatHistory(Model):
-    """聊天历史记录模型"""
-    __table_args__ = (
-        Index("idx_session", "session_id"),  # 创建会话索引
-    )
+ 
+# 核心接口
+class IHistoryManager(ABC):
+    @abstractmethod
+    async def save_message(self, session_id: str, role: str, content: str) -> None:
+        pass
+
+    @abstractmethod
+    async def get_history(self, session_id: str, length: int = 10) -> List[Dict[str, str]]:
+        pass
+
+    @abstractmethod
+    async def clear_history(self, session_id: str) -> None:
+        pass
     
-    id = Column(Integer, primary_key=True)
-    session_id = Column(String(255), nullable=False)
-    role = Column(String(50), nullable=False)
-    content = Column(Text, nullable=False)
-    timestamp = Column(DateTime, default=datetime.now)
 
-class HistoryManager:
-    async def add_record(self, session_id: str, role: str, content: str):
-        """添加聊天记录"""
-        async with get_session() as db_session:
-            db_session.add(ChatHistory(
-                session_id=session_id,
-                role=role,
-                content=content
-            ))
-            await db_session.commit()
 
-    async def get_history(self, session_id: str, max_turns: int = 5) -> List[Tuple[str, str]]:
-        """获取历史对话"""
-        async with get_session() as db_session:
-            result = await db_session.execute(
-                select(ChatHistory)
-                .where(ChatHistory.session_id == session_id)
-                .order_by(ChatHistory.timestamp.desc())
-                .limit(max_turns * 2)
+
+# 内存实现（带Token计数）
+class MemoryHistoryManager(IHistoryManager):
+    def __init__(self):
+        self.max_history_tokens = 2000
+        self.histories = defaultdict(list)
+        self.token_counts = defaultdict(int)
+
+    async def save_message(self, session_id: str, role: str, content: str) -> None:
+        new_tokens = self._count_tokens(content)
+        
+        self.histories[session_id].append({"role": role, "content": content})
+        self.token_counts[session_id] += new_tokens
+
+        # 自动清理历史
+        while self.token_counts[session_id] > self.max_history_tokens:
+            if len(self.histories[session_id]) > 0:
+                removed = self.histories[session_id].pop(0)
+                self.token_counts[session_id] -= self._count_tokens(removed["content"])
+            else:
+                break
+
+    async def get_history(self, session_id: str, length: int = 10) -> List[Dict[str, str]]:
+        return self.histories[session_id].copy()[-length:]
+
+    async def clear_history(self, session_id: str) -> None:
+        self.histories[session_id].clear()
+        self.token_counts[session_id] = 0
+
+    def _count_tokens(self, text: str) -> int:
+        # 简易token计算（实际应使用tiktoken库）
+        return len(text) // 4
+
+
+
+
+class SQLiteHistoryManager(IHistoryManager):
+    def __init__(self, db_path: str = "data/llm/history.db"):
+        self.db_path = db_path
+        self.init_db()
+
+    def init_db(self):
+        with sqlite3.connect(self.db_path) as db:
+            db.execute('''
+                CREATE TABLE IF NOT EXISTS history (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    session_id TEXT,
+                    role TEXT,
+                    content TEXT,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+            db.commit()
+
+    async def save_message(self, session_id: str, role: str, content: str) -> None:
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.execute(
+                "INSERT INTO history (session_id, role, content) VALUES (?, ?, ?)",
+                (session_id, role, content)
             )
-            records = result.scalars().all()
-            return [(r.role, r.content) for r in reversed(records)]
+            await db.commit()
+
+    async def get_history(self, session_id: str, length: int = 10) -> List[Dict[str, str]]:
+        async with aiosqlite.connect(self.db_path) as db:
+            cursor = await db.execute("SELECT role, content FROM history WHERE session_id = ? ORDER BY timestamp DESC LIMIT ?", (session_id,length,))
+            rows = await cursor.fetchall()
+        return [{"role": row[0], "content": row[1]} for row in rows]
+
+    async def clear_history(self, session_id: str) -> None:
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.execute("DELETE FROM history WHERE session_id = ?", (session_id,))
+            await db.commit()

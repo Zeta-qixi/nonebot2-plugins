@@ -8,6 +8,5 @@ __plugin_meta__ = PluginMetadata(
 
 
 from .llm_service import LLMService
-from .prompt import SystemTemplate, PromptTemplate
-
-llm_sv = LLMService()
+from .provider import OpenAIProvider
+from .models import LLMParams

@@ -16,26 +16,10 @@ test_matcher = on_command("ask")
 async def handle_ask(event: GroupMessageEvent):  
     
     response = await llm.generate(
-        intput='返回测试'
+        event,
+        '返回测试'
     )
     await test_matcher.finish(response)
 
 ```
 
-## 使用prompt模版
-```python
-PromptTemplate = require('nonebot_anywhere_llm').PromptTemplate
-SystemTemplate = require('nonebot_anywhere_llm').SystemTemplate
-
-my_prompt_template = PromptTemplate("""
-System: 请遵守以下规则：
-{text} 用户提问时请始终用中文回答""")
-
-sys_prompt_template = SystemTemplate('prompt.txt')
-
-response = await llm.generate(
-        system_prmompt = sys_prompt_template.render()
-        intput = my_prompt_template.render({"text" : '你好'})
-        temperature=0.5,
-    )
-```

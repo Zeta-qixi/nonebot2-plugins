@@ -1,3 +1,5 @@
+from ..uilts import db_to_message, cron_to_natural
+
 class Clock:
     def __init__(self, data):
         self.id = data['id']  # 主键，自增
@@ -27,7 +29,12 @@ class Clock:
     def from_dict(cls, data):
         return cls(data)
     
-    def get_info(self):
-        return f"{self.id}: {self.content}"
+    async def get_info(self):
+        """
+        基础信息
+        """
+        enabled = '✅' if self.is_enabled else '🚫'
+        content = await db_to_message(self.content, only_show=True)
+        return f"{enabled}|{cron_to_natural(self.cron_expression)}\n{content}"
     
 
