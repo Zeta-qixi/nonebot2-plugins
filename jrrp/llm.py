@@ -33,7 +33,6 @@ my_params = LLMParams(
 )
 llm = LLMService(my_params)
 async def llm_respone( rp: str) -> str:
-
     response = await llm.generate(
         f"{rp}/100"
     )
