@@ -20,6 +20,7 @@
 1. 安装基础依赖
 ```bash
 pip install nonebot2 nonebot-adapter-onebot
+pip install nonebot2 nonebot-anywhere-llm
 pip install nonebot-plugin-apscheduler
 ```
 
@@ -35,7 +36,7 @@ nonebot.load_plugin('your_plugin_directory')
 #### 方式一：自然语言（推荐）
 直接发送：
 `每天上午8点叫我起床`
-`每周五16:00提交周报`
+`每周五16:00提醒我提交周报`
 
 #### 方式二：快捷命令
 ```bash

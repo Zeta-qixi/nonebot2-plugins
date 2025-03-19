@@ -160,7 +160,7 @@ def parse_natural_language(input_text: str):
         if match:
             expression = formatter(match)
             break
-    
+    print(expression)
     try:
         expression = simple_time_to_cron(expression)
         content = re.search(r'(提醒|叫)我(.*)', input_text).groups()[-1]
