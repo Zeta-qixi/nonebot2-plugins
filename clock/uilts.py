@@ -133,6 +133,7 @@ def cron_to_natural(cron_expr: str) -> str:
             date_str = f"每{weekdays.get(weekday, weekday)}"
         else:  # 既有日期又有星期
             date_str += f" 和 {weekdays.get(weekday, weekday)}"
+
     return f"{date_str} {time_str}"
 
 

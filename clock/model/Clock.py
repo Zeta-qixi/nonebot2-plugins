@@ -35,6 +35,7 @@ class Clock:
         """
         enabled = '✅' if self.is_enabled else '🚫'
         content = await db_to_message(self.content, only_show=True)
-        return f"{enabled}|{cron_to_natural(self.cron_expression)}\n{content}"
+        ones = '（仅一次）' if self.is_one_time else ''
+        return f"{enabled}|{cron_to_natural(self.cron_expression)}{ones}\n{content}"
     
 

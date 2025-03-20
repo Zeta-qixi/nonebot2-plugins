@@ -1,15 +1,17 @@
 """
-自然语言 创建闹钟
+自然语言 创建任务
 """
+import random
 
-from .scheduler import myhandle
 from nonebot import on_message
 from nonebot.rule import to_me
 from nonebot.matcher import Matcher
-
 from nonebot.adapters.onebot.v11 import (Message, GroupMessageEvent, MessageEvent, MessageSegment)
-from .uilts import parse_natural_language, get_event_info
+
+from .uilts import parse_natural_language, get_event_info, message_to_db
 from .llm import natural_language_to_task
+from .scheduler import myhandle
+from .handle.job import add_clock
 
 natural_language_add_clock = on_message(block=False, rule=to_me())
 
@@ -18,7 +20,7 @@ natural_language_add_clock = on_message(block=False, rule=to_me())
 async def _(matcher: Matcher, event: MessageEvent): 
 
     message = event.get_plaintext()
-    for i in ['提醒','叫','让','记得']: # 防止无关聊天调用方法
+    for i in ['提醒','叫','让','记得','准备']: # 防止无关聊天调用方法
         if i in message:
             
             try:

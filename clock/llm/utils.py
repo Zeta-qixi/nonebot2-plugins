@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Optional, Dict
 from nonebot import logger, require
 from .prompt import PROMPT, cron_prompt
+
 import locale
 import json
 locale.setlocale(locale.LC_ALL, 'zh_CN.UTF-8')

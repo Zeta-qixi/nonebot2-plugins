@@ -19,7 +19,7 @@ class LLMService:
     async def generate(
         self,
         prompt: str,
-        param: LLMParams,
+        param: LLMParams = None,
         session_id: str = None,
         event: MessageEvent = None,
         use_histroy: bool = False,
