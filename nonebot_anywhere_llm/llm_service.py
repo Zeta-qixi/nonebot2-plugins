@@ -19,13 +19,14 @@ class LLMService:
     async def generate(
         self,
         prompt: str,
+        param: LLMParams,
         session_id: str = None,
         event: MessageEvent = None,
         use_histroy: bool = False,
         histroy_length: int = 10
     ) -> str:
 
-        
+        self.param = param or self.param
         messages = self.param.get_system_prompt() or []
 
         if use_histroy:

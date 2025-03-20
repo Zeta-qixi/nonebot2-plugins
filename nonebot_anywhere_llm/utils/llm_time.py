@@ -7,6 +7,5 @@ def llm_system_time() -> str:
     
     """
     now = datetime.now()
-    formatted_date = now.strftime("%D，%H:%M，%A ") + SEASON[now.month]
-    print(formatted_date)
-    return formatted_date 
+    formatted_date = now.strftime("%D %H:%M %A ") + SEASON[now.month]
+    return f"[{formatted_date}]" 
