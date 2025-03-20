@@ -68,7 +68,7 @@ def del_clock(handle: JobHandle, clock: Clock):
     
     handle.remove_clock_from_scheduler(str(clock.id))
     handle.db.delete(clock.id)
-    logger.info(f"Deleted clock with ID {id}")
+    logger.info(f"Deleted clock with ID {clock.id}")
     return True
 
 def enabled_clock(handle: JobHandle, clock: Clock):

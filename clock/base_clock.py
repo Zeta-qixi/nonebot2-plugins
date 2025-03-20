@@ -9,12 +9,6 @@ from .handle.job import add_clock, del_clock, get_clock_by_owner, enabled_clock,
 from .uilts import (get_event_info, simple_time_to_cron, 
                     message_to_db)
 
-
-
-
-
-
-
 check = on_regex("^(查看闹钟|提醒事项|闹钟|⏰)$" ,block=True)
 del_clock_qq = on_command('删除闹钟', block=True)
 add_clock_qq = on_command('添加闹钟', aliases={'设置闹钟',}, block=True)

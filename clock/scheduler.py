@@ -1,7 +1,6 @@
-from nonebot import require
-
+from nonebot import require, get_bot
 from .model import Clock
-from .handle.job import JobHandle
+from .handle.job import JobHandle, del_clock
 from .database.database import db
 from .uilts import db_to_message
 scheduler = require('nonebot_plugin_apscheduler').scheduler
