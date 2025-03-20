@@ -152,21 +152,17 @@ def parse_natural_language(input_text: str):
         (r'([零一二两三四五六七八九十]+)点', lambda m: f'{convert_chinese_to_digit(m.group(1))}:00'),
     ]
     
-    
     expression = None
-    
     for pattern, formatter in time_patterns:
         match = re.search(pattern, input_text)
         if match:
             expression = formatter(match)
             break
-    print(expression)
     try:
         expression = simple_time_to_cron(expression)
         content = re.search(r'(提醒|叫)我(.*)', input_text).groups()[-1]
     except:
         content = None
-        
     return (content, expression)
 
 def convert_chinese_to_digit(chinese_num: str) -> int:
