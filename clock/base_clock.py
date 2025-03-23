@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import (Message, GroupMessageEvent, MessageEven
 
 from .scheduler import myhandle
 from .handle.job import add_clock, del_clock, get_clock_by_owner, enabled_clock, disable_clock
-from .uilts import (get_event_info, simple_time_to_cron, 
+from .utils import (get_event_info, simple_time_to_cron, 
                     message_to_db)
 
 check = on_regex("^(查看闹钟|提醒事项|闹钟|⏰)$" ,block=True)

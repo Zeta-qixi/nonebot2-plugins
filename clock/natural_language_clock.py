@@ -8,7 +8,7 @@ from nonebot.rule import to_me
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import (Message, GroupMessageEvent, MessageEvent, MessageSegment)
 
-from .uilts import parse_natural_language, get_event_info, message_to_db
+from .utils import parse_natural_language, get_event_info, message_to_db
 from .llm import natural_language_to_task
 from .scheduler import myhandle
 from .handle.job import add_clock

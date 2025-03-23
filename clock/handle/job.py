@@ -4,7 +4,7 @@ from ..database.database import DB
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from typing import  Dict, Optional, List
-from ..uilts import db_to_message, message_to_db
+from ..utils import db_to_message, message_to_db
 from nonebot import logger
 
 class JobHandle:

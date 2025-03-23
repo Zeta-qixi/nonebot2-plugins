@@ -1,4 +1,4 @@
-from ..uilts import db_to_message, cron_to_natural
+from ..utils import db_to_message, cron_to_natural
 
 class Clock:
     def __init__(self, data):

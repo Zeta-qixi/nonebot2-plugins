@@ -1,7 +1,7 @@
 
 import json
 from typing import  Dict, List, Optional
-from ..uilts import db_to_message, message_to_db
+from ..utils import db_to_message, message_to_db
 from pathlib import Path
 import requests
 holiday_data = Path('./data/clocks/raw_holiday.json')

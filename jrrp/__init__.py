@@ -29,5 +29,5 @@ async def jrrp_(matcher: Matcher, event: GroupMessageEvent):
 
 @scheduler.scheduled_job('cron', hour='0', minute='0', second='0', misfire_grace_time=60) # = UTC+8 1445
 async def clean():
-    Game.clear()
+    Jrrp = {}
 
