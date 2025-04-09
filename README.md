@@ -1,5 +1,5 @@
 # nonebot2的插件库
-> 基于 nonebot-anywhere-llm ，全面接入大模型的插件，具体功能到插件中看 对应
+> 全面接入大模型的插件，具体功能到插件中看对应 readme 
 
 
 
@@ -8,6 +8,10 @@
 
  
 ## 基础配置
+### 依赖
+```
+pip install -U nonebot-plugin-anywhere-llm
+```
 ### 大模型基础配置
 ```
 OPENAI_API_KEY=""
