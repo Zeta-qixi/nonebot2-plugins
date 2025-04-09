@@ -1,2 +1,0 @@
-aiosqlite==0.21.0
-nonebot2==2.4.2

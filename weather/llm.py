@@ -1,7 +1,7 @@
 from nonebot import require
 from .model import Weather
 
-nllm = require('nonebot_anywhere_llm')
+nllm = require('nonebot_plugin_anywhere_llm')
 LLMParams = nllm.LLMParams
 LLMService = nllm.LLMService
 
@@ -63,8 +63,8 @@ my_params = LLMParams(
     temperature=0.5
 )
 llm = LLMService(my_params)
-async def llm_respone( weather: Weather) -> str:
+async def llm_respone(weather: Weather, event) -> str:
     response = await llm.generate(
-        f"[时间]: {nllm.llm_system_time()}\n{weather}"
+        f"[时间]: {nllm.llm_system_time()}\n{weather}",
     )
     return response
