@@ -7,23 +7,16 @@ from pathlib import Path
 
 
 TABLE = "CLOCKS"
-
-data_dir = Path('./data/clocks')
-if not os.path.exists(data_dir):
-    os.mkdir(data_dir)
-db_path = data_dir / 'data.db'
-
-
-class DB:
-    def __init__(self, db_name, auto_commit=True):
-        self.db_name = db_name
+class ClockDB:
+    def __init__(self, db_path, auto_commit=True):
+        self.db_path = db_path
         self.auto_commit = auto_commit
         self.connection = None
         self._init_db()
         
     def connect(self):
         if not self.connection:
-            self.connection = sqlite3.connect(self.db_name)
+            self.connection = sqlite3.connect(self.db_path)
             
     def close(self):
         if self.connection:
@@ -118,7 +111,7 @@ class DB:
                            (data['type'], data['group_id'], data['user_id'],
                             data['content'], data['is_enabled'], data['cron_expression'],
                             data['is_one_time']))
-            clock.id = cursor.lastrowid
+            return cursor.lastrowid
             
     
     def update(self, clock: Clock):
@@ -147,7 +140,3 @@ class DB:
             data.append(self.to_clock(row))
         return data
             
-
-
-db = DB(db_path)
-db.delete(1)

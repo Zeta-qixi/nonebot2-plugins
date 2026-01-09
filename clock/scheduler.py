@@ -1,19 +1,29 @@
-from nonebot import require, get_bot
+
 from .model import Clock
-from .handle.job import JobHandle, del_clock
-from .database.database import db
-from .utils import db_to_message
-scheduler = require('nonebot_plugin_apscheduler').scheduler
-class Myhandle(JobHandle):
-    def __init__(self, db, scheduler):
-        super().__init__(db, scheduler)
-    async def _job_function(self, clock: Clock):
-        message = await db_to_message(clock.content)
-        if clock.type == 'private':
-            await get_bot().send_msg(message_type=clock.type, user_id=clock.user_id, message=message)
-        elif clock.type == 'group':
-            # message = MessageSegment.at(clock.user_id) + message
-            await get_bot().send_msg(message_type=clock.type, group_id=clock.group_id, message=message)
-        if clock.is_one_time:
-            del_clock(myhandle, clock)
-myhandle = Myhandle(db, scheduler)
+from apscheduler.triggers.cron import CronTrigger
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
+
+class SchedulerAdapter:
+    def __init__(self, scheduler: AsyncIOScheduler):
+        self.scheduler =  scheduler
+
+    def add(self, clock: Clock, callback):
+        trigger = CronTrigger.from_crontab(clock.cron_expression)
+        self.scheduler.add_job(
+            callback,
+            trigger=trigger,
+            id=f"clock_{clock.id}",
+            args=[clock],
+            misfire_grace_time=60,
+            coalesce=False
+        )
+
+    def remove(self, clock_id: int):
+        try:
+            self.scheduler.remove_job(f"clock_{clock_id}")
+        except Exception:
+            pass
+
+
+

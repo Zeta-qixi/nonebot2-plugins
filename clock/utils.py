@@ -10,9 +10,8 @@ from .llm import decorate_content
 import uuid
 import re
 from datetime import datetime
+from .config import IMAGE_DIR, USE_LLM
 
-
-IMAGE_DIR = Path('./data/clocks/images')
 if not os.path.exists(IMAGE_DIR):
     os.mkdir(IMAGE_DIR)
 
@@ -48,11 +47,9 @@ async def db_to_message(content: str, only_show = False):
         if _type == 'image':
             message += MessageSegment.image(Path(data)) # type: ignore
         elif _type == 'text':
-            if only_show:
-                text = data
-            else:
-                text = await decorate_content(data)
-            message += Message(text)
+            if not only_show and USE_LLM:
+                data = await decorate_content(data) 
+            message += Message(data)
     
     return message
 
@@ -100,7 +97,6 @@ def simple_time_to_cron(time_str: str) -> str:
         minute, hour, day, month, weekday = time_str.split()
     assert 0 <= hour <24 and 0<= minute <60, "Invalid time"
     return f"{minute} {hour} {day} {month} {weekday}"  
-from typing import List
 
 
 def cron_to_natural(cron_expr: str) -> str:
@@ -120,14 +116,13 @@ def cron_to_natural(cron_expr: str) -> str:
 
     time_str = f"{hour.zfill(2)}:{minute.zfill(2)}" if hour != "*" and minute != "*" else "任意时间"
     if month != "*" and day != "*":
-        date_str = f"{months}月{day}日"
+        date_str = f"{month}月{day}日"
     elif month != "*":
-        date_str = f"{months}月的每天"
+        date_str = f"{month}月的每天"
     elif day != "*":
         date_str = f"每月{day}日"
     else:
         date_str = "每天"
-    # 解析星期
     if weekday != "*":
         if day == "*":  # 如果没有指定具体日期
             date_str = f"每{weekdays.get(weekday, weekday)}"

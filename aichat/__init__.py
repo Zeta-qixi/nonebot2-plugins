@@ -13,7 +13,7 @@ require('nonebot_plugin_anywhere_llm')
 from nonebot_plugin_anywhere_llm import LLMService
 
 llm = LLMService.load('chat.yaml')
-
+print(llm.config)
 
 chat = on_message(block=False, priority=99)
 @chat.handle()

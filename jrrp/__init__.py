@@ -1,5 +1,7 @@
 
 import nonebot
+import time
+import re
 import random
 from nonebot import on_command, require
 from nonebot.matcher import Matcher
@@ -23,11 +25,18 @@ async def jrrp_(matcher: Matcher, event: GroupMessageEvent):
             Jrrp[event.user_id] = rp
             await matcher.send( message=MessageSegment.at(event.user_id) + f'今日的人品值是:{rp}')
             
-            respone = await llm_respone(rp)
-            await matcher.finish( message=respone)
+            # response = await llm_respone(rp)
+            # if response:
+            #     for r in re.split(r'[\\\n$]', response):
+            #         r=r.strip()
+            #         if r:
+            #             time.sleep(len(r) / 12 * random.randint(1,3))
+            #             await matcher.send(r)
+    
 
 
 @scheduler.scheduled_job('cron', hour='0', minute='0', second='0', misfire_grace_time=60) # = UTC+8 1445
 async def clean():
+    global Jrrp
     Jrrp = {}
 

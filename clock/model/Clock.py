@@ -22,17 +22,18 @@ class Clock:
             'is_enabled': int(self.is_enabled),
             'cron_expression': self.cron_expression,
             'is_one_time': int(self.is_one_time),
-
         }
 
     @classmethod
     def from_dict(cls, data):
         return cls(data)
     
+    def set_id(self, id: int):
+        self.id = id
+
+
     async def get_info(self):
-        """
-        基础信息
-        """
+
         enabled = '✅' if self.is_enabled else '🚫'
         content = await db_to_message(self.content, only_show=True)
         ones = '（仅一次）' if self.is_one_time else ''

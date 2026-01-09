@@ -80,7 +80,7 @@ nonebot.load_plugin('your_plugin_directory')
 ```bash
 用户：/添加闹钟 +1h
 机器人：请设置闹钟内容
-用户：该起来活动啦！(发送颈椎保健操图片)
+用户：该起来活动啦！
 机器人：添加成功～
 ```
 
@@ -103,6 +103,3 @@ nonebot.load_plugin('your_plugin_directory')
 3. 数据库写入权限设置
 
 ---
-
-> 遇到问题？欢迎提交issue反馈 [项目地址](https://github.com/your_repo)  
-> 开发团队：智能提醒小组 ©2023
