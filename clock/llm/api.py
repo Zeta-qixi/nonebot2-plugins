@@ -1,16 +1,18 @@
-from .llm import *
+
 from typing import Optional, Dict
 from nonebot import logger
 
-async def decorate_content( content: str) -> Optional[str]:
-    try:
-        response = await llm.generate(
-            f"事项：{content}",
-        )
-        return response
-    except Exception as e:
-        logger.error(str(e))
-        return content.strip()
+from nonebot import require
+simple_chat = require('nonebot_plugin_anywhere_llm').simple_chat
+
+async def decorate_content(content: str) -> Optional[str]:
+ 
+    response = await simple_chat(
+        'clock',
+        f"事项：{content}",
+    )
+    return response
+
 
 
 async def natural_language_to_task(content: str) -> Dict:
